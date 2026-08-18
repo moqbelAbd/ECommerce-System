@@ -296,3 +296,4 @@ S:\New folder\Orange Cooding Schoole\EcommerceSystem\EcommerceSystem\obj\Debug\n
 S:\New folder\Orange Cooding Schoole\EcommerceSystem\EcommerceSystem\obj\Debug\net10.0\EcommerceSystem.pdb
 S:\New folder\Orange Cooding Schoole\EcommerceSystem\EcommerceSystem\obj\Debug\net10.0\EcommerceSystem.genruntimeconfig.cache
 S:\New folder\Orange Cooding Schoole\EcommerceSystem\EcommerceSystem\obj\Debug\net10.0\ref\EcommerceSystem.dll
+S:\New folder\Orange Cooding Schoole\EcommerceSystem\EcommerceSystem\obj\Debug\net10.0\EcommerceSystem.sourcelink.json
