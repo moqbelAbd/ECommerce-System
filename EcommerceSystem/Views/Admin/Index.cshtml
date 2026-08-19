@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard - Watch Store";
+    // سيتم استخدام الـ Layout الافتراضي للموقع تلقائياً
+}
+
+<div class="container p-t-100 p-b-100">
+    <!-- رأس لوحة التحكم -->
+    <div class="flex-sb-m flex-w p-b-35">
+        <div>
+            <h1 class="ltext-103 cl5">Admin Dashboard</h1>
+            <p class="stext-102 cl6">Welcome back, @User.Identity?.Name! Monitor store performance and recent watch orders.</p>
+        </div>
+        <div>
+            <a asp-controller="Product" asp-action="Index" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                Manage Products
+            </a>
+        </div>
+    </div>
+
+    <!-- كروت الإحصائيات (Metrics) باستخدام كلاسات المتجر -->
+    <div class="row g-4 p-b-50">
+        <div class="col-md-3">
+            <div class="p-all-20 bg6 bor4">
+                <span class="stext-102 cl9">Total Revenue</span>
+                <h3 class="mtext-111 cl2 p-t-10">$28,450</h3>
+                <span class="stext-109 cl1">+14.2% from last month</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-all-20 bg6 bor4">
+                <span class="stext-102 cl9">Watch Orders</span>
+                <h3 class="mtext-111 cl2 p-t-10">348</h3>
+                <span class="stext-109 cl1">+8.5% new orders</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-all-20 bg6 bor4">
+                <span class="stext-102 cl9">Customers</span>
+                <h3 class="mtext-111 cl2 p-t-10">1,420</h3>
+                <span class="stext-109 cl1">+6.3% active users</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-all-20 bg6 bor4">
+                <span class="stext-102 cl9">Low Stock Items</span>
+                <h3 class="mtext-111 cl2 p-t-10 text-danger">4</h3>
+                <span class="stext-109 text-danger">Stock remaining &lt; 5</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول الطلبات الحديثة (Recent Orders) بنفس ستايل جدول السلة في القالب -->
+    <div class="p-b-30">
+        <h4 class="mtext-103 cl2 p-b-20">Recent Watch Orders</h4>
+        <div class="wrap-table-shopping-cart">
+            <table class="table-shopping-cart">
+                <tr class="table_head">
+                    <th class="column-1">Order ID</th>
+                    <th class="column-2">Customer</th>
+                    <th class="column-3">Watch Item</th>
+                    <th class="column-4">Status</th>
+                    <th class="column-5">Action</th>
+                </tr>
+
+                <tr class="table_row">
+                    <td class="column-1">#ORD-9021</td>
+                    <td class="column-2">Sarah Ahmed</td>
+                    <td class="column-3">Classic Leather Watch</td>
+                    <td class="column-4"><span class="badge bg-success">Completed</span></td>
+                    <td class="column-5"><a href="#" class="stext-101 cl1 hov-cl1">View Details</a></td>
+                </tr>
+
+                <tr class="table_row">
+                    <td class="column-1">#ORD-9020</td>
+                    <td class="column-2">Rafi Khan</td>
+                    <td class="column-3">Sport Chronograph</td>
+                    <td class="column-4"><span class="badge bg-warning text-dark">Pending</span></td>
+                    <td class="column-5"><a href="#" class="stext-101 cl1 hov-cl1">View Details</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
