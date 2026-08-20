@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
         public int ProductQuantity { get; set; }
 
+        public bool isDeleted {  get; set; }
         public Guid ProductBrandId { get; set; }
 
         [ForeignKey("ProductBrandId")]
