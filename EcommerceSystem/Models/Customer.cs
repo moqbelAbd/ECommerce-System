@@ -19,12 +19,12 @@ public string Location    {get; set;}
 
 public bool IsDeleted { get; set; }
 
-        public string? ApplicationUserId { get; set; }
+public string? ApplicationUserId { get; set; }
 
-        [ForeignKey("ApplicationUserId")]
-        public EcommerceSystem.Data.ApplicationUser? ApplicationUser { get; set; }
+[ForeignKey("ApplicationUserId")]
+public EcommerceSystem.Data.ApplicationUser? ApplicationUser { get; set; }
 
-        public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
 
 }
 

@@ -1,1 +1,18 @@
 .vs/
+
+# 1. Compiled Output (Never push these, they rebuild automatically)
+bin/
+obj/
+
+# 2. Visual Studio Local Settings (Keeps your personal IDE settings private)
+.vs/
+*.user
+*.suo
+
+# 3. Environment-Specific Configurations (Keeps your database passwords safe!)
+appsettings.Development.json
+appsettings.Local.json
+
+# 4. OS Generated Files
+.DS_Store
+Thumbs.db

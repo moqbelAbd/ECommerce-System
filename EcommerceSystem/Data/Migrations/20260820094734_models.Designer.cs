@@ -4,6 +4,7 @@ using EcommerceSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260820094734_models")]
+    partial class models
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,12 +173,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("PaymentStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PaymentTypeId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -191,10 +188,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("PaymentStatusId");
-
-                    b.HasIndex("PaymentTypeId");
 
                     b.ToTable("Orders");
                 });
@@ -214,7 +207,7 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderId2")
+                    b.Property<Guid?>("OrderId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductId")
@@ -224,62 +217,11 @@ namespace EcommerceSystem.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("OrderId2");
+                    b.HasIndex("OrderId1");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItem");
-                });
-
-            modelBuilder.Entity("EcommerceSystem.Models.OrderStatus", b =>
-                {
-                    b.Property<int>("OrderStatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderStatusId"));
-
-                    b.Property<string>("OrderStatusName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("OrderStatusId");
-
-                    b.ToTable("OrderStatuses");
-                });
-
-            modelBuilder.Entity("EcommerceSystem.Models.PaymentStatus", b =>
-                {
-                    b.Property<int>("PaymentStatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentStatusId"));
-
-                    b.Property<string>("PaymentStatusName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PaymentStatusId");
-
-                    b.ToTable("PaymentStatuses");
-                });
-
-            modelBuilder.Entity("EcommerceSystem.Models.PaymentType", b =>
-                {
-                    b.Property<int>("PaymentTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentTypeId"));
-
-                    b.Property<string>("PaymentTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PaymentTypeId");
-
-                    b.ToTable("PaymentTypes");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>
@@ -291,15 +233,9 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<Guid?>("OrderItemId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductBrandId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("ProductDescription")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("ProductModelId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ProductPrice")
                         .HasColumnType("decimal(18,2)");
@@ -314,28 +250,9 @@ namespace EcommerceSystem.Data.Migrations
 
                     b.HasIndex("OrderItemId");
 
-                    b.HasIndex("ProductBrandId");
-
-                    b.HasIndex("ProductModelId");
-
                     b.HasIndex("SubCategoryId");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("EcommerceSystem.Models.ProductBrand", b =>
-                {
-                    b.Property<Guid>("ProductBrandId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BrandName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductBrandId");
-
-                    b.ToTable("ProductBrands");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.ProductImage", b =>
@@ -356,21 +273,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
-                });
-
-            modelBuilder.Entity("EcommerceSystem.Models.ProductModel", b =>
-                {
-                    b.Property<Guid>("ProductModelId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ModelName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductModelId");
-
-                    b.ToTable("ProductModels");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.SubCategory", b =>
@@ -562,19 +464,7 @@ namespace EcommerceSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EcommerceSystem.Models.PaymentStatus", "PaymentStatus")
-                        .WithMany()
-                        .HasForeignKey("PaymentStatusId");
-
-                    b.HasOne("EcommerceSystem.Models.PaymentType", "ProductType")
-                        .WithMany()
-                        .HasForeignKey("PaymentTypeId");
-
                     b.Navigation("Customer");
-
-                    b.Navigation("PaymentStatus");
-
-                    b.Navigation("ProductType");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.OrderItem", b =>
@@ -587,9 +477,7 @@ namespace EcommerceSystem.Data.Migrations
 
                     b.HasOne("EcommerceSystem.Models.Order", null)
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderId2")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrderId1");
 
                     b.HasOne("EcommerceSystem.Models.Product", "Product")
                         .WithMany()
@@ -608,25 +496,9 @@ namespace EcommerceSystem.Data.Migrations
                         .WithMany("OrderProducts")
                         .HasForeignKey("OrderItemId");
 
-                    b.HasOne("EcommerceSystem.Models.ProductBrand", "ProductBrand")
-                        .WithMany()
-                        .HasForeignKey("ProductBrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EcommerceSystem.Models.ProductModel", "ProductModel")
-                        .WithMany()
-                        .HasForeignKey("ProductModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EcommerceSystem.Models.SubCategory", null)
                         .WithMany("Products")
                         .HasForeignKey("SubCategoryId");
-
-                    b.Navigation("ProductBrand");
-
-                    b.Navigation("ProductModel");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.ProductImage", b =>
