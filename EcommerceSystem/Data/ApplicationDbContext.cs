@@ -9,6 +9,7 @@ namespace EcommerceSystem.Data
     {
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerPhoneNumber> CustomerPhoneNumbers { get; set; }
+        public DbSet<CustomerPaymentCard> CustomerPaymentCards { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
@@ -19,6 +20,7 @@ namespace EcommerceSystem.Data
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductBrand> ProductBrands { get; set; }
         public DbSet<ProductModel> ProductModels { get; set; }
+        public DbSet<ProductReview> ProductReviews { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,7 +34,13 @@ namespace EcommerceSystem.Data
                 .WithMany() // Leaves the other side of the relationship empty
                 .HasForeignKey(oi => oi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict); // <-- THE FIX
+
+            modelBuilder.Entity<OrderItem>()
+               .HasOne(oi => oi.Order)
+               .WithMany() // Leaves the other side of the relationship empty
+               .HasForeignKey(oi => oi.ProductId)
+               .OnDelete(DeleteBehavior.Restrict); // <-- THE FIX
         }
-    
+
     }
 }

@@ -3,27 +3,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceSystem.Models
 {
-    public class OrderItem
+    public class CartItem
     {
-        [Key]
-        public Guid OrderItemId { get; set; }
 
+        [Key]
+        public Guid CartItemId { get; set; }
 
         [Required]
         public int ItemQuantity { get; set; }
 
-        [Required]
-        public decimal ItemTotalPrice { get; set; }
+        public Guid CartId { get; set; }
 
-        public Guid OrderId { get; set; }
-
-        [ForeignKey("OrderId")]
-        public Order? Order { get; set; }
-
+        [ForeignKey("CartId")]
+        public Cart? Cart { get; set; }
         public Guid ProductId { get; set; }
 
         [ForeignKey("ProductId")]
         public Product? Product { get; set; }
+
+        public ICollection<Product> OrderProducts { get; set; } = new HashSet<Product>();
 
 
     }
