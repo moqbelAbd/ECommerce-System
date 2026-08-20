@@ -69,28 +69,28 @@ namespace EcommerceSystem.Data.Migrations
                 newName: "FirstName");
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "SubCategories",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Products",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "CustomerPhoneNumbers",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Categories",
                 type: "bit",
                 nullable: false,
@@ -145,19 +145,19 @@ namespace EcommerceSystem.Data.Migrations
                 table: "Orders");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "SubCategories");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Products");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "CustomerPhoneNumbers");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Categories");
 
             migrationBuilder.RenameColumn(

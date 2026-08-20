@@ -12,7 +12,7 @@ public Guid PhoneNumberId {get; set;}
 [MaxLength(50)]
 public string PhoneNumber { get; set; } = string.Empty;
 
-public bool isDeleted {  get; set; }
+public bool IsDeleted {  get; set; }
 
 public Guid CustomerId {get; set;}
 

@@ -11,22 +11,22 @@ namespace EcommerceSystem.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "SubCategories",
                 newName: "IsDeleted");
 
             migrationBuilder.RenameColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Products",
                 newName: "IsDeleted");
 
             migrationBuilder.RenameColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "CustomerPhoneNumbers",
                 newName: "IsDeleted");
 
             migrationBuilder.RenameColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Categories",
                 newName: "IsDeleted");
         }
@@ -37,22 +37,22 @@ namespace EcommerceSystem.Data.Migrations
             migrationBuilder.RenameColumn(
                 name: "IsDeleted",
                 table: "SubCategories",
-                newName: "isDeleted");
+                newName: "IsDeleted");
 
             migrationBuilder.RenameColumn(
                 name: "IsDeleted",
                 table: "Products",
-                newName: "isDeleted");
+                newName: "IsDeleted");
 
             migrationBuilder.RenameColumn(
                 name: "IsDeleted",
                 table: "CustomerPhoneNumbers",
-                newName: "isDeleted");
+                newName: "IsDeleted");
 
             migrationBuilder.RenameColumn(
                 name: "IsDeleted",
                 table: "Categories",
-                newName: "isDeleted");
+                newName: "IsDeleted");
         }
     }
 }

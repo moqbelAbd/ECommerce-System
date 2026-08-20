@@ -11,7 +11,7 @@ namespace EcommerceSystem.Models
         public string SubCategoryName { get; set; }
         public string SubCategoryImagePath { get; set; }
 
-        public bool isDeleted { get; set; }
+        public bool IsDeleted { get; set; }
 
         public ICollection<Product> Products { get; set; } = new HashSet<Product>();
     }

@@ -14,7 +14,7 @@ public string CardNumber { get; set; } = string.Empty;
 [Required]
 public DateOnly CardExpire { get; set; } 
 
-public bool isDeleted {  get; set; }
+public bool IsDeleted {  get; set; }
 
 public Guid CustomerId {get; set;}
 

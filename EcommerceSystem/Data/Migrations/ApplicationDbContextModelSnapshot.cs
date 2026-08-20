@@ -101,7 +101,7 @@ namespace EcommerceSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.HasKey("CategoryId");
@@ -153,7 +153,7 @@ namespace EcommerceSystem.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool>("isDeleted")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.HasKey("PhoneNumberId");
@@ -312,7 +312,7 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<Guid?>("SubCategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("isDeleted")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.HasKey("ProductId");
@@ -395,7 +395,7 @@ namespace EcommerceSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.HasKey("SubCategoryId");
