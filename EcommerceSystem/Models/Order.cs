@@ -16,8 +16,8 @@ public DateTime CreatedAt { get; set; } = DateTime.Now; // Automatically sets th
 [Required]
 public int orderStatus  {get; set;}
 
-//[ForeignKey("OrderStatusId")]
-//public OrderStatus? OrderStatus { get; set; }
+[ForeignKey("OrderStatusId")]
+public OrderStatus? OrderStatus { get; set; }
 
 [Required]
 public int paymentStatus  {get; set;}
@@ -26,7 +26,7 @@ public int paymentStatus  {get; set;}
 public PaymentStatus? PaymentStatus { get; set; }
 
 [Required]
-public int paymentTypeId {get; set;}
+public int PaymentTypeId {get; set;}
 
 [ForeignKey("PaymentTypeId")]
 public PaymentType? ProductType { get; set; }

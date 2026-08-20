@@ -19,14 +19,14 @@ namespace EcommerceSystem.Models
         public Guid OrderId { get; set; }
 
         [ForeignKey("OrderId")]
-        public Product? Order { get; set; }
+        public Order? Order { get; set; }
 
         public Guid ProductId { get; set; }
 
         [ForeignKey("ProductId")]
         public Product? Product { get; set; }
 
-        public ICollection<Product> OrderProducts { get; set; } = new HashSet<Product>();
+        //public ICollection<Product> OrderProducts { get; set; } = new HashSet<Product>();
 
     }
 }
