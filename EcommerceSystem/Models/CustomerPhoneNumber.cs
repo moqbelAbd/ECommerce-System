@@ -12,6 +12,8 @@ public Guid phoneNumberId {get; set;}
 [MaxLength(50)]
 public string PhoneNumber { get; set; }
 
+public bool isDeleted {  get; set; }
+
 public Guid CustomerId {get; set;}
 
 [ForeignKey ("CustomerId")]
