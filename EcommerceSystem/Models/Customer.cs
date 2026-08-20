@@ -10,12 +10,12 @@ public class Customer{
 public Guid CustomerId {get; set;}
 
 [Required]
-public string firstName   {get; set;}
+public string FirstName   {get; set;} = string.Empty;
 
 [Required]
-public string lastName   {get; set;}
+public string LastName   {get; set;} = string.Empty;
 
-public string Location    {get; set;}
+public string? Location    {get; set;}
 
 public bool IsDeleted { get; set; }
 

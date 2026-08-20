@@ -4,6 +4,7 @@ using EcommerceSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260820113958_editingModels")]
+    partial class editingModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,6 +133,7 @@ namespace EcommerceSystem.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CustomerId");
@@ -141,7 +145,7 @@ namespace EcommerceSystem.Data.Migrations
 
             modelBuilder.Entity("EcommerceSystem.Models.CustomerPhoneNumber", b =>
                 {
-                    b.Property<Guid>("PhoneNumberId")
+                    b.Property<Guid>("phoneNumberId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -156,7 +160,7 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<bool>("isDeleted")
                         .HasColumnType("bit");
 
-                    b.HasKey("PhoneNumberId");
+                    b.HasKey("phoneNumberId");
 
                     b.HasIndex("CustomerId");
 
@@ -290,9 +294,6 @@ namespace EcommerceSystem.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("OrderItemId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ProductBrandId")
                         .HasColumnType("uniqueidentifier");
 
@@ -316,8 +317,6 @@ namespace EcommerceSystem.Data.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("ProductId");
-
-                    b.HasIndex("OrderItemId");
 
                     b.HasIndex("ProductBrandId");
 
@@ -604,7 +603,7 @@ namespace EcommerceSystem.Data.Migrations
                     b.HasOne("EcommerceSystem.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -614,10 +613,6 @@ namespace EcommerceSystem.Data.Migrations
 
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>
                 {
-                    b.HasOne("EcommerceSystem.Models.OrderItem", null)
-                        .WithMany("OrderProducts")
-                        .HasForeignKey("OrderItemId");
-
                     b.HasOne("EcommerceSystem.Models.ProductBrand", "ProductBrand")
                         .WithMany()
                         .HasForeignKey("ProductBrandId")
@@ -721,11 +716,6 @@ namespace EcommerceSystem.Data.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("EcommerceSystem.Models.OrderItem", b =>
-                {
-                    b.Navigation("OrderProducts");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>

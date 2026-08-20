@@ -3,14 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EcommerceSystem.Models
 {
 
-public class CustomerPhoneNumber{
+public class CustomerPaymentCard
+    {
 
 [Key]
-public Guid PhoneNumberId {get; set;}
+public Guid PaymentCardId { get; set;}
 
 [Required]
-[MaxLength(50)]
-public string PhoneNumber { get; set; } = string.Empty;
+public string CardNumber { get; set; } = string.Empty;
+[Required]
+public DateOnly CardExpire { get; set; } 
 
 public bool isDeleted {  get; set; }
 

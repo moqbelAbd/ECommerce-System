@@ -20,5 +20,19 @@ namespace EcommerceSystem.Data
         public DbSet<ProductBrand> ProductBrands { get; set; }
         public DbSet<ProductModel> ProductModels { get; set; }
 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // 1. MUST call the base method first so ASP.NET Identity tables build correctly!
+            base.OnModelCreating(modelBuilder);
+
+            // 2. Prevent SQL Server from cascade deleting OrderItems when a Product is deleted
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany() // Leaves the other side of the relationship empty
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict); // <-- THE FIX
+        }
+    
     }
 }
