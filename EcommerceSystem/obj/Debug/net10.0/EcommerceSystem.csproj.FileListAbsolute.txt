@@ -724,7 +724,6 @@ C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Mi
 C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.SqlServer.dll
 C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Microsoft.Extensions.DependencyModel.dll
-C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Microsoft.Extensions.FileProviders.Embedded.dll
 C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Microsoft.Identity.Client.dll
 C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Microsoft.Identity.Client.Broker.dll
 C:\Users\user\source\repos\ECommerce-System\EcommerceSystem\bin\Debug\net10.0\Microsoft.Identity.Client.Extensions.Msal.dll

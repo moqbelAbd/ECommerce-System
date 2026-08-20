@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj": {}
+    "C:\\Users\\User\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj": {
+    "C:\\Users\\User\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj",
+        "projectUniqueName": "C:\\Users\\User\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj",
         "projectName": "EcommerceSystem",
-        "projectPath": "C:\\Users\\user\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj",
-        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\source\\repos\\ECommerce-System\\EcommerceSystem\\obj\\",
+        "projectPath": "C:\\Users\\User\\source\\repos\\ECommerce-System\\EcommerceSystem\\EcommerceSystem.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\source\\repos\\ECommerce-System\\EcommerceSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net10.0": {
@@ -99,7 +99,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
