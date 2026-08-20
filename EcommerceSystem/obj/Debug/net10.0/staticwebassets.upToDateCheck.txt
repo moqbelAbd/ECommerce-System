@@ -99,33 +99,13 @@ wwwroot\fonts\Poppins\Poppins-Thin.ttf
 wwwroot\fonts\Poppins\Poppins-ThinItalic.ttf
 wwwroot\images\about-01.jpg
 wwwroot\images\about-02.jpg
-wwwroot\images\avatar-01.jpg
 wwwroot\images\banner-01.jpg
 wwwroot\images\banner-02.jpg
 wwwroot\images\banner-03.jpg
 wwwroot\images\banner-04.jpg
 wwwroot\images\banner-05.jpg
 wwwroot\images\banner-06.jpg
-wwwroot\images\banner-07.jpg
-wwwroot\images\banner-08.jpg
-wwwroot\images\banner-09.jpg
 wwwroot\images\bg-01.jpg
-wwwroot\images\bg-02.jpg
-wwwroot\images\blog-01.jpg
-wwwroot\images\blog-02.jpg
-wwwroot\images\blog-03.jpg
-wwwroot\images\blog-04.jpg
-wwwroot\images\blog-05.jpg
-wwwroot\images\blog-06.jpg
-wwwroot\images\gallery-01.jpg
-wwwroot\images\gallery-02.jpg
-wwwroot\images\gallery-03.jpg
-wwwroot\images\gallery-04.jpg
-wwwroot\images\gallery-05.jpg
-wwwroot\images\gallery-06.jpg
-wwwroot\images\gallery-07.jpg
-wwwroot\images\gallery-08.jpg
-wwwroot\images\gallery-09.jpg
 wwwroot\images\icons\favicon.png
 wwwroot\images\icons\icon-close.png
 wwwroot\images\icons\icon-close2.png
@@ -140,45 +120,53 @@ wwwroot\images\icons\icon-pay-04.png
 wwwroot\images\icons\icon-pay-05.png
 wwwroot\images\icons\icon-prev.png
 wwwroot\images\icons\logo-01.png
-wwwroot\images\icons\logo-02.png
-wwwroot\images\icons\pin.png
-wwwroot\images\item-cart-01.jpg
-wwwroot\images\item-cart-02.jpg
-wwwroot\images\item-cart-03.jpg
-wwwroot\images\item-cart-04.jpg
-wwwroot\images\item-cart-05.jpg
-wwwroot\images\product-01.jpg
-wwwroot\images\product-02.jpg
-wwwroot\images\product-03.jpg
-wwwroot\images\product-04.jpg
-wwwroot\images\product-05.jpg
-wwwroot\images\product-06.jpg
-wwwroot\images\product-07.jpg
-wwwroot\images\product-08.jpg
-wwwroot\images\product-09.jpg
-wwwroot\images\product-10.jpg
-wwwroot\images\product-11.jpg
-wwwroot\images\product-12.jpg
-wwwroot\images\product-13.jpg
-wwwroot\images\product-14.jpg
-wwwroot\images\product-15.jpg
-wwwroot\images\product-16.jpg
-wwwroot\images\product-detail-01.jpg
-wwwroot\images\product-detail-02.jpg
-wwwroot\images\product-detail-03.jpg
-wwwroot\images\product-min-01.jpg
-wwwroot\images\product-min-02.jpg
-wwwroot\images\product-min-03.jpg
+wwwroot\images\Men\GiftBox1\bigotti-giftset.png
+wwwroot\images\Men\GiftBox2\BIGOTTI MILANO BG.1.10651-5 MEN WATCH - GIFT SET.png
+wwwroot\images\Men\Watch10\img.png
+wwwroot\images\Men\Watch10\img1.png
+wwwroot\images\Men\Watch10\timberland-watch.png
+wwwroot\images\Men\Watch11\TIMBERLAND TDWGQ0075001 MEN WATCH.png
+wwwroot\images\Men\Watch12\WESTERN W1829GGP010F MEN WATCH.png
+wwwroot\images\Men\Watch13\WESTERN W8756GPP030D MEN WATCH.png
+wwwroot\images\Men\Watch14\TIMBERLAND TDWGC9011001 MEN WATCH.png
+wwwroot\images\Men\Watch15\JOVIAL 5230GSLQ12E MEN WATCH.png
+wwwroot\images\Men\Watch16\JOVIAL 5091GTMQ01E MEN WATCH.png
+wwwroot\images\Men\Watch1\TIMBERLAND TDWGF0055001 MEN WATCH.png
+wwwroot\images\Men\Watch2\BIGOTTI MILANO BG.1.10649-5 MEN WATCH.png
+wwwroot\images\Men\Watch3\DANIEL KLEIN DK.1.13995- 4 MEN WATCH.png
+wwwroot\images\Men\Watch4\DANIEL KLEIN DK.1.13645-3 MEN WATCH.png
+wwwroot\images\Men\Watch5\DANIEL KLEIN DK.1.13701-1 MEN WATCH.png
+wwwroot\images\Men\Watch6\TIMBERLAND TDWGC9011002 MEN WATCH.png
+wwwroot\images\Men\Watch7\img.png
+wwwroot\images\Men\Watch7\img2.png
+wwwroot\images\Men\Watch7\TIMBERLAND TDWGF0082903 MEN WATCH.png
+wwwroot\images\Men\Watch8\img.png
+wwwroot\images\Men\Watch8\img2.png
+wwwroot\images\Men\Watch8\TIMBERLAND TDWGH0083105 MEN WATCH.png
+wwwroot\images\Men\Watch9\img.png
+wwwroot\images\Men\Watch9\img1.png
+wwwroot\images\Men\Watch9\TIMBERLAND TDWGH0083702 MEN WATCH.png
 wwwroot\images\slide-01.jpg
 wwwroot\images\slide-02.jpg
 wwwroot\images\slide-03.jpg
-wwwroot\images\slide-04.jpg
-wwwroot\images\slide-05.jpg
-wwwroot\images\slide-06.jpg
-wwwroot\images\slide-07.jpg
-wwwroot\images\thumb-01.jpg
-wwwroot\images\thumb-02.jpg
-wwwroot\images\thumb-03.jpg
+wwwroot\images\Women\Watch1\BIGOTTI MILANO BG.1.10616-4 WOMEN WATCH.png
+wwwroot\images\Women\Watch1\img.png
+wwwroot\images\Women\Watch2\BIGOTTI MILANO BG.1.10616-5 WOMEN WATCH.png
+wwwroot\images\Women\Watch2\img.png
+wwwroot\images\Women\Watch3\BIGOTTI MILANO BG.1.10617-5 WOMEN WATCH.pmg.webp
+wwwroot\images\Women\Watch3\img.png
+wwwroot\images\Women\Watch4\DANIEL KLEIN DK.1.13943-4 WOMEN WATCH.png
+wwwroot\images\Women\Watch4\img.png
+wwwroot\images\Women\Watch5\img.png
+wwwroot\images\Women\Watch5\watch5-daniel-klein.png
+wwwroot\images\Women\Watch6\DANIEL KLEIN DK.6.14131-5 WOMEN WATCH.png
+wwwroot\images\Women\Watch6\img.png
+wwwroot\images\Women\Watch7\JOVIAL 1549LSMQ01ZE WOMEN WATCH.png
+wwwroot\images\Women\Watch8\img.png
+wwwroot\images\Women\Watch8\img2.png
+wwwroot\images\Women\Watch8\img3.png
+wwwroot\images\Women\Watch8\TIMBERLAND TDWGA0029201 WOMEN WATCH.png
+wwwroot\images\Women\Watch9\JOVIAL 5090LSMQ09ZE WOMEN WATCH.png
 wwwroot\js\admin.js
 wwwroot\js\main.js
 wwwroot\js\map-custom.js
@@ -356,13 +344,13 @@ C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\l
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
@@ -372,13 +360,13 @@ C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\l
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-reboot.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-reboot.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
@@ -392,15 +380,15 @@ C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\f
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\css\site.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\css\main.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\css\util.css
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.css
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.min.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\slick\slick-theme.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.svg
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\font-awesome-4.7.0\fonts\FontAwesome.otf
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\font-awesome-4.7.0\HELP-US-OUT.txt
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\iconic\css\material-design-iconic-font.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\iconic\css\material-design-iconic-font.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\iconic\fonts\Material-Design-Iconic-Font.svg
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\linearicons-v1.0.0\icon-font.min.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\linearicons-v1.0.0\WebFont\Linearicons-Free.svg
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\Montserrat\OFL.txt
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\PlayfairDisplay\OFL.txt
@@ -416,13 +404,13 @@ C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\v
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-grid.css.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-grid.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-grid.min.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-reboot.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-reboot.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-reboot.min.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap-reboot.min.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\linearicons-v1.0.0\icon-font.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap.css.map
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap.min.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\css\bootstrap.min.css.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\js\bootstrap.js
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\bootstrap\js\bootstrap.min.js
@@ -467,7 +455,7 @@ C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\v
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\select2\select2.min.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\select2\select2.min.js
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\slick\fonts\slick.svg
-C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\slick\slick-theme.css
+C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\slick\slick.css
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\slick\slick.js
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\vendor\slick\slick.min.js

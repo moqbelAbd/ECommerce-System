@@ -3,36 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\views\\shared\\product.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\views\\shared\\product.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\views\\shared\\contact.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\views\\shared\\contact.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\wwwroot\\css\\util.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\wwwroot\\css\\util.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\wwwroot\\css\\main.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\wwwroot\\css\\main.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|c:\\users\\user\\desktop\\orange training\\ecommerce-system\\ecommercesystem\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{295DD710-7BAF-AE6C-93C7-DE3EAE64270A}|EcommerceSystem\\EcommerceSystem.csproj|solutionrelative:ecommercesystem\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -69,111 +53,59 @@
               "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CustomerController.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Controllers\\CustomerController.cs",
-              "RelativeDocumentMoniker": "EcommerceSystem\\Controllers\\CustomerController.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Controllers\\CustomerController.cs",
-              "RelativeToolTip": "EcommerceSystem\\Controllers\\CustomerController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-19T19:23:05.137Z",
-              "EditorCaption": ""
-            },
-            {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "EcommerceSystem\\Controllers\\HomeController.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "EcommerceSystem\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAQwCUAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-19T19:15:50.148Z",
+              "DocumentIndex": 1,
+              "Title": "Contact.cshtml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Shared\\Contact.cshtml",
+              "RelativeDocumentMoniker": "EcommerceSystem\\Views\\Shared\\Contact.cshtml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Shared\\Contact.cshtml",
+              "RelativeToolTip": "EcommerceSystem\\Views\\Shared\\Contact.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-20T12:54:41.961Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "EcommerceSystem\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "EcommerceSystem\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAO8AAAAAAAAAAADwv/8AAAAOAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Product.cshtml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Shared\\Product.cshtml",
+              "RelativeDocumentMoniker": "EcommerceSystem\\Views\\Shared\\Product.cshtml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Shared\\Product.cshtml",
+              "RelativeToolTip": "EcommerceSystem\\Views\\Shared\\Product.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAABWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-08-19T19:09:44.201Z",
+              "WhenOpened": "2026-08-20T12:46:51.706Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Admin\\Index.cshtml",
-              "RelativeDocumentMoniker": "EcommerceSystem\\Views\\Admin\\Index.cshtml",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Admin\\Index.cshtml",
-              "RelativeToolTip": "EcommerceSystem\\Views\\Admin\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFIAAAAGAAAAAAAAAA==",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "EcommerceSystem\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "EcommerceSystem\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKgBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-08-19T19:04:25.023Z",
+              "WhenOpened": "2026-08-20T12:36:45.648Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "util.css",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\wwwroot\\css\\util.css",
-              "RelativeDocumentMoniker": "EcommerceSystem\\wwwroot\\css\\util.css",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\wwwroot\\css\\util.css",
-              "RelativeToolTip": "EcommerceSystem\\wwwroot\\css\\util.css",
-              "ViewState": "AgIAAGAOAAAAAAAAAAAUwIEOAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-08-19T19:02:54.181Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "site.css",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\wwwroot\\css\\site.css",
-              "RelativeDocumentMoniker": "EcommerceSystem\\wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\wwwroot\\css\\site.css",
-              "RelativeToolTip": "EcommerceSystem\\wwwroot\\css\\site.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-08-19T19:02:36.126Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "main.css",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\wwwroot\\css\\main.css",
-              "RelativeDocumentMoniker": "EcommerceSystem\\wwwroot\\css\\main.css",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\wwwroot\\css\\main.css",
-              "RelativeToolTip": "EcommerceSystem\\wwwroot\\css\\main.css",
-              "ViewState": "AgIAAOIMAAAAAAAAAAAUwAMNAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-08-19T19:02:28.804Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "EcommerceSystem\\Views\\Shared\\_Layout.cshtml",
               "ToolTip": "C:\\Users\\user\\Desktop\\Orange Training\\ECommerce-System\\EcommerceSystem\\Views\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "EcommerceSystem\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAANUAAAAAAAAAAAAAAN0AAABFAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAACUAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-08-19T18:59:54.231Z",
+              "WhenOpened": "2026-08-20T12:36:36.663Z",
               "EditorCaption": ""
             }
           ]

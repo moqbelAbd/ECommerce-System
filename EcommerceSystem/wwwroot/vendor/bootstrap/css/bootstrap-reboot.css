@@ -172,7 +172,7 @@ img {
   border-style: none;
 }
 
-svg:not(:root) {
+png:not(:root) {
   overflow: hidden;
 }
 

@@ -4,51 +4,77 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="container p-t-100 p-b-80">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="bor10 p-lr-40 p-tb-30 m-l-r-auto bg0">
-                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    <h4 class="mtext-105 cl2 txt-center p-b-30">
-                        Create a New Account
-                    </h4>
+<div class="container-fluid px-0 bg0" style="min-height: 80vh; display: flex; align-items: stretch;">
+    <div class="row g-0 w-100">
 
-                    <div asp-validation-summary="ModelOnly" class="text-danger p-b-15" role="alert"></div>
+        <!-- الجانب الأول: نفس صورة banner-02.jpg النظيفة بدون ظلال -->
+        <div class="col-lg-7 d-none d-lg-block position-relative overflow-hidden" style="background-image: url('/images/banner-02.jpg'); background-size: cover; background-position: center; min-height: 650px;">
+        </div>
+
+        <!-- الجانب الثاني: نموذج إنشاء الحساب الجديد (Sign Up) -->
+        <div class="col-lg-5 d-flex align-items: center justify-content-center p-tb-60 p-lr-30 bg0">
+            <div class="w-100" style="max-width: 440px;">
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="bor10 p-lr-40 p-tb-40" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); background: #fff;">
+
+                    <!-- رأس النموذج -->
+                    <div class="text-center p-b-35">
+                        <h3 class="mtext-111 cl2 p-b-8" style="font-weight: 600; letter-spacing: 1px;">
+                            Create Account
+                        </h3>
+                        <p class="stext-113 cl6" style="font-size: 14px;">
+                            Please fill in the details to sign up
+                        </p>
+                    </div>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger p-b-15 text-center stext-115" role="alert"></div>
 
                     <!-- Email Input -->
-                    <div class="bor8 m-b-20 how-pos4-parent">
-                        <input asp-for="Input.Email" class="stext-111 cl2 plh3 size-116 p-l-25 p-r-30" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <div class="m-b-20">
+                        <label class="stext-102 cl6 p-b-5 block" style="font-weight: 500;">Email Address</label>
+                        <div class="bor8" style="border-radius: 10px; background: #fafafa; border: 1px solid #e5e5e5;">
+                            <input asp-for="Input.Email" class="stext-111 cl2 plh3 size-116 p-l-20 p-r-20" autocomplete="username" aria-required="true" placeholder="name@example.com" style="border: none; background: transparent; width: 100%; height: 45px;" />
+                        </div>
+                        <span asp-validation-for="Input.Email" class="text-danger stext-115 p-t-5 block"></span>
                     </div>
 
                     <!-- Password Input -->
-                    <div class="bor8 m-b-20">
-                        <input asp-for="Input.Password" class="stext-111 cl2 plh3 size-116 p-l-25 p-r-30" autocomplete="new-password" aria-required="true" placeholder="Password" />
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <div class="m-b-20">
+                        <label class="stext-102 cl6 p-b-5 block" style="font-weight: 500;">Password</label>
+                        <div class="bor8" style="border-radius: 10px; background: #fafafa; border: 1px solid #e5e5e5;">
+                            <input asp-for="Input.Password" class="stext-111 cl2 plh3 size-116 p-l-20 p-r-20" autocomplete="new-password" aria-required="true" placeholder="••••••••" style="border: none; background: transparent; width: 100%; height: 45px;" />
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger stext-115 p-t-5 block"></span>
                     </div>
 
                     <!-- Confirm Password Input -->
-                    <div class="bor8 m-b-30">
-                        <input asp-for="Input.ConfirmPassword" class="stext-111 cl2 plh3 size-116 p-l-25 p-r-30" autocomplete="new-password" aria-required="true" placeholder="Confirm password" />
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    <div class="m-b-25">
+                        <label class="stext-102 cl6 p-b-5 block" style="font-weight: 500;">Confirm Password</label>
+                        <div class="bor8" style="border-radius: 10px; background: #fafafa; border: 1px solid #e5e5e5;">
+                            <input asp-for="Input.ConfirmPassword" class="stext-111 cl2 plh3 size-116 p-l-20 p-r-20" autocomplete="new-password" aria-required="true" placeholder="••••••••" style="border: none; background: transparent; width: 100%; height: 45px;" />
+                        </div>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger stext-115 p-t-5 block"></span>
                     </div>
 
                     <!-- Submit Button -->
-                    <button id="registerSubmit" type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer w-full">
-                        Register
+                    <button id="registerSubmit" type="submit" class="flex-c-m stext-101 cl0 size-121 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer w-full" style="border-radius: 10px; font-weight: 600; letter-spacing: 1px; height: 50px;">
+                        REGISTER
                     </button>
 
                     <!-- Back to Login Link -->
-                    <div class="p-t-25 txt-center">
-                        <p>
-                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="stext-102 cl7 hov-cl1">
-                                Already have an account? <b>Log in</b>
+                    <div class="p-t-25 txt-center" style="border-top: 1px solid #f2f2f2; margin-top: 25px;">
+                        <p class="stext-102 cl6">
+                            Already have an account?
+                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="cl2 hov-cl1" style="font-weight: 600; text-decoration: underline;">
+                                Log in
                             </a>
                         </p>
                     </div>
                 </form>
+
             </div>
         </div>
+
     </div>
 </div>
 

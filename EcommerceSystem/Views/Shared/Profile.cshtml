@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "User Profile - Rolexyal";
+}
+
+<!-- Title page -->
+<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
+    <h2 class="ltext-105 cl0 txt-center" style="color: black;">
+        My Profile
+    </h2>
+</section>
+
+<!-- Content page -->
+<section class="bg0 p-t-75 p-b-120">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Navigation mockup -->
+            <div class="col-md-3 p-b-30">
+                <div class="p-all-20 bg6 bor4">
+                    <h5 class="mtext-102 cl2 p-b-20 border-bottom">Account Menu</h5>
+                    <ul class="nav flex-column p-t-10">
+                        <li class="nav-item m-b-10">
+                            <a href="#" class="stext-102 cl1 hov-cl1 trans-04 d-block p-tb-8 p-lr-15 bg0 bor8">
+                                <i class="fa fa-user-o m-r-10"></i> Profile Information
+                            </a>
+                        </li>
+                        <li class="nav-item m-b-10">
+                            <a href="#" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15">
+                                <i class="fa fa-shopping-bag m-r-10"></i> My Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15">
+                                <i class="fa fa-heart-o m-r-10"></i> Wishlist
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Profile Details Content -->
+            <div class="col-md-9 p-b-30">
+                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
+                    <div class="d-flex align-items-center justify-content-between p-b-25 border-bottom m-b-30">
+                        <div>
+                            <h4 class="mtext-105 cl2">Profile Information</h4>
+                            <p class="stext-107 cl6">View and update your personal details for Rolexyal orders.</p>
+                        </div>
+                        <div class="size-108 rounded-circle d-flex align-items-center justify-content-center text-white fs-20" style="background-color: #717fe0; width: 50px; height: 50px;">
+                            <i class="fa fa-user"></i>
+                        </div>
+                    </div>
+
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 p-b-20">
+                                <label class="stext-102 cl2 p-b-5 font-weight-bold">Full Name</label>
+                                <div class="bor8 bg0">
+                                    <input type="text" class="stext-111 cl2 size-111 p-lr-20" value="Zain Haubsh" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 p-b-20">
+                                <label class="stext-102 cl2 p-b-5 font-weight-bold">Email Address</label>
+                                <div class="bor8 bg6">
+                                    <input type="text" class="stext-111 cl6 size-111 p-lr-20" value="zain@rolexyal.com" disabled />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 p-b-20">
+                                <label class="stext-102 cl2 p-b-5 font-weight-bold">Phone Number</label>
+                                <div class="bor8 bg0">
+                                    <input type="text" class="stext-111 cl2 size-111 p-lr-20" value="+962 7xxxxxxxx" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 p-b-20">
+                                <label class="stext-102 cl2 p-b-5 font-weight-bold">City / Location</label>
+                                <div class="bor8 bg0">
+                                    <input type="text" class="stext-111 cl2 size-111 p-lr-20" value="Amman, Jordan" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-all-20 bg6 bor4 m-t-10 m-b-30">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-info-circle cl1 fs-20 m-r-15"></i>
+                                <p class="stext-107 cl6 mb-0">
+                                    Your data is secure with us and will only be used to process your luxury watch deliveries across Jordan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex-l-m">
+                            <button type="button" class="flex-c-m stext-101 cl0 size-118 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
