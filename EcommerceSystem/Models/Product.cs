@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-    namespace EcommerceSystem.Models
+
+namespace EcommerceSystem.Models
 {
     public class Product
     {
-
         [Key]
         public Guid ProductId { get; set; }
 
@@ -15,19 +15,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
         public int ProductQuantity { get; set; }
 
-        public bool IsDeleted {  get; set; }
+        public bool IsDeleted { get; set; }
+
+        // Product Brand
         public Guid ProductBrandId { get; set; }
 
         [ForeignKey("ProductBrandId")]
         public ProductBrand? ProductBrand { get; set; }
 
+        // Product Model
         public Guid ProductModelId { get; set; }
 
         [ForeignKey("ProductModelId")]
         public ProductModel? ProductModel { get; set; }
 
-        public ICollection<ProductImage> ProductImages { get; set; } = new HashSet<ProductImage>();
-        public ICollection<ProductSubCategory> ProductSubCategories = new HashSet<ProductSubCategory>();
+        // Product Images
+        public ICollection<ProductImage> ProductImages { get; set; }
+            = new HashSet<ProductImage>();
 
+        // Product <-> SubCategory
+        public ICollection<ProductSubCategory> ProductSubCategories { get; set; }
+            = new HashSet<ProductSubCategory>();
     }
 }

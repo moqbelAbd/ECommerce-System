@@ -1,98 +1,223 @@
 @using EcommerceSystem.Models
 @model Product
+
 @{
     ViewData["Title"] = "Product Detail";
+
     var productName = Model.ProductDescription
         ?? $"{Model.ProductBrand?.BrandName} {Model.ProductModel?.ModelName}".Trim();
+
     var images = Model.ProductImages.Any()
-        ? Model.ProductImages.Select(i => i.ProductImagepath).ToList()
-        : new List<string> { "~/images/product-detail-01.jpg" };
+        ? Model.ProductImages
+            .Select(i => i.ProductImagePath)
+            .ToList()
+        : new List<string>
+        {
+            "~/images/product-detail-01.jpg"
+        };
+
+    var subCategories = Model.ProductSubCategories
+        .Where(psc => psc.SubCategory != null)
+        .Select(psc => psc.SubCategory!)
+        .ToList();
+
+    var category = subCategories
+        .FirstOrDefault()?.Category;
 }
 
-<!-- breadcrumb -->
+<!-- Breadcrumb -->
 <div class="container">
     <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-        <a asp-controller="Home" asp-action="Index" class="stext-109 cl8 hov-cl1 trans-04">
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="stext-109 cl8 hov-cl1 trans-04">
+
             Home
-            <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+
+            <i class="fa fa-angle-right m-l-9 m-r-10"
+               aria-hidden="true"></i>
         </a>
 
-        @if (Model.SubCategory?.Category != null)
+        @if (category != null)
         {
-            <a asp-controller="Customer" asp-action="Index" asp-route-categoryId="@Model.SubCategory.Category.CategoryId" class="stext-109 cl8 hov-cl1 trans-04">
-                @Model.SubCategory.Category.CategoryName
-                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            <a asp-controller="Customer"
+               asp-action="Index"
+               asp-route-categoryId="@category.CategoryId"
+               class="stext-109 cl8 hov-cl1 trans-04">
+
+                @category.CategoryName
+
+                <i class="fa fa-angle-right m-l-9 m-r-10"
+                   aria-hidden="true"></i>
             </a>
         }
 
         <span class="stext-109 cl4">
             @productName
         </span>
+
     </div>
 </div>
 
+
 <!-- Product Detail -->
 <section class="sec-product-detail bg0 p-t-65 p-b-60">
+
     <div class="container">
+
         <div class="row">
+
+            <!-- Product Images -->
             <div class="col-md-6 col-lg-7 p-b-30">
+
                 <div class="p-l-25 p-r-30 p-lr-0-lg">
+
                     <div class="row">
+
                         @foreach (var image in images)
                         {
                             <div class="col-md-6 p-b-15">
+
                                 <div class="wrap-pic-w pos-relative">
-                                    <img src="@image" alt="@productName" style="width:100%;">
+
+                                    <img src="@image"
+                                         alt="@productName"
+                                         style="width:100%;" />
+
                                 </div>
+
                             </div>
                         }
+
                     </div>
+
                 </div>
+
             </div>
 
+
+            <!-- Product Information -->
             <div class="col-md-6 col-lg-5 p-b-30">
+
                 <div class="p-r-50 p-t-5 p-lr-0-lg">
+
+                    <!-- Product Name -->
                     <h4 class="mtext-105 cl2 js-name-detail p-b-14">
                         @productName
                     </h4>
 
+
+                    <!-- Price -->
                     <span class="mtext-106 cl2">
+
                         @Model.ProductPrice.ToString("C")
+
                     </span>
 
+
+                    <!-- Description -->
                     <p class="stext-102 cl3 p-t-23">
-                        @(Model.ProductDescription ?? "No description available.")
+
+                        @(Model.ProductDescription
+                            ?? "No description available.")
+
                     </p>
 
+
+                    <!-- Stock -->
                     <div class="p-t-15">
+
                         @if (Model.ProductQuantity > 0)
                         {
-                            <span class="stext-107 cl2">In stock: @Model.ProductQuantity</span>
+                            <span class="stext-107 cl2">
+
+                                In stock:
+                                @Model.ProductQuantity
+
+                            </span>
                         }
                         else
                         {
-                            <span class="stext-107 cl11">Out of stock</span>
+                            <span class="stext-107 cl11">
+
+                                Out of stock
+
+                            </span>
                         }
+
                     </div>
 
+
+                    <!-- Product Information -->
                     <div class="p-t-15">
-                        @if (Model.SubCategory != null)
+
+                        <!-- SubCategories -->
+                        @if (subCategories.Any())
                         {
-                            <span class="stext-107 cl6">Subcategory: @Model.SubCategory.SubCategoryName</span>
+                            <div class="p-b-5">
+
+                                <span class="stext-107 cl6">
+                                    Subcategory:
+                                </span>
+
+                                @foreach (var subCategory in subCategories)
+                                {
+                                    <span class="stext-107 cl6">
+
+                                        @subCategory.SubCategoryName
+
+                                    </span>
+
+                                    @if (subCategory != subCategories.Last())
+                                    {
+                                        <span>, </span>
+                                    }
+                                }
+
+                            </div>
                         }
+
+
+                        <!-- Brand -->
                         @if (Model.ProductBrand != null)
                         {
-                            <br />
-                            <span class="stext-107 cl6">Brand: @Model.ProductBrand.BrandName</span>
+                            <div class="p-b-5">
+
+                                <span class="stext-107 cl6">
+
+                                    Brand:
+                                    @Model.ProductBrand.BrandName
+
+                                </span>
+
+                            </div>
                         }
+
+
+                        <!-- Model -->
                         @if (Model.ProductModel != null)
                         {
-                            <br />
-                            <span class="stext-107 cl6">Model: @Model.ProductModel.ModelName</span>
+                            <div class="p-b-5">
+
+                                <span class="stext-107 cl6">
+
+                                    Model:
+                                    @Model.ProductModel.ModelName
+
+                                </span>
+
+                            </div>
                         }
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </section>

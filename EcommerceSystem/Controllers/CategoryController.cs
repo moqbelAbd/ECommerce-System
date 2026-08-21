@@ -33,7 +33,7 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             var category = await _context.Categories
-                .Include(c => c.subCategories)
+                .Include(c => c.SubCategories)
                 .FirstOrDefaultAsync(c =>
                     c.CategoryId == id &&
                     !c.IsDeleted);
@@ -106,7 +106,7 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             existingCategory.CategoryName = category.CategoryName;
-            existingCategory.categoryImagePath = category.categoryImagePath;
+            existingCategory.CategoryImagePath = category.CategoryImagePath;
 
             await _context.SaveChangesAsync();
 

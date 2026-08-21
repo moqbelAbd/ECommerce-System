@@ -1,5 +1,5 @@
 using EcommerceSystem.Data;
-using EcommerceSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,32 +15,47 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: Customer
-        // Browses all products, optionally filtered by category or subcategory.
-        public async Task<IActionResult> Index(Guid? categoryId, Guid? subCategoryId)
+        public async Task<IActionResult> Index(
+            Guid? categoryId,
+            Guid? subCategoryId)
         {
             var products = _context.Products
                 .Where(p => !p.IsDeleted)
+
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-                .Include(p => p.SubCategory)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+                        .ThenInclude(sc => sc.Category)
+
                 .AsQueryable();
+
             // Filter by SubCategory
             if (subCategoryId.HasValue)
             {
-                products = products.Where(p => p.SubCategoryId == subCategoryId);
+                products = products.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategoryId == subCategoryId.Value));
             }
+
             // Filter by Category
             else if (categoryId.HasValue)
             {
-                products = products.Where(p => p.SubCategory != null && p.SubCategory.CategoryId == categoryId);
+                products = products.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
+                        psc.SubCategory.CategoryId == categoryId.Value));
             }
 
             // Categories + active SubCategories
-
             ViewBag.Categories = await _context.Categories
                 .Where(c => !c.IsDeleted)
-                .Include(c => c.subCategories.Where(sc => !sc.IsDeleted))
+
+                .Include(c => c.SubCategories
+                    .Where(sc => !sc.IsDeleted))
+
                 .ToListAsync();
 
             ViewBag.SelectedCategoryId = categoryId;
@@ -50,16 +65,19 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: Customer/Search?term=...
-        // Partial-text search across product description, brand, model, subcategory and category names.
         public async Task<IActionResult> Search(string? term)
         {
             var products = _context.Products
                 .Where(p => !p.IsDeleted)
+
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-                .Include(p => p.SubCategory)
-                    .ThenInclude(sc => sc!.Category)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+                        .ThenInclude(sc => sc.Category)
+
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(term))
@@ -67,21 +85,64 @@ namespace EcommerceSystem.Controllers
                 var search = term.Trim();
 
                 products = products.Where(p =>
-                    (p.ProductDescription != null && EF.Functions.Like(p.ProductDescription, $"%{search}%")) ||
-                    (p.ProductBrand != null && EF.Functions.Like(p.ProductBrand.BrandName, $"%{search}%")) ||
-                    (p.ProductModel != null && EF.Functions.Like(p.ProductModel.ModelName, $"%{search}%")) ||
-                    (p.SubCategory != null && EF.Functions.Like(p.SubCategory.SubCategoryName, $"%{search}%")) ||
-                    (p.SubCategory != null && p.SubCategory.Category != null && EF.Functions.Like(p.SubCategory.Category.CategoryName, $"%{search}%")));
+
+                    // Product description
+                    (p.ProductDescription != null &&
+                     EF.Functions.Like(
+                         p.ProductDescription,
+                         $"%{search}%"))
+
+                    ||
+
+                    // Brand
+                    (p.ProductBrand != null &&
+                     EF.Functions.Like(
+                         p.ProductBrand.BrandName,
+                         $"%{search}%"))
+
+                    ||
+
+                    // Model
+                    (p.ProductModel != null &&
+                     EF.Functions.Like(
+                         p.ProductModel.ModelName,
+                         $"%{search}%"))
+
+                    ||
+
+                    // SubCategory
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
+                        EF.Functions.Like(
+                            psc.SubCategory.SubCategoryName,
+                            $"%{search}%"))
+
+                    ||
+
+                    // Category
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
+                        psc.SubCategory.Category != null &&
+                        EF.Functions.Like(
+                            psc.SubCategory.Category.CategoryName,
+                            $"%{search}%"))
+                );
             }
 
+            // Categories + active SubCategories
             ViewBag.Categories = await _context.Categories
                 .Where(c => !c.IsDeleted)
-                .Include(c => c.subCategories.Where(sc => !sc.IsDeleted))
+
+                .Include(c => c.SubCategories
+                    .Where(sc => !sc.IsDeleted))
+
                 .ToListAsync();
 
             ViewBag.SearchTerm = term;
 
-            return View("Index", await products.ToListAsync());
+            return View(
+                "Index",
+                await products.ToListAsync());
         }
 
         // GET: Customer/Details/{id}
@@ -91,12 +152,19 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             var product = await _context.Products
+
+                .Where(p => !p.IsDeleted)
+
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-                .Include(p => p.SubCategory)
-                    .ThenInclude(sc => sc!.Category)
-                .FirstOrDefaultAsync(p => p.ProductId == id && !p.IsDeleted);
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+                        .ThenInclude(sc => sc.Category)
+
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id);
 
             if (product == null)
                 return NotFound();
@@ -104,6 +172,8 @@ namespace EcommerceSystem.Controllers
             return View(product);
         }
 
+        // GET: Customer/Cart
+        [Authorize]
         public IActionResult Cart()
         {
             return View();

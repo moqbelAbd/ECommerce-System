@@ -21,10 +21,14 @@ namespace EcommerceSystem.Controllers
         {
             var products = await _context.Products
                 .Where(p => !p.IsDeleted)
+
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
-                .Include(p => p.SubCategory)
                 .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
                 .ToListAsync();
 
             return View(products);
@@ -39,8 +43,11 @@ namespace EcommerceSystem.Controllers
             var product = await _context.Products
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
-                .Include(p => p.SubCategory)
                 .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
                 .FirstOrDefaultAsync(p =>
                     p.ProductId == id &&
                     !p.IsDeleted);
@@ -64,6 +71,7 @@ namespace EcommerceSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             Product product,
+            Guid? subCategoryId,
             string? imagePaths)
         {
             if (!ModelState.IsValid)
@@ -75,16 +83,30 @@ namespace EcommerceSystem.Controllers
             product.ProductId = Guid.NewGuid();
             product.IsDeleted = false;
 
+            // Add product images
             foreach (var path in SplitImagePaths(imagePaths))
             {
                 product.ProductImages.Add(new ProductImage
                 {
                     ProductImageId = Guid.NewGuid(),
-                    ProductImagepath = path
+                    ProductImagePath = path,
+                    ProductId = product.ProductId
                 });
             }
 
             _context.Products.Add(product);
+
+            // Add Product <-> SubCategory relationship
+            if (subCategoryId.HasValue)
+            {
+                var productSubCategory = new ProductSubCategory
+                {
+                    ProductId = product.ProductId,
+                    SubCategoryId = subCategoryId.Value
+                };
+
+                _context.ProductSubCategories.Add(productSubCategory);
+            }
 
             await _context.SaveChangesAsync();
 
@@ -101,12 +123,19 @@ namespace EcommerceSystem.Controllers
 
             var product = await _context.Products
                 .Include(p => p.ProductImages)
+                .Include(p => p.ProductSubCategories)
                 .FirstOrDefaultAsync(p =>
                     p.ProductId == id &&
                     !p.IsDeleted);
 
             if (product == null)
                 return NotFound();
+
+            // Get current SubCategory
+            ViewBag.SelectedSubCategoryId =
+                product.ProductSubCategories
+                    .Select(psc => (Guid?)psc.SubCategoryId)
+                    .FirstOrDefault();
 
             await LoadProductDropdowns();
 
@@ -119,6 +148,7 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> Edit(
             Guid id,
             Product product,
+            Guid? subCategoryId,
             string? imagePaths)
         {
             if (id != product.ProductId)
@@ -132,6 +162,7 @@ namespace EcommerceSystem.Controllers
 
             var existingProduct = await _context.Products
                 .Include(p => p.ProductImages)
+                .Include(p => p.ProductSubCategories)
                 .FirstOrDefaultAsync(p =>
                     p.ProductId == id &&
                     !p.IsDeleted);
@@ -139,24 +170,50 @@ namespace EcommerceSystem.Controllers
             if (existingProduct == null)
                 return NotFound();
 
-            existingProduct.ProductDescription = product.ProductDescription;
-            existingProduct.ProductPrice = product.ProductPrice;
-            existingProduct.ProductQuantity = product.ProductQuantity;
-            existingProduct.ProductBrandId = product.ProductBrandId;
-            existingProduct.ProductModelId = product.ProductModelId;
-            existingProduct.SubCategoryId = product.SubCategoryId;
+            // Update product information
+            existingProduct.ProductDescription =
+                product.ProductDescription;
 
+            existingProduct.ProductPrice =
+                product.ProductPrice;
+
+            existingProduct.ProductQuantity =
+                product.ProductQuantity;
+
+            existingProduct.ProductBrandId =
+                product.ProductBrandId;
+
+            existingProduct.ProductModelId =
+                product.ProductModelId;
+
+            // Remove old images
             _context.ProductImages.RemoveRange(
                 existingProduct.ProductImages);
 
+            // Add new images
             foreach (var path in SplitImagePaths(imagePaths))
             {
                 existingProduct.ProductImages.Add(new ProductImage
                 {
                     ProductImageId = Guid.NewGuid(),
-                    ProductImagepath = path,
+                    ProductImagePath = path,
                     ProductId = existingProduct.ProductId
                 });
+            }
+
+            // Remove old Product/SubCategory relationships
+            _context.ProductSubCategories.RemoveRange(
+                existingProduct.ProductSubCategories);
+
+            // Add new relationship
+            if (subCategoryId.HasValue)
+            {
+                existingProduct.ProductSubCategories.Add(
+                    new ProductSubCategory
+                    {
+                        ProductId = existingProduct.ProductId,
+                        SubCategoryId = subCategoryId.Value
+                    });
             }
 
             await _context.SaveChangesAsync();
@@ -173,9 +230,14 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             var product = await _context.Products
+
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
-                .Include(p => p.SubCategory)
+                .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
                 .FirstOrDefaultAsync(p =>
                     p.ProductId == id &&
                     !p.IsDeleted);
@@ -200,6 +262,7 @@ namespace EcommerceSystem.Controllers
             if (product == null)
                 return NotFound();
 
+            // Soft Delete
             product.IsDeleted = true;
 
             await _context.SaveChangesAsync();
@@ -209,6 +272,7 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Load dropdown data
         private async Task LoadProductDropdowns()
         {
             ViewBag.Brands = await _context.ProductBrands
@@ -222,6 +286,7 @@ namespace EcommerceSystem.Controllers
                 .ToListAsync();
         }
 
+        // Split image paths
         private static IEnumerable<string> SplitImagePaths(
             string? imagePaths)
         {
