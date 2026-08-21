@@ -35,6 +35,9 @@ namespace EcommerceSystem.Controllers
         {
             return View();
         }
-        
+        public IActionResult Profile()
+        {
+            return View(); 
+        }
     }
 }

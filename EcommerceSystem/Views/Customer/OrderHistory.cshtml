@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Order History - Rolexyal";
+}
+
+<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
+    <h2 class="ltext-105 cl0 txt-center" style="color: black;">
+        My Orders
+    </h2>
+</section>
+
+<section class="bg0 p-t-75 p-b-120">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-3 p-b-30">
+                <div class="p-all-20 bg6 bor4">
+                    <h5 class="mtext-102 cl2 p-b-20 border-bottom">Account Menu</h5>
+                    <ul class="nav flex-column p-t-10">
+                        <li class="nav-item m-b-10">
+                            <a asp-controller="Home" asp-action="Profile" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15" style="text-decoration: none;">
+                                <i class="fa fa-user-o m-r-10"></i> Profile Information
+                            </a>
+                        </li>
+                        <li class="nav-item m-b-10">
+                            <a asp-controller="Customer" asp-action="OrderHistory" class="stext-102 cl1 hov-cl1 trans-04 d-block p-tb-8 p-lr-15 bg0 bor8" style="text-decoration: none; font-weight: 600;">
+                                <i class="fa fa-shopping-bag m-r-10"></i> My Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Customer" asp-action="Wishlist" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15" style="text-decoration: none;">
+                                <i class="fa fa-heart-o m-r-10"></i> Wishlist
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- محتوى سجل الطلبات -->
+            <div class="col-md-9 p-b-30">
+                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
+                    <div class="p-b-25 border-bottom m-b-30">
+                        <h4 class="mtext-105 cl2">Your Past Orders</h4>
+                        <p class="stext-107 cl6">Track, review, and check the status of your luxury purchases.</p>
+                    </div>
+
+                    <div class="wrap-table-shopping-cart" style="border: 1px solid #e6e6e6; border-radius: 8px; overflow: hidden; background: #fff;">
+                        <table class="table-shopping-cart" style="width: 100%; border-collapse: collapse;">
+                            <tr class="table_head" style="background-color: #f8f9fa;">
+                                <th class="column-1" style="padding-left: 20px;">Order ID</th>
+                                <th class="column-2">Date</th>
+                                <th class="column-3">Ship to</th>
+                                <th class="column-4">Status</th>
+                                <th class="column-5" style="text-align: right; padding-right: 20px;">Total</th>
+                                <th class="column-6" style="text-align: center; padding-right: 15px;">Actions</th>
+                            </tr>
+
+                            <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
+                                <td class="column-1" style="padding-left: 20px; font-weight: 600; color: #111;">#RX-2026-081</td>
+                                <td class="column-2" style="color: #666;">August 18, 2026</td>
+                                <td class="column-3" style="color: #555;">Amman, Jordan</td>
+                                <td class="column-4">
+                                    <span class="badge" style="background-color: #e2f0d9; color: #385723; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 11px;">
+                                        Delivered
+                                    </span>
+                                </td>
+                                <td class="column-5" style="text-align: right; padding-right: 20px; font-weight: 600; color: #111;">$240.00</td>
+                                <td class="column-6" style="text-align: center; padding-right: 15px;">
+                                    <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="1" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="display: inline-flex; height: 32px; font-size: 11px; border-radius: 6px; text-decoration: none;">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
+                                <td class="column-1" style="padding-left: 20px; font-weight: 600; color: #111;">#RX-2026-074</td>
+                                <td class="column-2" style="color: #666;">July 30, 2026</td>
+                                <td class="column-3" style="color: #555;">Irbid, Jordan</td>
+                                <td class="column-4">
+                                    <span class="badge" style="background-color: #fff2cc; color: #806000; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 11px;">
+                                        Processing
+                                    </span>
+                                </td>
+                                <td class="column-5" style="text-align: right; padding-right: 20px; font-weight: 600; color: #111;">$145.00</td>
+                                <td class="column-6" style="text-align: center; padding-right: 15px;">
+                                    <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="2" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="display: inline-flex; height: 32px; font-size: 11px; border-radius: 6px; text-decoration: none;">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
+                                <td class="column-1" style="padding-left: 20px; font-weight: 600; color: #111;">#RX-2026-059</td>
+                                <td class="column-2" style="color: #666;">June 12, 2026</td>
+                                <td class="column-3" style="color: #555;">Zarqa, Jordan</td>
+                                <td class="column-4">
+                                    <span class="badge" style="background-color: #fce4d6; color: #c65911; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 11px;">
+                                        Shipped
+                                    </span>
+                                </td>
+                                <td class="column-5" style="text-align: right; padding-right: 20px; font-weight: 600; color: #111;">$95.00</td>
+                                <td class="column-6" style="text-align: center; padding-right: 15px;">
+                                    <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="3" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="display: inline-flex; height: 32px; font-size: 11px; border-radius: 6px; text-decoration: none;">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    @@media (max-width: 992px) {
+        .table-shopping-cart {
+            min-width: 750px;
+        }
+    }
+</style>

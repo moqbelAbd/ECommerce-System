@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Order Details";
+}
+
+<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('/images/bg-01.jpg');">
+    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
+        CUSTOMER DASHBOARD
+    </h2>
+</section>
+
+<div class="bg0 m-t-60 p-b-140">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-3 m-b-40">
+                <div class="bor10 p-lr-25 p-tb-30" style="border-radius: 12px; background: #fff;">
+                    <h4 class="mtext-109 cl2 p-b-20" style="font-weight: 600; border-bottom: 1px solid #eee;">
+                        My Account
+                    </h4>
+                    <ul class="p-t-15" style="list-style: none; padding: 0;">
+                        <li class="m-b-12">
+                            <a asp-controller="Customer" asp-action="Profile" class="stext-106 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-10" style="text-decoration: none; border-radius: 6px;">
+                                <i class="zmdi zmdi-account m-r-8"></i> Profile Details
+                            </a>
+                        </li>
+                        <li class="m-b-12">
+                            <a asp-controller="Customer" asp-action="OrderHistory" class="stext-106 cl1 trans-04 d-block p-tb-8 p-lr-10" style="text-decoration: none; border-radius: 6px; background: #f2f2f2; font-weight: 600;">
+                                <i class="zmdi zmdi-shopping-basket m-r-8"></i> My Orders
+                            </a>
+                        </li>
+                        <li class="m-b-12">
+                            <a asp-controller="Customer" asp-action="Wishlist" class="stext-106 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-10" style="text-decoration: none; border-radius: 6px;">
+                                <i class="zmdi zmdi-favorite-outline m-r-8"></i> Wishlist
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+
+                <div class="flex-w flex-sb-m p-b-25">
+                    <div>
+                        <h3 class="mtext-111 cl2" style="font-weight: 600;">
+                            Order #RX-2026-081
+                        </h3>
+                        <p class="stext-113 cl6 p-t-5">
+                            Placed on August 18, 2026 &bull; <span style="color: #385723; font-weight: 600;">Delivered</span>
+                        </p>
+                    </div>
+                    <div>
+                        <a asp-controller="Customer" asp-action="OrderHistory" class="flex-c-m stext-101 cl2 size-119 bg2 bor13 hov-btn3 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none; font-size: 13px;">
+                            <i class="zmdi zmdi-arrow-left m-r-6"></i> Back To Orders
+                        </a>
+                    </div>
+                </div>
+
+                <!-- معلومات الطلب والشحن (Cards سريعة) -->
+                <div class="row m-b-30">
+                    <div class="col-md-6 m-b-20 md-m-b-0">
+                        <div class="bor10 p-lr-25 p-tb-20" style="border-radius: 10px; background: #fff; height: 100%;">
+                            <h5 class="stext-110 cl2 p-b-10" style="font-weight: 600; border-bottom: 1px solid #f1f1f1;">
+                                Shipping Address
+                            </h5>
+                            <p class="stext-111 cl6 p-t-10">
+                                <b>Zain Haubsh</b><br>
+                                Building 14, Zahran Street<br>
+                                Amman, Jordan<br>
+                                Phone: +962 7XXXXXXXX
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bor10 p-lr-25 p-tb-20" style="border-radius: 10px; background: #fff; height: 100%;">
+                            <h5 class="stext-110 cl2 p-b-10" style="font-weight: 600; border-bottom: 1px solid #f1f1f1;">
+                                Payment & Delivery Info
+                            </h5>
+                            <p class="stext-111 cl6 p-t-10">
+                                <b>Payment Method:</b> Cash on Delivery<br>
+                                <b>Shipping Method:</b> Express Delivery (1-3 Days)<br>
+                                <b>Tracking Number:</b> TRK-98421037
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- جدول المنتجات داخل الطلب -->
+                <div class="wrap-table-shopping-cart" style="border: 1px solid #e6e6e6; border-radius: 12px; overflow: hidden; background: #fff;">
+                    <table class="table-shopping-cart" style="width: 100%; border-collapse: collapse;">
+                        <tr class="table_head" style="background-color: #f8f9fa;">
+                            <th class="column-1" style="padding-left: 25px;">Product</th>
+                            <th class="column-2">Product Name</th>
+                            <th class="column-3">Price</th>
+                            <th class="column-4" style="text-align: center;">Quantity</th>
+                            <th class="column-5" style="text-align: right; padding-right: 25px;">Total</th>
+                        </tr>
+
+                        <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
+                            <td class="column-1" style="padding-left: 25px; padding-top: 15px; padding-bottom: 15px;">
+                                <div class="how-itemcart1" style="width: 50px; height: 70px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 6px;">
+                                    <img src="~/images/Men/Watch10/timberland-watch.png" alt="ITEM" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
+                            </td>
+                            <td class="column-2" style="font-weight: 500; color: #111;">Timberland Classic Men Watch</td>
+                            <td class="column-3" style="color: #555;">$145.00</td>
+                            <td class="column-4" style="text-align: center; color: #333; font-weight: 600;">1</td>
+                            <td class="column-5" style="text-align: right; padding-right: 25px; font-weight: 600; color: #111;">$145.00</td>
+                        </tr>
+
+                        <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
+                            <td class="column-1" style="padding-left: 25px; padding-top: 15px; padding-bottom: 15px;">
+                                <div class="how-itemcart1" style="width: 50px; height: 70px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 6px;">
+                                    <img src="~/images/Women/Watch5/watch5-daniel-klein.png" alt="ITEM" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
+                            </td>
+                            <td class="column-2" style="font-weight: 500; color: #111;">Daniel Klein Elegant Women Watch</td>
+                            <td class="column-3" style="color: #555;">$95.00</td>
+                            <td class="column-4" style="text-align: center; color: #333; font-weight: 600;">1</td>
+                            <td class="column-5" style="text-align: right; padding-right: 25px; font-weight: 600; color: #111;">$95.00</td>
+                        </tr>
+
+                    </table>
+                </div>
+
+                <div class="row justify-content-end m-t-25">
+                    <div class="col-md-5">
+                        <div class="bor10 p-lr-25 p-tb-20" style="border-radius: 10px; background: #fff;">
+                            <div class="flex-w flex-t bor12 p-b-10">
+                                <div class="size-208"><span class="stext-110 cl6">Subtotal:</span></div>
+                                <div class="size-209 text-right"><span class="stext-110 cl2" style="font-weight: 600;">$240.00</span></div>
+                            </div>
+                            <div class="flex-w flex-t bor12 p-t-10 p-b-10">
+                                <div class="size-208"><span class="stext-110 cl6">Shipping:</span></div>
+                                <div class="size-209 text-right"><span class="stext-110 cl2" style="font-weight: 600;">$0.00</span></div>
+                            </div>
+                            <div class="flex-w flex-t p-t-12">
+                                <div class="size-208"><span class="mtext-101 cl2">Total:</span></div>
+                                <div class="size-209 text-right"><span class="mtext-110 cl1" style="font-weight: 700; color: #111;">$240.00</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media (max-width: 992px) {
+        .table-shopping-cart {
+            min-width: 750px;
+        }
+    }
+</style>

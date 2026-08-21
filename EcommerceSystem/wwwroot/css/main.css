@@ -2040,8 +2040,19 @@ input.num-product::-webkit-inner-spin-button {
 
 /*//////////////////////////////////////////////////////////////////
 [ Block2 ]*/
-.block2-pic {
-  position: relative;
+/* كلاس موحد لثبات حجم صور المنتجات */
+.product-img-fixed {
+    width: 100%;
+    height: 280px; /* يمكنك زيادة أو تقليل الارتفاع حسب تصميم المتجر */
+    object-fit: contain; /* لضمان ظهور الصورة كاملة بدون قص */
+    background-color: #fff; /* خلفية بيضاء لتناسق الأشكال المربعة */
+    padding: 10px; /* مسافة داخلية خفيفة حول الصورة */
+    transition: transform 0.3s ease;
+}
+
+/* تأثير تكبير خفيف عند مرور الماوس (اختياري) */
+.block2-pic.hov-img0:hover .product-img-fixed {
+    transform: scale(1.03);
 }
 
 .block2-btn {
@@ -3330,3 +3341,89 @@ input.num-product::-webkit-inner-spin-button {
   }
 
 }
+/*------------------------------------------------------------------
+[Custom Rolexyal Dark Theme & Navbar Padding]
+------------------------------------------------------------------*/
+
+/* إضافة مسافات داخلية (Padding) من الأعلى والأسفل للنافبار وجعل لونه مطابِقاً للفوتر */
+.header-v3 .container-menu-desktop,
+.header-v3 .container-menu-desktop.fixed-bar,
+.header-v3 .fix-menu-desktop .wrap-menu-desktop,
+.header-v3 .wrap-menu-desktop {
+    background-color: #1a1d20 !important;
+    border-bottom: 1px solid #2c3034 !important;
+    padding-top: 25px !important; 
+    padding-bottom: 10px !important; /* مسافة داخلية من الأسفل */
+}
+
+/* تعديل لون روابط القائمة الرئيسية لتكون واضحة وفاتحة */
+.header-v3 .main-menu > li > a {
+    color: #f8f9fa !important;
+}
+
+    .header-v3 .main-menu > li > a:hover {
+        color: #d4af37 !important; /* ذهبي عند المرور */
+    }
+
+/* تعديل لون الأيقونات (السلة والقائمة) */
+.header-v3 .wrap-icon-header .icon-header-item {
+    color: #f8f9fa !important;
+}
+
+    .header-v3 .wrap-icon-header .icon-header-item:hover {
+        color: #d4af37 !important;
+    }
+
+/* مطابقة لون خلفية الـ Sidebar (القائمة الجانبية) ونصوصها مع الفوتر والهيدر */
+aside.wrap-sidebar .sidebar {
+    background-color: #1a1d20 !important;
+    color: #f8f9fa !important;
+}
+
+aside.wrap-sidebar .sidebar-link a {
+    color: #f8f9fa !important;
+}
+
+    aside.wrap-sidebar .sidebar-link a:hover {
+        color: #d4af37 !important;
+    }
+
+aside.wrap-sidebar .fs-35 {
+    color: #f8f9fa !important;
+}
+
+/* توحيد لون خلفية الهيدر الموبايل و القائمة الموبايل */
+.wrap-header-mobile {
+    background-color: #1a1d20 !important;
+}
+
+.menu-mobile {
+    background-color: #1a1d20 !important;
+}
+
+    .menu-mobile .main-menu-m li a {
+        color: #f8f9fa !important;
+        /* --- تعديل وتثبيت مقاسات صور المنتجات لتكون متساوية تماماً --- */
+        .block2-pic.hov-img0 {
+            width: 100% !important;
+            height: 300px !important; /* تثبيت ارتفاع حاوية الصورة */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background-color: #fff !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+
+            .block2-pic.hov-img0 img {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: contain !important; /* لضمان ظهور الساعة أو الهدية كاملة بدون أي قص أو تشويه */
+                padding: 15px !important; /* مسافة داخلية مريحة للعين */
+            }
+        /* توافق الجدول مع الأجهزة الصغيرة والشاشات المحمولة */
+        @media (max-width: 992px) {
+            .table-shopping-cart {
+                min-width: 750px;
+            }
+        }
