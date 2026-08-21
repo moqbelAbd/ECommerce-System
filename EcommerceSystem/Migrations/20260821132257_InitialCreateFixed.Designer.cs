@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EcommerceSystem.Data.Migrations
+namespace EcommerceSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260820111458_addingTables")]
-    partial class addingTables
+    [Migration("20260821132257_InitialCreateFixed")]
+    partial class InitialCreateFixed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,19 +90,63 @@ namespace EcommerceSystem.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("EcommerceSystem.Models.Cart", b =>
+                {
+                    b.Property<Guid>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.CartItem", b =>
+                {
+                    b.Property<Guid>("CartItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ItemQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CartItemId");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("EcommerceSystem.Models.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CategoryName")
+                    b.Property<string>("CategoryImagePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("categoryImagePath")
+                    b.Property<string>("CategoryName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.HasKey("CategoryId");
 
@@ -118,20 +162,22 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("firstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("lastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("CustomerId");
 
@@ -140,21 +186,51 @@ namespace EcommerceSystem.Data.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("EcommerceSystem.Models.CustomerPaymentCard", b =>
+                {
+                    b.Property<Guid>("PaymentCardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("CardExpire")
+                        .HasColumnType("date");
+
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("PaymentCardId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("CustomerPaymentCards");
+                });
+
             modelBuilder.Entity("EcommerceSystem.Models.CustomerPhoneNumber", b =>
                 {
-                    b.Property<Guid>("phoneNumberId")
+                    b.Property<Guid>("PhoneNumberId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("phoneNumberId");
+                    b.HasKey("PhoneNumberId");
 
                     b.HasIndex("CustomerId");
 
@@ -173,27 +249,23 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("PaymentStatusId")
+                    b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PaymentTypeId")
+                    b.Property<int>("PaymentStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentTypeId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("orderStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("paymentStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("paymentTypeId")
-                        .HasColumnType("int");
-
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderStatusId");
 
                     b.HasIndex("PaymentStatusId");
 
@@ -217,9 +289,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderId2")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
@@ -227,11 +296,9 @@ namespace EcommerceSystem.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("OrderId2");
-
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.OrderStatus", b =>
@@ -291,8 +358,8 @@ namespace EcommerceSystem.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("OrderItemId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("ProductBrandId")
                         .HasColumnType("uniqueidentifier");
@@ -314,8 +381,6 @@ namespace EcommerceSystem.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ProductId");
-
-                    b.HasIndex("OrderItemId");
 
                     b.HasIndex("ProductBrandId");
 
@@ -350,7 +415,7 @@ namespace EcommerceSystem.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ProductImagepath")
+                    b.Property<string>("ProductImagePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -376,14 +441,70 @@ namespace EcommerceSystem.Data.Migrations
                     b.ToTable("ProductModels");
                 });
 
+            modelBuilder.Entity("EcommerceSystem.Models.ProductReview", b =>
+                {
+                    b.Property<Guid>("ProductReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CustomerProductRating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerProductReview")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProductReviewId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductReviews");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.ProductSubCategory", b =>
+                {
+                    b.Property<Guid>("ProductSubCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProductSubCategoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SubCategoryId");
+
+                    b.ToTable("ProductSubCategories");
+                });
+
             modelBuilder.Entity("EcommerceSystem.Models.SubCategory", b =>
                 {
                     b.Property<Guid>("SubCategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("SubCategoryImagePath")
                         .IsRequired()
@@ -391,13 +512,75 @@ namespace EcommerceSystem.Data.Migrations
 
                     b.Property<string>("SubCategoryName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("SubCategoryId");
 
                     b.HasIndex("CategoryId");
 
                     b.ToTable("SubCategories");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.Testimonial", b =>
+                {
+                    b.Property<Guid>("TestimonialId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomerTestimonial")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.HasKey("TestimonialId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Testimonials");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.Wishlist", b =>
+                {
+                    b.Property<Guid>("WishlistId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("WishlistId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Wishlists");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.WishlistItem", b =>
+                {
+                    b.Property<Guid>("WishlistItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WishlistId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("WishlistItemId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("WishlistItems");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -537,6 +720,36 @@ namespace EcommerceSystem.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("EcommerceSystem.Models.Cart", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.CartItem", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Cart", "Cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceSystem.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("EcommerceSystem.Models.Customer", b =>
                 {
                     b.HasOne("EcommerceSystem.Data.ApplicationUser", "ApplicationUser")
@@ -544,6 +757,17 @@ namespace EcommerceSystem.Data.Migrations
                         .HasForeignKey("ApplicationUserId");
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.CustomerPaymentCard", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.CustomerPhoneNumber", b =>
@@ -565,39 +789,45 @@ namespace EcommerceSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EcommerceSystem.Models.OrderStatus", "OrderStatus")
+                        .WithMany()
+                        .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EcommerceSystem.Models.PaymentStatus", "PaymentStatus")
                         .WithMany()
-                        .HasForeignKey("PaymentStatusId");
+                        .HasForeignKey("PaymentStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("EcommerceSystem.Models.PaymentType", "ProductType")
+                    b.HasOne("EcommerceSystem.Models.PaymentType", "PaymentType")
                         .WithMany()
-                        .HasForeignKey("PaymentTypeId");
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
 
+                    b.Navigation("OrderStatus");
+
                     b.Navigation("PaymentStatus");
 
-                    b.Navigation("ProductType");
+                    b.Navigation("PaymentType");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.OrderItem", b =>
                 {
-                    b.HasOne("EcommerceSystem.Models.Product", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EcommerceSystem.Models.Order", null)
+                    b.HasOne("EcommerceSystem.Models.Order", "Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderId2")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EcommerceSystem.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -607,10 +837,6 @@ namespace EcommerceSystem.Data.Migrations
 
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>
                 {
-                    b.HasOne("EcommerceSystem.Models.OrderItem", null)
-                        .WithMany("OrderProducts")
-                        .HasForeignKey("OrderItemId");
-
                     b.HasOne("EcommerceSystem.Models.ProductBrand", "ProductBrand")
                         .WithMany()
                         .HasForeignKey("ProductBrandId")
@@ -643,11 +869,94 @@ namespace EcommerceSystem.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("EcommerceSystem.Models.ProductReview", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceSystem.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.ProductSubCategory", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceSystem.Models.SubCategory", "SubCategory")
+                        .WithMany()
+                        .HasForeignKey("SubCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("SubCategory");
+                });
+
             modelBuilder.Entity("EcommerceSystem.Models.SubCategory", b =>
                 {
-                    b.HasOne("EcommerceSystem.Models.Category", null)
-                        .WithMany("subCategories")
-                        .HasForeignKey("CategoryId");
+                    b.HasOne("EcommerceSystem.Models.Category", "Category")
+                        .WithMany("SubCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.Testimonial", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.Wishlist", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.WishlistItem", b =>
+                {
+                    b.HasOne("EcommerceSystem.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceSystem.Models.Wishlist", "Wishlist")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("WishlistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -701,9 +1010,14 @@ namespace EcommerceSystem.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EcommerceSystem.Models.Cart", b =>
+                {
+                    b.Navigation("CartItems");
+                });
+
             modelBuilder.Entity("EcommerceSystem.Models.Category", b =>
                 {
-                    b.Navigation("subCategories");
+                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.Customer", b =>
@@ -716,11 +1030,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("EcommerceSystem.Models.OrderItem", b =>
-                {
-                    b.Navigation("OrderProducts");
-                });
-
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>
                 {
                     b.Navigation("ProductImages");
@@ -729,6 +1038,11 @@ namespace EcommerceSystem.Data.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.SubCategory", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("EcommerceSystem.Models.Wishlist", b =>
+                {
+                    b.Navigation("WishlistItems");
                 });
 #pragma warning restore 612, 618
         }

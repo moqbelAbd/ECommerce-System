@@ -9,7 +9,7 @@ public class CustomerPhoneNumber{
 public Guid PhoneNumberId {get; set;}
 
 [Required]
-[MaxLength(50)]
+[MaxLength(20)]
 public string PhoneNumber { get; set; } = string.Empty;
 
 public bool IsDeleted {  get; set; }

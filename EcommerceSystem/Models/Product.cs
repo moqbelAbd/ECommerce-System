@@ -27,6 +27,7 @@ using System.ComponentModel.DataAnnotations.Schema;
         public ProductModel? ProductModel { get; set; }
 
         public ICollection<ProductImage> ProductImages { get; set; } = new HashSet<ProductImage>();
+        public ICollection<ProductSubCategory> ProductSubCategories = new HashSet<ProductSubCategory>();
 
     }
 }

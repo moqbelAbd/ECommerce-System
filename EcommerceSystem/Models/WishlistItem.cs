@@ -19,7 +19,7 @@ namespace EcommerceSystem.Models
         [ForeignKey("ProductId")]
         public Product? Product { get; set; }
 
-        public ICollection<Product> WishlistProducts { get; set; } = new HashSet<Product>();
+        //public ICollection<Product> WishlistProducts { get; set; } = new HashSet<Product>();
 
 
     }

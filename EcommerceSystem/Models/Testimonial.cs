@@ -10,6 +10,7 @@ namespace EcommerceSystem.Models
         public Guid TestimonialId { get; set; }
 
         [Required]
+        [MaxLength(250)]
         public string CustomerTestimonial { get; set; } = string.Empty;
 
         public bool IsApproved {  get; set; }

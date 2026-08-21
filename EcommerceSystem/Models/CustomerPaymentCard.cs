@@ -10,7 +10,9 @@ public class CustomerPaymentCard
 public Guid PaymentCardId { get; set;}
 
 [Required]
+[MaxLength(16)]
 public string CardNumber { get; set; } = string.Empty;
+
 [Required]
 public DateOnly CardExpire { get; set; } 
 

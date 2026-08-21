@@ -11,16 +11,17 @@ public Guid OrderId {get; set;}
 [Required]
 public decimal TotalPrice {get; set;}
 
-public DateTime CreatedAt { get; set; } = DateTime.Now; // Automatically sets the current time!
+public DateTime CreatedAt { get; set; } = DateTime.Now; 
 
 [Required]
-public int orderStatus  {get; set;}
+public int OrderStatusId { get; set;}
 
 [ForeignKey("OrderStatusId")]
 public OrderStatus? OrderStatus { get; set; }
 
 [Required]
-public int paymentStatus  {get; set;}
+public int PaymentStatusId  {get; set;}
+
 
 [ForeignKey("PaymentStatusId")]
 public PaymentStatus? PaymentStatus { get; set; }
@@ -29,7 +30,7 @@ public PaymentStatus? PaymentStatus { get; set; }
 public int PaymentTypeId {get; set;}
 
 [ForeignKey("PaymentTypeId")]
-public PaymentType? ProductType { get; set; }
+public PaymentType? PaymentType { get; set; }
 
 public Guid CustomerId {get; set;}
 

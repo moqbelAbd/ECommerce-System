@@ -15,6 +15,6 @@ namespace EcommerceSystem.Models
         public Customer? Customer { get; set; }
 
 
-        public ICollection<WishlistItem> CartItems { get; set; } = new HashSet<WishlistItem>();
+        public ICollection<WishlistItem> WishlistItems { get; set; } = new HashSet<WishlistItem>();
     }
 }

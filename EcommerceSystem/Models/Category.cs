@@ -6,12 +6,17 @@ namespace EcommerceSystem.Models
     {
         [Key]
         public Guid CategoryId { get; set; }
+
+        [Required]
+        [MaxLength(20)]
         public string CategoryName { get; set; }
-        public string categoryImagePath { get; set; }
+
+        [Required]
+        public string CategoryImagePath { get; set; }
 
         public bool IsDeleted { get; set; }
 
-        public ICollection<SubCategory> subCategories { get; set; } = new HashSet<SubCategory>();
+        public ICollection<SubCategory> SubCategories { get; set; } = new HashSet<SubCategory>();
 
     }
 }

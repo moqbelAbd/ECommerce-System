@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceSystem.Models
@@ -10,12 +11,14 @@ namespace EcommerceSystem.Models
         public Guid ProductReviewId { get; set; }
 
         [Required]
-        public string CustomerProductRating { get; set; }
+        public int CustomerProductRating { get; set; }
 
         [Required]
         [MaxLength(250)]
         public string CustomerProductReview { get; set; }
 
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public Guid ProductId { get; set; }
 
         [ForeignKey("ProductId")]
