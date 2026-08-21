@@ -2,14 +2,12 @@
     ViewData["Title"] = "Contact Us - Rolexyal";
 }
 
-<!-- Title page -->
 <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
     <h2 class="ltext-105 cl0 txt-center" style="color: black;">
         Contact Rolexyal
     </h2>
 </section>
 
-<!-- Content page -->
 <section class="bg0 p-t-104 p-b-116">
     <div class="container">
         <div class="flex-w flex-tr">
@@ -86,14 +84,3 @@
         </div>
     </div>
 </section>
-
-<!-- Map -->
-<div class="map">
-    <div class="size-303" id="google_map" data-map-x="40.691446" data-map-y="-73.886787" data-pin="~/images/icons/pin.png" data-scrollwhell="0" data-draggable="1" data-zoom="11"></div>
-</div>
-
-@section Scripts {
-    <!-- Google Maps script specific to contact page -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes"></script>
-    <script src="~/js/map-custom.js"></script>
-}
