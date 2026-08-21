@@ -1,10 +1,70 @@
-wwwroot\css\admin.css
 wwwroot\css\main.css
+wwwroot\favicon.ico
+wwwroot\js\site.js
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+wwwroot\vendor\bootstrap\css\bootstrap-reboot.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
+wwwroot\vendor\bootstrap\css\bootstrap-reboot.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
+wwwroot\lib\bootstrap\LICENSE
+wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
+wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
+wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
+wwwroot\lib\jquery-validation\dist\additional-methods.js
+wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+wwwroot\lib\jquery-validation\LICENSE.md
+wwwroot\lib\jquery\dist\jquery.js
+wwwroot\lib\jquery\dist\jquery.min.js
+wwwroot\lib\jquery\dist\jquery.min.map
+wwwroot\lib\jquery\dist\jquery.slim.js
+wwwroot\lib\jquery\dist\jquery.slim.min.js
+wwwroot\lib\jquery\dist\jquery.slim.min.map
+wwwroot\lib\jquery\LICENSE.txt
 wwwroot\css\site.css
 wwwroot\css\util.css
-wwwroot\favicon.ico
-wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.css
-wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.min.css
+wwwroot\vendor\slick\slick-theme.css
+wwwroot\vendor\bootstrap\css\bootstrap.min.css
 wwwroot\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.eot
 wwwroot\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.svg
 wwwroot\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.ttf
@@ -47,7 +107,7 @@ wwwroot\fonts\iconic\fonts\Material-Design-Iconic-Font.svg
 wwwroot\fonts\iconic\fonts\Material-Design-Iconic-Font.ttf
 wwwroot\fonts\iconic\fonts\Material-Design-Iconic-Font.woff
 wwwroot\fonts\iconic\fonts\Material-Design-Iconic-Font.woff2
-wwwroot\fonts\linearicons-v1.0.0\icon-font.min.css
+wwwroot\vendor\bootstrap\css\bootstrap.css
 wwwroot\fonts\linearicons-v1.0.0\WebFont\Linearicons-Free.eot
 wwwroot\fonts\linearicons-v1.0.0\WebFont\Linearicons-Free.svg
 wwwroot\fonts\linearicons-v1.0.0\WebFont\Linearicons-Free.ttf
@@ -97,15 +157,6 @@ wwwroot\fonts\Poppins\Poppins-SemiBold.ttf
 wwwroot\fonts\Poppins\Poppins-SemiBoldItalic.ttf
 wwwroot\fonts\Poppins\Poppins-Thin.ttf
 wwwroot\fonts\Poppins\Poppins-ThinItalic.ttf
-wwwroot\images\about-01.jpg
-wwwroot\images\about-02.jpg
-wwwroot\images\banner-01.jpg
-wwwroot\images\banner-02.jpg
-wwwroot\images\banner-03.jpg
-wwwroot\images\banner-04.jpg
-wwwroot\images\banner-05.jpg
-wwwroot\images\banner-06.jpg
-wwwroot\images\bg-01.jpg
 wwwroot\images\icons\favicon.png
 wwwroot\images\icons\icon-close.png
 wwwroot\images\icons\icon-close2.png
@@ -119,119 +170,9 @@ wwwroot\images\icons\icon-pay-03.png
 wwwroot\images\icons\icon-pay-04.png
 wwwroot\images\icons\icon-pay-05.png
 wwwroot\images\icons\icon-prev.png
-wwwroot\images\icons\logo-01.png
-wwwroot\images\Men\GiftBox1\bigotti-giftset.png
-wwwroot\images\Men\GiftBox2\BIGOTTI MILANO BG.1.10651-5 MEN WATCH - GIFT SET.png
-wwwroot\images\Men\Watch10\img.png
-wwwroot\images\Men\Watch10\img1.png
-wwwroot\images\Men\Watch10\timberland-watch.png
-wwwroot\images\Men\Watch11\TIMBERLAND TDWGQ0075001 MEN WATCH.png
-wwwroot\images\Men\Watch12\WESTERN W1829GGP010F MEN WATCH.png
-wwwroot\images\Men\Watch13\WESTERN W8756GPP030D MEN WATCH.png
-wwwroot\images\Men\Watch14\TIMBERLAND TDWGC9011001 MEN WATCH.png
-wwwroot\images\Men\Watch15\JOVIAL 5230GSLQ12E MEN WATCH.png
-wwwroot\images\Men\Watch16\JOVIAL 5091GTMQ01E MEN WATCH.png
-wwwroot\images\Men\Watch1\TIMBERLAND TDWGF0055001 MEN WATCH.png
-wwwroot\images\Men\Watch2\BIGOTTI MILANO BG.1.10649-5 MEN WATCH.png
-wwwroot\images\Men\Watch3\DANIEL KLEIN DK.1.13995- 4 MEN WATCH.png
-wwwroot\images\Men\Watch4\DANIEL KLEIN DK.1.13645-3 MEN WATCH.png
-wwwroot\images\Men\Watch5\DANIEL KLEIN DK.1.13701-1 MEN WATCH.png
-wwwroot\images\Men\Watch6\TIMBERLAND TDWGC9011002 MEN WATCH.png
-wwwroot\images\Men\Watch7\img.png
-wwwroot\images\Men\Watch7\img2.png
-wwwroot\images\Men\Watch7\TIMBERLAND TDWGF0082903 MEN WATCH.png
-wwwroot\images\Men\Watch8\img.png
-wwwroot\images\Men\Watch8\img2.png
-wwwroot\images\Men\Watch8\TIMBERLAND TDWGH0083105 MEN WATCH.png
-wwwroot\images\Men\Watch9\img.png
-wwwroot\images\Men\Watch9\img1.png
-wwwroot\images\Men\Watch9\TIMBERLAND TDWGH0083702 MEN WATCH.png
-wwwroot\images\slide-01.jpg
-wwwroot\images\slide-02.jpg
-wwwroot\images\slide-03.jpg
-wwwroot\images\Women\Watch1\BIGOTTI MILANO BG.1.10616-4 WOMEN WATCH.png
-wwwroot\images\Women\Watch1\img.png
-wwwroot\images\Women\Watch2\BIGOTTI MILANO BG.1.10616-5 WOMEN WATCH.png
-wwwroot\images\Women\Watch2\img.png
-wwwroot\images\Women\Watch3\BIGOTTI MILANO BG.1.10617-5 WOMEN WATCH.pmg.webp
-wwwroot\images\Women\Watch3\img.png
-wwwroot\images\Women\Watch4\DANIEL KLEIN DK.1.13943-4 WOMEN WATCH.png
-wwwroot\images\Women\Watch4\img.png
-wwwroot\images\Women\Watch5\img.png
-wwwroot\images\Women\Watch5\watch5-daniel-klein.png
-wwwroot\images\Women\Watch6\DANIEL KLEIN DK.6.14131-5 WOMEN WATCH.png
-wwwroot\images\Women\Watch6\img.png
-wwwroot\images\Women\Watch7\JOVIAL 1549LSMQ01ZE WOMEN WATCH.png
-wwwroot\images\Women\Watch8\img.png
-wwwroot\images\Women\Watch8\img2.png
-wwwroot\images\Women\Watch8\img3.png
-wwwroot\images\Women\Watch8\TIMBERLAND TDWGA0029201 WOMEN WATCH.png
-wwwroot\images\Women\Watch9\JOVIAL 5090LSMQ09ZE WOMEN WATCH.png
-wwwroot\js\admin.js
 wwwroot\js\main.js
 wwwroot\js\map-custom.js
-wwwroot\js\site.js
 wwwroot\js\slick-custom.js
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap.css
-wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
-wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
-wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
-wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
-wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
-wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
-wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
-wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
-wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
-wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
-wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
-wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
-wwwroot\lib\bootstrap\dist\js\bootstrap.js
-wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
-wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
-wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
-wwwroot\lib\bootstrap\LICENSE
-wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
-wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
-wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
-wwwroot\lib\jquery-validation\dist\additional-methods.js
-wwwroot\lib\jquery-validation\dist\additional-methods.min.js
-wwwroot\lib\jquery-validation\dist\jquery.validate.js
-wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
-wwwroot\lib\jquery-validation\LICENSE.md
-wwwroot\lib\jquery\dist\jquery.js
-wwwroot\lib\jquery\dist\jquery.min.js
-wwwroot\lib\jquery\dist\jquery.min.map
-wwwroot\lib\jquery\dist\jquery.slim.js
-wwwroot\lib\jquery\dist\jquery.slim.min.js
-wwwroot\lib\jquery\dist\jquery.slim.min.map
-wwwroot\lib\jquery\LICENSE.txt
 wwwroot\vendor\animate\animate.css
 wwwroot\vendor\animsition\css\animsition.css
 wwwroot\vendor\animsition\css\animsition.min.css
@@ -241,13 +182,13 @@ wwwroot\vendor\bootstrap\css\bootstrap-grid.css
 wwwroot\vendor\bootstrap\css\bootstrap-grid.css.map
 wwwroot\vendor\bootstrap\css\bootstrap-grid.min.css
 wwwroot\vendor\bootstrap\css\bootstrap-grid.min.css.map
-wwwroot\vendor\bootstrap\css\bootstrap-reboot.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
 wwwroot\vendor\bootstrap\css\bootstrap-reboot.css.map
-wwwroot\vendor\bootstrap\css\bootstrap-reboot.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
 wwwroot\vendor\bootstrap\css\bootstrap-reboot.min.css.map
-wwwroot\vendor\bootstrap\css\bootstrap.css
+wwwroot\fonts\linearicons-v1.0.0\icon-font.min.css
 wwwroot\vendor\bootstrap\css\bootstrap.css.map
-wwwroot\vendor\bootstrap\css\bootstrap.min.css
+wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.min.css
 wwwroot\vendor\bootstrap\css\bootstrap.min.css.map
 wwwroot\vendor\bootstrap\js\bootstrap.js
 wwwroot\vendor\bootstrap\js\bootstrap.min.js
@@ -307,7 +248,7 @@ wwwroot\vendor\slick\fonts\slick.eot
 wwwroot\vendor\slick\fonts\slick.svg
 wwwroot\vendor\slick\fonts\slick.ttf
 wwwroot\vendor\slick\fonts\slick.woff
-wwwroot\vendor\slick\slick-theme.css
+wwwroot\fonts\font-awesome-4.7.0\css\font-awesome.css
 wwwroot\vendor\slick\slick-theme.less
 wwwroot\vendor\slick\slick-theme.scss
 wwwroot\vendor\slick\slick.css
@@ -316,6 +257,126 @@ wwwroot\vendor\slick\slick.less
 wwwroot\vendor\slick\slick.min.js
 wwwroot\vendor\slick\slick.scss
 wwwroot\vendor\sweetalert\sweetalert.min.js
+wwwroot\css\admin.css
+wwwroot\js\admin.js
+wwwroot\images\Men\Watch8\img.png
+wwwroot\images\Men\Watch13\WESTERN W8756GPP030D MEN WATCH.png
+wwwroot\images\Men\Watch12\WESTERN W1829GGP010F MEN WATCH.png
+wwwroot\images\Men\Watch11\TIMBERLAND TDWGQ0075001 MEN WATCH.png
+wwwroot\images\Men\Watch10\img.png
+wwwroot\images\Men\Watch9\img.png
+wwwroot\images\Men\Watch1\TIMBERLAND TDWGF0055001 MEN WATCH.png
+wwwroot\images\Men\Watch15\JOVIAL 5230GSLQ12E MEN WATCH.png
+wwwroot\images\Men\Watch3\DANIEL KLEIN DK.1.13995- 4 MEN WATCH.png
+wwwroot\images\Men\Watch5\DANIEL KLEIN DK.1.13701-1 MEN WATCH.png
+wwwroot\images\Men\Watch7\img.png
+wwwroot\images\Men\GiftBox1\bigotti-giftset.png
+wwwroot\images\Men\Watch6\TIMBERLAND TDWGC9011002 MEN WATCH.png
+wwwroot\images\Men\Watch4\DANIEL KLEIN DK.1.13645-3 MEN WATCH.png
+wwwroot\images\Men\Watch2\BIGOTTI MILANO BG.1.10649-5 MEN WATCH.png
+wwwroot\images\Men\GiftBox2\BIGOTTI MILANO BG.1.10651-5 MEN WATCH - GIFT SET.png
+wwwroot\images\Men\Watch16\JOVIAL 5091GTMQ01E MEN WATCH.png
+wwwroot\images\Men\Watch14\TIMBERLAND TDWGC9011001 MEN WATCH.png
+wwwroot\images\Women\Watch8\img2.png
+wwwroot\images\Women\Watch1\BIGOTTI MILANO BG.1.10616-4 WOMEN WATCH.png
+wwwroot\images\Women\Watch9\JOVIAL 5090LSMQ09ZE WOMEN WATCH.png
+wwwroot\images\Women\Watch2\BIGOTTI MILANO BG.1.10616-5 WOMEN WATCH.png
+wwwroot\images\Women\Watch2\img.png
+wwwroot\images\Women\Watch4\DANIEL KLEIN DK.1.13943-4 WOMEN WATCH.png
+wwwroot\images\Women\Watch5\watch5-daniel-klein.png
+wwwroot\images\Women\Watch8\TIMBERLAND TDWGA0029201 WOMEN WATCH.png
+wwwroot\images\Women\Watch6\DANIEL KLEIN DK.6.14131-5 WOMEN WATCH.png
+wwwroot\images\banner-05.jpg
+wwwroot\images\banner-06.jpg
+wwwroot\images\banner-04.jpg
+wwwroot\images\Women\Watch1\img.png
+wwwroot\images\Women\Watch8\img.png
+wwwroot\images\Women\Watch8\img3.png
+wwwroot\images\Women\Watch7\JOVIAL 1549LSMQ01ZE WOMEN WATCH.png
+wwwroot\images\Women\Watch6\img.png
+wwwroot\images\Women\Watch5\img.png
+wwwroot\images\Women\Watch4\img.png
+wwwroot\images\Women\Watch3\BIGOTTI MILANO BG.1.10617-5 WOMEN WATCH.pmg.webp
+wwwroot\images\Women\Watch3\img.png
+wwwroot\images\slide-01.jpg
+wwwroot\images\Men\Watch7\TIMBERLAND TDWGF0082903 MEN WATCH.png
+wwwroot\images\Men\Watch7\img2.png
+wwwroot\images\Men\Watch8\TIMBERLAND TDWGH0083105 MEN WATCH.png
+wwwroot\images\Men\Watch8\img2.png
+wwwroot\images\Men\Watch9\TIMBERLAND TDWGH0083702 MEN WATCH.png
+wwwroot\images\Men\Watch9\img1.png
+wwwroot\images\Men\Watch10\timberland-watch.png
+wwwroot\images\Men\Watch10\img1.png
+wwwroot\images\slide-02.jpg
+wwwroot\images\about-01.jpg
+wwwroot\images\slide-03.jpg
+wwwroot\images\about-02.jpg
+wwwroot\images\banner-01.jpg
+wwwroot\images\banner-03.jpg
+wwwroot\images\banner-02.jpg
+wwwroot\images\bg-01.jpg
+wwwroot\images\icons\logo-01.png
+wwwroot\images\Women\SunGlasses1\img.png
+wwwroot\images\Women\SunGlasses2\img.png
+wwwroot\images\Women\SunGlasses2\img1.png
+wwwroot\images\Women\SunGlasses3\img.png
+wwwroot\images\Women\SunGlasses3\img2.png
+wwwroot\images\Women\SunGlasses4\img.png
+wwwroot\images\Women\SunGlasses4\img1.png
+wwwroot\images\Women\SunGlasses5\img.png
+wwwroot\images\Women\SunGlasses5\img1.png
+wwwroot\images\Women\Bracelet1\img.png
+wwwroot\images\Women\Bracelet2\img.png
+wwwroot\images\Women\Bracelet3\img.png
+wwwroot\images\Women\Bracelet4\img.png
+wwwroot\images\Women\Necklaces\1.png
+wwwroot\images\Women\Necklaces\2.png
+wwwroot\images\Women\Necklaces\3.png
+wwwroot\images\Women\Necklaces\4.png
+wwwroot\images\Women\Necklaces\5.png
+wwwroot\images\Women\Necklaces\6.png
+wwwroot\images\Women\Necklaces\7.png
+wwwroot\images\Women\Necklaces\8.png
+wwwroot\images\Women\Necklaces\9.png
+wwwroot\images\Women\Necklaces\10.png
+wwwroot\images\Men\SunGlasses1\img.png
+wwwroot\images\Men\SunGlasses1\img1.png
+wwwroot\images\Men\SunGlasses2\img.png
+wwwroot\images\Men\SunGlasses2\img1.png
+wwwroot\images\Men\SunGlasses3\img.png
+wwwroot\images\Men\SunGlasses3\img1.png
+wwwroot\images\Men\SunGlasses4\img.png
+wwwroot\images\Men\SunGlasses4\img1.png
+wwwroot\images\Men\SunGlasses5\img.png
+wwwroot\images\Men\SunGlasses5\img1.png
+wwwroot\images\Men\Bracelet1\img.png
+wwwroot\images\Men\Bracelet1\img1.png
+wwwroot\images\Men\Bracelet2\img.png
+wwwroot\images\Men\Bracelet2\img1.png
+wwwroot\images\Men\Bracelet3\img.png
+wwwroot\images\Men\Bracelet3\img1.png
+wwwroot\images\Men\Bracelet4\img.png
+wwwroot\images\Men\Bracelet5\img.png
+wwwroot\images\Men\Necklace1\img.png
+wwwroot\images\Men\Necklace1\img1.png
+wwwroot\images\Men\Necklace2\img.png
+wwwroot\images\Men\Necklace2\img1.png
+wwwroot\images\Men\Necklace3\img.png
+wwwroot\images\Men\Necklace3\img1.png
+wwwroot\images\Men\Necklace4\img.png
+wwwroot\images\Men\Necklace4\img1.png
+wwwroot\images\Men\Necklace5\img.png
+wwwroot\images\Men\Necklace5\img1.png
+wwwroot\images\Men\Wallets\1.png
+wwwroot\images\Men\Wallets\2.png
+wwwroot\images\Men\Wallets\3.png
+wwwroot\images\Men\Wallets\4.png
+wwwroot\images\Men\Wallets\5.png
+wwwroot\images\Men\Wallets\6.png
+wwwroot\images\Men\Wallets\7.png
+wwwroot\images\Men\Wallets\8.png
+wwwroot\images\Men\Wallets\9.png
+wwwroot\images\Men\Wallets\10.png
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\jquery\dist\jquery.slim.min.map
 C:\Users\user\Desktop\Orange Training\ECommerce-System\EcommerceSystem\wwwroot\lib\jquery\dist\jquery.slim.min.js

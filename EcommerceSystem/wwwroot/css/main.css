@@ -3417,3 +3417,9 @@ aside.wrap-sidebar .fs-35 {
                 object-fit: contain !important; /* لضمان ظهور الساعة أو الهدية كاملة بدون أي قص أو تشويه */
                 padding: 15px !important; /* مسافة داخلية مريحة للعين */
             }
+        /* توافق الجدول مع الأجهزة الصغيرة والشاشات المحمولة */
+        @media (max-width: 992px) {
+            .table-shopping-cart {
+                min-width: 750px;
+            }
+        }
