@@ -1,8 +1,413 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home Page - Rolexyal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Slider -->
+<section class="section-slide">
+    <div class="wrap-slick1">
+        <div class="slick1">
+            <div class="item-slick1" style="background-image: url('@Url.Content("~/images/slide-01.jpg")');">
+                <div class="container h-full">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                        <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+                            <span class="ltext-101 cl2 respon2">
+                                Luxury Collection 2026
+                            </span>
+                        </div>
+
+                        <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                TIMELESS ELEGANCE
+                            </h2>
+                        </div>
+
+                        <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+                            <a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-slick1" style="background-image: url('@Url.Content("~/images/slide-02.jpg")');">
+                <div class="container h-full">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                        <div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
+                            <span class="ltext-101 cl2 respon2">
+                                Classic & Casual
+                            </span>
+                        </div>
+
+                        <div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
+                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                WATCHES & STRAPS
+                            </h2>
+                        </div>
+
+                        <div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
+                            <a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-slick1" style="background-image: url('@Url.Content("~/images/slide-03.jpg")');">
+                <div class="container h-full">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                        <div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
+                            <span class="ltext-101 cl2 respon2">
+                                Premium Accessories
+                            </span>
+                        </div>
+
+                        <div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
+                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                NEW ARRIVALS
+                            </h2>
+                        </div>
+
+                        <div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">
+                            <a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Banner -->
+<div class="sec-banner bg0 p-t-80 p-b-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
+                <div class="block1 wrap-pic-w">
+                    <img src="~/images/banner-01.jpg" alt="IMG-BANNER">
+                    <a href="#" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+                        <div class="block1-txt-child1 flex-col-l">
+                            <span class="block1-name ltext-102 trans-04 p-b-8">
+                                Fine Necklaces
+                            </span>
+                        </div>
+                        <div class="block1-txt-child2 p-b-4 trans-05">
+                            <div class="block1-link stext-101 cl0 trans-09">
+                                Shop Now
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
+                <div class="block1 wrap-pic-w">
+                    <img src="~/images/banner-02.jpg" alt="IMG-BANNER">
+                    <a href="#" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+                        <div class="block1-txt-child1 flex-col-l">
+                            <span class="block1-name ltext-102 trans-04 p-b-8">
+                                Luxury Timepieces
+                            </span>
+                        </div>
+                        <div class="block1-txt-child2 p-b-4 trans-05">
+                            <div class="block1-link stext-101 cl0 trans-09">
+                                Shop Now
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
+                <div class="block1 wrap-pic-w">
+                    <img src="~/images/banner-03.jpg" alt="IMG-BANNER">
+                    <a href="#" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+                        <div class="block1-txt-child1 flex-col-l">
+                            <span class="block1-name ltext-102 trans-04 p-b-8">
+                                Elegant Rings
+                            </span>
+                        </div>
+                        <div class="block1-txt-child2 p-b-4 trans-05">
+                            <div class="block1-link stext-101 cl0 trans-09">
+                                Shop Now
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Product Overview -->
+<section class="bg0 p-t-23 p-b-80">
+    <div class="container">
+        <div class="p-b-10">
+            <h3 class="ltext-103 cl5">
+                Product Overview
+            </h3>
+        </div>
+
+        <div class="flex-w flex-sb-m p-b-52">
+            <div class="flex-w flex-l-m filter-tope-group m-tb-10">
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+                    All Products
+                </button>
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
+                    Watches
+                </button>
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".straps">
+                    Necklaces
+                </button>
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".accessories">
+                    Rings
+                </button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="row isotope-grid">
+            s
+            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
+                <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
+                    <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
+                        <img src="~/images/Men/Watch10/timberland-watch.png" alt="TIMBERLAND MEN WATCH" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
+                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
+                            Quick View
+                        </a>
+                    </div>
+                    <div class="block2-txt flex-w flex-t p-t-16 p-b-20 p-lr-20" style="display: flex; justify-content: space-between; align-items: flex-start; flex-grow: 1;">
+                        <div class="block2-txt-child1 flex-col-l" style="width: calc(100% - 35px);">
+                            <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                Timberland Classic Men Watch
+                            </a>
+                            <span class="stext-105 cl3" style="font-weight: 600; color: #111;">
+                                $145.00
+                            </span>
+                        </div>
+                        <div class="block2-txt-child2 flex-r p-t-3">
+                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                                <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON">
+                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
+                <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
+                    <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
+                        <img src="~/images/Men/GiftBox1/bigotti-giftset.png" alt="BIGOTTI MILANO GIFT SET" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
+                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
+                            Quick View
+                        </a>
+                    </div>
+                    <div class="block2-txt flex-w flex-t p-t-16 p-b-20 p-lr-20" style="display: flex; justify-content: space-between; align-items: flex-start; flex-grow: 1;">
+                        <div class="block2-txt-child1 flex-col-l" style="width: calc(100% - 35px);">
+                            <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                Bigotti Milano Men Gift Set
+                            </a>
+                            <span class="stext-105 cl3" style="font-weight: 600; color: #111;">
+                                $189.50
+                            </span>
+                        </div>
+                        <div class="block2-txt-child2 flex-r p-t-3">
+                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                                <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON">
+                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
+                <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
+                    <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
+                        <img src="~/images/Women/Watch5/watch5-daniel-klein.png" alt="DANIEL KLEIN WOMEN WATCH" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
+                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
+                            Quick View
+                        </a>
+                    </div>
+                    <div class="block2-txt flex-w flex-t p-t-16 p-b-20 p-lr-20" style="display: flex; justify-content: space-between; align-items: flex-start; flex-grow: 1;">
+                        <div class="block2-txt-child1 flex-col-l" style="width: calc(100% - 35px);">
+                            <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                Daniel Klein Elegant Women Watch
+                            </a>
+                            <span class="stext-105 cl3" style="font-weight: 600; color: #111;">
+                                $95.00
+                            </span>
+                        </div>
+                        <div class="block2-txt-child2 flex-r p-t-3">
+                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                                <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON">
+                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <style>
+                    .block2-pic:hover .block2-btn {
+                        opacity: 1 !important;
+                        visibility: visible !important;
+                        bottom: 25px !important;
+                    }
+        </style>
+
+        <div class="flex-c-m flex-w w-full p-t-45">
+            <a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+                Load More
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="sec-testimonials bg6 p-t-80 p-b-80">
+    <div class="container">
+        <div class="p-b-42">
+            <h3 class="ltext-105 cl5 txt-center respon1">
+                What Our Customers Say
+            </h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 p-b-30">
+                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
+                    <p class="stext-114 cl6 p-b-26">
+                        "The quality of the watches is exceptional! Fast delivery and amazing customer service here in Amman."
+                    </p>
+                    <span class="mtext-107 cl2">
+                        - Ahmad Omar
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-md-4 p-b-30">
+                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
+                    <p class="stext-114 cl6 p-b-26">
+                        "I ordered a classic leather watch and it exceeded my expectations. Beautiful packaging too!"
+                    </p>
+                    <span class="mtext-107 cl2">
+                        - Sarah Naser
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-md-4 p-b-30">
+                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
+                    <p class="stext-114 cl6 p-b-26">
+                        "Best watch store online! Great variety of modern designs and very reasonable prices."
+                    </p>
+                    <span class="mtext-107 cl2">
+                        - Tariq Ziad
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec-faq bg0 p-t-80 p-b-90">
+    <div class="container">
+        <div class="p-b-45">
+            <h3 class="ltext-105 cl5 txt-center respon1">
+                Frequently Asked Questions
+            </h3>
+            <p class="stext-113 cl6 txt-center p-t-10">
+                Swipe through to find answers about our luxury collections and services.
+            </p>
+        </div>
+
+        <div class="wrap-slick2">
+            <div class="slick2">
+
+                <div class="item-slick2 p-lr-15">
+                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
+                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> Are all watches authentic?
+                        </h5>
+                        <p class="stext-111 cl6">
+                            Yes, all our timepieces and gift sets (such as Timberland and Bigotti) are 100% original with official warranties.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="item-slick2 p-lr-15">
+                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
+                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> What are delivery options?
+                        </h5>
+                        <p class="stext-111 cl6">
+                            We provide fast shipping across Amman and all governorates in Jordan within 1 to 3 business days.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="item-slick2 p-lr-15">
+                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
+                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> Can I return a product?
+                        </h5>
+                        <p class="stext-111 cl6">
+                            Yes, we offer a hassle-free 14-day return and exchange policy for unused items in original packaging.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="item-slick2 p-lr-15">
+                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
+                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> Do you offer gift wrapping?
+                        </h5>
+                        <p class="stext-111 cl6">
+                            Absolutely! Every order can be packed in our signature luxury gift boxes with custom greeting cards.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if ($('.slick2').length > 0) {
+                $('.slick2').slick({
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    autoplay: true,
+                    autoplaySpeed: 4000,
+                    arrows: true,
+                    dots: false,
+                    responsive: [
+                        {
+                            breakpoint: 1200,
+                            settings: { slidesToShow: 3 }
+                        },
+                        {
+                            breakpoint: 992,
+                            settings: { slidesToShow: 2 }
+                        },
+                        {
+                            breakpoint: 576,
+                            settings: { slidesToShow: 1 }
+                        }
+                    ]
+                });
+            }
+        });
+    </script>
+}

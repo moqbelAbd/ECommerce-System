@@ -1,0 +1,251 @@
+/* تنسيقات لوحة التحكم المتوافقة مع ألوان المتجر */
+:root {
+    --admin-sidebar-width: 260px;
+    --admin-bg: #f8f9fa;
+    --admin-card-bg: #ffffff;
+    --admin-text: #333333;
+    --primary-color: #717fe0;
+}
+
+body.admin-body {
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: var(--admin-sidebar-width);
+    background-color: #222222;
+    color: #ffffff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brand-mark {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+}
+
+.brand-icon {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+.brand-title {
+    font-weight: bold;
+    display: block;
+    font-size: 16px;
+}
+
+.brand-subtitle {
+    font-size: 11px;
+    color: #b2b2b2;
+}
+
+.sidebar-nav {
+    padding: 20px 0;
+    flex-grow: 1;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #b2b2b2;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sidebar-nav .nav-link:hover, .sidebar-nav .nav-link.active {
+    color: #fff;
+    background-color: rgba(113, 127, 224, 0.2);
+    border-left: 4px solid var(--primary-color);
+}
+
+.sidebar-nav .nav-icon {
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.sidebar-user {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+}
+
+.sidebar-user small {
+    color: #b2b2b2;
+}
+
+.sidebar-footer {
+    padding: 10px 20px;
+    background-color: #1a1a1a;
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    align-items: center;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #28a745;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+/* Main Content Area */
+.admin-main {
+    margin-left: var(--admin-sidebar-width);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-navbar {
+    height: 70px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+}
+
+.sidebar-toggle span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: #333;
+}
+
+.dashboard-content {
+    flex-grow: 1;
+}
+
+/* Panels & Cards */
+.metric-card {
+    background: var(--admin-card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid var(--primary-color);
+}
+
+.metric-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #666;
+    font-size: 14px;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0 5px 0;
+    color: #333;
+}
+
+.panel {
+    background: var(--admin-card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 200px;
+    padding-top: 20px;
+}
+
+.chart-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35px;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.chart-column span {
+    width: 100%;
+    background-color: var(--primary-color);
+    border-radius: 4px 4px 0 0;
+}
+
+.bar-42 span { height: 42%; }
+.bar-58 span { height: 58%; }
+.bar-51 span { height: 51%; }
+.bar-72 span { height: 72%; }
+.bar-66 span { height: 66%; }
+.bar-83 span { height: 83%; }
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.activity-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+}
+
+.admin-footer {
+    padding: 15px 20px;
+    background: #fff;
+    border-top: 1px solid #e6e6e6;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+}

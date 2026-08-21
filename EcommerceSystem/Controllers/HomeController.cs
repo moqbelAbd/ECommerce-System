@@ -5,7 +5,6 @@ using System.Diagnostics;
 
 namespace EcommerceSystem.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()
@@ -22,6 +21,23 @@ namespace EcommerceSystem.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult About()
+        {
+            return View();
+        }
+        public IActionResult Contact()
+        {
+            return View();
+        }
+        public IActionResult Product (string category)
+        {
+            return View();
+        }
+        public IActionResult Profile()
+        {
+            return View(); 
         }
     }
 }

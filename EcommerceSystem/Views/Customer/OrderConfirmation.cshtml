@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('/images/bg-01.jpg');">
+    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
+        ORDER CONFIRMATION
+    </h2>
+</section>
+
+<!-- Order Confirmation Section -->
+<div class="bg0 m-t-60 p-b-140">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="bor10 p-lr-50 p-tb-60 text-center" style="border-radius: 16px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.06);">
+
+                    <div class="m-b-25">
+                        <div style="width: 80px; height: 80px; background-color: #e2f0d9; color: #385723; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 38px;">
+                            <i class="zmdi zmdi-check"></i>
+                        </div>
+                    </div>
+
+                    <h3 class="mtext-111 cl2 p-b-10" style="font-weight: 600;">
+                        Thank You For Your Order!
+                    </h3>
+                    <p class="stext-113 cl6 p-b-25">
+                        Your order has been successfully placed and is now being processed. We’ve sent a confirmation email to your address.
+                    </p>
+
+                    <div class="p-tb-20 p-lr-30 bg-light mb-4" style="border-radius: 10px; display: inline-block; width: 100%; border: 1px dashed #d9d9d9;">
+                        <div class="row">
+                            <div class="col-md-4 p-b-10 md-p-b-0">
+                                <span class="stext-102 cl6 block">Order Number:</span>
+                                <span class="mtext-102 cl2" style="font-weight: 600;">#RX-2026-094</span>
+                            </div>
+                            <div class="col-md-4 p-b-10 md-p-b-0">
+                                <span class="stext-102 cl6 block">Date:</span>
+                                <span class="mtext-102 cl2" style="font-weight: 600;">August 20, 2026</span>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="stext-102 cl6 block">Payment Method:</span>
+                                <span class="mtext-102 cl2" style="font-weight: 600;">Cash on Delivery</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-left m-b-35">
+                        <h5 class="mtext-102 cl2 p-b-15" style="font-weight: 600; border-bottom: 1px solid #f1f1f1; padding-bottom: 10px;">
+                            Order Summary
+                        </h5>
+
+                        <div class="d-flex justify-content-between align-items-center p-tb-10" style="border-bottom: 1px solid #f8f9fa;">
+                            <span class="stext-111 cl6">Timberland Classic Men Watch (x1)</span>
+                            <span class="stext-111 cl2" style="font-weight: 600;">$145.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center p-tb-10" style="border-bottom: 1px solid #f8f9fa;">
+                            <span class="stext-111 cl6">Daniel Klein Elegant Women Watch (x1)</span>
+                            <span class="stext-111 cl2" style="font-weight: 600;">$95.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center p-t-15">
+                            <span class="mtext-101 cl2">Total Amount:</span>
+                            <span class="mtext-108 cl1" style="font-weight: 700; color: #222;">$240.00</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-w flex-c-m w-full p-t-10" style="gap: 15px;">
+                        <a asp-controller="Home" asp-action="Index" class="flex-c-m stext-101 cl0 size-119 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none;">
+                            Back To Home
+                        </a>
+                        <a asp-controller="Customer" asp-action="OrderHistory" class="flex-c-m stext-101 cl2 size-119 bg2 bor13 hov-btn3 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none;">
+                            View Orders
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
