@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+# Custom Rules: Environment-Specific Configurations (Keeps database passwords safe!)
+appsettings.Development.json
+appsettings.Local.json
