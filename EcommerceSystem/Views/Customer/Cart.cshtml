@@ -2,9 +2,9 @@
     ViewData["Title"] = "Shopping Cart";
 }
 
-<!-- breadcrumb -->
-<div class="container">
-    <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+<!-- breadcrumb مع مسافة علوية لضمان ظهوره وعدم اختفائه تحت الهيدر -->
+<div class="container p-t-100 p-b-20">
+    <div class="bread-crumb flex-w p-l-25 p-r-15 p-lr-0-lg">
         <a asp-controller="Home" asp-action="Index" class="stext-109 cl8 hov-cl1 trans-04">
             Home
             <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
@@ -17,10 +17,10 @@
 </div>
 
 <!-- Shopping Cart -->
-<form class="bg0 p-t-75 p-b-85" method="post">
+<form class="bg0 p-t-25 p-b-85" method="post">
     <div class="container">
         <div class="row">
-            <!-- قائمة المنتجات   -->
+            <!-- قائمة المنتجات -->
             <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
                 <div class="m-l-25 m-r--38 m-lr-0-xl">
                     <div class="wrap-table-shopping-cart">
@@ -125,28 +125,27 @@
                                 Free Shipping
                             </span>
 
-                                <div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-                                    <select class="js-select2" name="time">
-                                        <option>Select a country...</option>
-                                        <option>USA</option>
-                                        <option>UK</option>
-                                        <option>Jordan</option>
-                                    </select>
-                                    <div class="dropDownSelect2"></div>
-                                </div>
+                            <div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
+                                <select class="js-select2" name="time">
+                                    <option>Select a country...</option>
+                                    <option>USA</option>
+                                    <option>UK</option>
+                                    <option>Jordan</option>
+                                </select>
+                                <div class="dropDownSelect2"></div>
+                            </div>
 
-                                <div class="bor8 bg0 m-b-12">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="state" placeholder="State / country">
-                                </div>
+                            <div class="bor8 bg0 m-b-12">
+                                <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="state" placeholder="State / country">
+                            </div>
 
-                                <div class="bor8 bg0 m-b-22">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="postcode" placeholder="Postcode / Zip">
-                                </div>
+                            <div class="bor8 bg0 m-b-22">
+                                <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="postcode" placeholder="Postcode / Zip">
+                            </div>
 
-                                <div class="flex-w">
-                                    <div class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer">
-                                        Update Totals
-                                    </div>
+                            <div class="flex-w">
+                                <div class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer">
+                                    Update Totals
                                 </div>
                             </div>
                         </div>
