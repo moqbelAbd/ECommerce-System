@@ -51,6 +51,66 @@ namespace EcommerceSystem.Data
                 .HasForeignKey(oi => oi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict); // <-- THE FIX
 
+
+            // 1. Seed Product Brands
+            modelBuilder.Entity<ProductBrand>().HasData(
+                new ProductBrand { ProductBrandId = Guid.Parse("b1111111-1111-1111-1111-111111111111"), BrandName = "Rolex" },     // Luxury Watch
+                new ProductBrand { ProductBrandId = Guid.Parse("b2222222-2222-2222-2222-222222222222"), BrandName = "Tissot" },    // Classic Watch
+                new ProductBrand { ProductBrandId = Guid.Parse("b3333333-3333-3333-3333-333333333333"), BrandName = "Casio" },     // Sport Watch
+                new ProductBrand { ProductBrandId = Guid.Parse("b4444444-4444-4444-4444-444444444444"), BrandName = "Apple" },     // Smartwatch
+                new ProductBrand { ProductBrandId = Guid.Parse("b5555555-5555-5555-5555-555555555555"), BrandName = "eontblanc" }  // Accessories
+            );
+
+            // 2. Seed Product Models
+            modelBuilder.Entity<ProductModel>().HasData(
+                // Rolex Models
+                new ProductModel { ProductModelId = Guid.Parse("e1111111-1111-1111-1111-111111111111"), ModelName = "Submariner" },
+                new ProductModel { ProductModelId = Guid.Parse("e1111111-2222-2222-2222-222222222222"), ModelName = "Datejust" },
+
+                // Tissot Models
+                new ProductModel { ProductModelId = Guid.Parse("e2222222-1111-1111-1111-111111111111"), ModelName = "Le Locle" },
+                new ProductModel { ProductModelId = Guid.Parse("e2222222-2222-2222-2222-222222222222"), ModelName = "PRX" },
+
+                // Casio Models
+                new ProductModel { ProductModelId = Guid.Parse("e3333333-1111-1111-1111-111111111111"), ModelName = "G-Shock" },
+                new ProductModel { ProductModelId = Guid.Parse("e3333333-2222-2222-2222-222222222222"), ModelName = "Edifice" },
+
+                // Apple Models
+                new ProductModel { ProductModelId = Guid.Parse("e4444444-1111-1111-1111-111111111111"), ModelName = "Series 9" },
+                new ProductModel { ProductModelId = Guid.Parse("e4444444-2222-2222-2222-222222222222"), ModelName = "Ultra 2" },
+
+                // Montblanc Models
+                new ProductModel { ProductModelId = Guid.Parse("e5555555-1111-1111-1111-111111111111"), ModelName = "eeisterstück" },
+                new ProductModel { ProductModelId = Guid.Parse("e5555555-2222-2222-2222-222222222222"), ModelName = "Sartorial" }
+            );
+
+            // 3. Seed Payment Types (Integers instead of Guids!)
+            modelBuilder.Entity<PaymentType>().HasData(
+                new PaymentType { PaymentTypeId = 1, PaymentTypeName = "Credit Card" },
+                new PaymentType { PaymentTypeId = 2, PaymentTypeName = "PayPal" },
+                new PaymentType { PaymentTypeId = 3, PaymentTypeName = "Cash on Delivery (COD)" }
+            );
+
+            // 4. Seed Order Statuses
+            modelBuilder.Entity<OrderStatus>().HasData(
+                new OrderStatus { OrderStatusId = 1, OrderStatusName = "Pending" },
+                new OrderStatus { OrderStatusId = 2, OrderStatusName = "Processing" },
+                new OrderStatus { OrderStatusId = 3, OrderStatusName = "Shipped" },
+                new OrderStatus { OrderStatusId = 4, OrderStatusName = "Delivered" },
+                new OrderStatus { OrderStatusId = 5, OrderStatusName = "Cancelled" }
+            );
+
+            // 5. Seed Payment Statuses
+            modelBuilder.Entity<PaymentStatus>().HasData(
+                new PaymentStatus { PaymentStatusId = 1, PaymentStatusName = "Pending" },
+                new PaymentStatus { PaymentStatusId = 2, PaymentStatusName = "Completed" },
+                new PaymentStatus { PaymentStatusId = 3, PaymentStatusName = "Failed" },
+                new PaymentStatus { PaymentStatusId = 4, PaymentStatusName = "Refunded" }
+            );
         }
+
+
     }
+
+
 }
