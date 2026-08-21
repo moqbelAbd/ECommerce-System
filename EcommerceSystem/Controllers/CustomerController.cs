@@ -1,4 +1,4 @@
-﻿
+
 using EcommerceSystem.Data;
 using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +18,13 @@ namespace EcommerceSystem.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            _context = context;
         }
 
-        public IActionResult Cart()
+        // GET: Customer
+        public async Task<IActionResult> Index(
+            Guid? categoryId,
+            Guid? subCategoryId)
         {
             return View();
         }

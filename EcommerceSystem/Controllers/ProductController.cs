@@ -1,0 +1,305 @@
+using EcommerceSystem.Data;
+using EcommerceSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace EcommerceSystem.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class ProductController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public ProductController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: Product
+        public async Task<IActionResult> Index()
+        {
+            var products = await _context.Products
+                .Where(p => !p.IsDeleted)
+
+                .Include(p => p.ProductBrand)
+                .Include(p => p.ProductModel)
+                .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
+                .ToListAsync();
+
+            return View(products);
+        }
+
+        // GET: Product/Details/{id}
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var product = await _context.Products
+                .Include(p => p.ProductBrand)
+                .Include(p => p.ProductModel)
+                .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id &&
+                    !p.IsDeleted);
+
+            if (product == null)
+                return NotFound();
+
+            return View(product);
+        }
+
+        // GET: Product/Create
+        public async Task<IActionResult> Create()
+        {
+            await LoadProductDropdowns();
+
+            return View();
+        }
+
+        // POST: Product/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(
+            Product product,
+            Guid? subCategoryId,
+            string? imagePaths)
+        {
+            if (!ModelState.IsValid)
+            {
+                await LoadProductDropdowns();
+                return View(product);
+            }
+
+            product.ProductId = Guid.NewGuid();
+            product.IsDeleted = false;
+
+            // Add product images
+            foreach (var path in SplitImagePaths(imagePaths))
+            {
+                product.ProductImages.Add(new ProductImage
+                {
+                    ProductImageId = Guid.NewGuid(),
+                    ProductImagePath = path,
+                    ProductId = product.ProductId
+                });
+            }
+
+            _context.Products.Add(product);
+
+            // Add Product <-> SubCategory relationship
+            if (subCategoryId.HasValue)
+            {
+                var productSubCategory = new ProductSubCategory
+                {
+                    ProductId = product.ProductId,
+                    SubCategoryId = subCategoryId.Value
+                };
+
+                _context.ProductSubCategories.Add(productSubCategory);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Product created successfully.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Product/Edit/{id}
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var product = await _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductSubCategories)
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id &&
+                    !p.IsDeleted);
+
+            if (product == null)
+                return NotFound();
+
+            // Get current SubCategory
+            ViewBag.SelectedSubCategoryId =
+                product.ProductSubCategories
+                    .Select(psc => (Guid?)psc.SubCategoryId)
+                    .FirstOrDefault();
+
+            await LoadProductDropdowns();
+
+            return View(product);
+        }
+
+        // POST: Product/Edit/{id}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(
+            Guid id,
+            Product product,
+            Guid? subCategoryId,
+            string? imagePaths)
+        {
+            if (id != product.ProductId)
+                return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                await LoadProductDropdowns();
+                return View(product);
+            }
+
+            var existingProduct = await _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductSubCategories)
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id &&
+                    !p.IsDeleted);
+
+            if (existingProduct == null)
+                return NotFound();
+
+            // Update product information
+            existingProduct.ProductDescription =
+                product.ProductDescription;
+
+            existingProduct.ProductPrice =
+                product.ProductPrice;
+
+            existingProduct.ProductQuantity =
+                product.ProductQuantity;
+
+            existingProduct.ProductBrandId =
+                product.ProductBrandId;
+
+            existingProduct.ProductModelId =
+                product.ProductModelId;
+
+            // Remove old images
+            _context.ProductImages.RemoveRange(
+                existingProduct.ProductImages);
+
+            // Add new images
+            foreach (var path in SplitImagePaths(imagePaths))
+            {
+                existingProduct.ProductImages.Add(new ProductImage
+                {
+                    ProductImageId = Guid.NewGuid(),
+                    ProductImagePath = path,
+                    ProductId = existingProduct.ProductId
+                });
+            }
+
+            // Remove old Product/SubCategory relationships
+            _context.ProductSubCategories.RemoveRange(
+                existingProduct.ProductSubCategories);
+
+            // Add new relationship
+            if (subCategoryId.HasValue)
+            {
+                existingProduct.ProductSubCategories.Add(
+                    new ProductSubCategory
+                    {
+                        ProductId = existingProduct.ProductId,
+                        SubCategoryId = subCategoryId.Value
+                    });
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Product updated successfully.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Product/Delete/{id}
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var product = await _context.Products
+
+                .Include(p => p.ProductBrand)
+                .Include(p => p.ProductModel)
+                .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id &&
+                    !p.IsDeleted);
+
+            if (product == null)
+                return NotFound();
+
+            return View(product);
+        }
+
+        // POST: Product/Delete/{id}
+        [HttpPost]
+        [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id &&
+                    !p.IsDeleted);
+
+            if (product == null)
+                return NotFound();
+
+            // Soft Delete
+            product.IsDeleted = true;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Warning"] = "Product deleted successfully.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Load dropdown data
+        private async Task LoadProductDropdowns()
+        {
+            ViewBag.Brands = await _context.ProductBrands
+                .ToListAsync();
+
+            ViewBag.Models = await _context.ProductModels
+                .ToListAsync();
+
+            ViewBag.SubCategories = await _context.SubCategories
+                .Where(sc => !sc.IsDeleted)
+                .ToListAsync();
+        }
+
+        // Split image paths
+        private static IEnumerable<string> SplitImagePaths(
+            string? imagePaths)
+        {
+            if (string.IsNullOrWhiteSpace(imagePaths))
+                yield break;
+
+            foreach (var path in imagePaths.Split(
+                ',',
+                StringSplitOptions.RemoveEmptyEntries |
+                StringSplitOptions.TrimEntries))
+            {
+                yield return path;
+            }
+        }
+    }
+}
