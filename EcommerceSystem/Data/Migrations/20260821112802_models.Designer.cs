@@ -4,6 +4,7 @@ using EcommerceSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260821112802_models")]
+    partial class models
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,8 +90,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-<<<<<<< Updated upstream
-=======
             modelBuilder.Entity("EcommerceSystem.Models.Cart", b =>
                 {
                     b.Property<Guid>("CartId")
@@ -558,7 +559,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.ToTable("WishlistItems");
                 });
 
->>>>>>> Stashed changes
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -696,8 +696,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-<<<<<<< Updated upstream
-=======
             modelBuilder.Entity("EcommerceSystem.Models.Cart", b =>
                 {
                     b.HasOne("EcommerceSystem.Models.Customer", "Customer")
@@ -914,7 +912,6 @@ namespace EcommerceSystem.Data.Migrations
                     b.Navigation("Wishlist");
                 });
 
->>>>>>> Stashed changes
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -965,8 +962,6 @@ namespace EcommerceSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
-<<<<<<< Updated upstream
-=======
 
             modelBuilder.Entity("EcommerceSystem.Models.Cart", b =>
                 {
@@ -1002,7 +997,6 @@ namespace EcommerceSystem.Data.Migrations
                 {
                     b.Navigation("CartItems");
                 });
->>>>>>> Stashed changes
 #pragma warning restore 612, 618
         }
     }
