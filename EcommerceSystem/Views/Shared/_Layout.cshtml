@@ -2,14 +2,22 @@
 <html lang="en">
 <head>
     <title>@ViewData["Title"] - Rolexyal</title>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="~/images/icons/favicon.png" />
+
+    <!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="~/vendor/bootstrap/css/bootstrap.min.css">
+
+    <!-- Fonts & Icons -->
     <link rel="stylesheet" type="text/css" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="~/fonts/iconic/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" type="text/css" href="~/fonts/linearicons-v1.0.0/icon-font.min.css">
+
+    <!-- Plugins -->
     <link rel="stylesheet" type="text/css" href="~/vendor/animate/animate.css">
     <link rel="stylesheet" type="text/css" href="~/vendor/css-hamburgers/hamburgers.min.css">
     <link rel="stylesheet" type="text/css" href="~/vendor/animsition/css/animsition.min.css">
@@ -18,378 +26,1142 @@
     <link rel="stylesheet" type="text/css" href="~/vendor/slick/slick.css">
     <link rel="stylesheet" type="text/css" href="~/vendor/MagnificPopup/magnific-popup.css">
     <link rel="stylesheet" type="text/css" href="~/vendor/perfect-scrollbar/perfect-scrollbar.css">
+
+    <!-- Main CSS -->
     <link rel="stylesheet" type="text/css" href="~/css/util.css">
     <link rel="stylesheet" type="text/css" href="~/css/main.css">
 
-    <!-- Custom Styling for Mobile Menu, Auth Buttons, Cart Icon, and Compact Footer -->
+
+    <!-- ========================================= -->
+    <!-- Custom Styling -->
+    <!-- ========================================= -->
+
     <style>
-            .menu-mobile {
-                background-color: #1a1d20 !important;
-                border-top: 1px solid rgba(201, 170, 111, 0.2);
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+        /* =========================================
+           GLOBAL PAGE LAYOUT
+        ========================================= */
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+        }
+
+        body > * {
+            flex-shrink: 0;
+        }
+
+        body > main,
+        .page-content {
+            flex: 1 0 auto;
+        }
+
+
+        /* =========================================
+           MOBILE MENU
+        ========================================= */
+
+        .menu-mobile {
+            background-color: #1a1d20 !important;
+            border-top: 1px solid rgba(201, 170, 111, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-mobile .main-menu-m {
+            background-color: #1a1d20 !important;
+            padding: 15px 0;
+        }
+
+        .menu-mobile .main-menu-m li {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-mobile .main-menu-m li a {
+            color: #f8f9fa !important;
+            padding: 14px 25px;
+            font-size: 15px;
+            font-family: 'Poppins-Medium', sans-serif;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .menu-mobile .main-menu-m li a:hover {
+            color: #c9aa6f !important;
+            background-color: rgba(201, 170, 111, 0.08);
+            padding-left: 30px;
+        }
+
+
+        /* =========================================
+           CART
+        ========================================= */
+
+        .header-cart {
+            background-color: #1a1d20 !important;
+            color: #fff !important;
+        }
+
+        .icon-header-item.cart-styled {
+            color: #c9aa6f !important;
+            transition: transform 0.3s ease;
+        }
+
+        .icon-header-item.cart-styled:hover {
+            transform: scale(1.1);
+        }
+
+        .icon-header-noti::after {
+            background-color: #c9aa6f !important;
+            color: #1a1d20 !important;
+            font-weight: 700;
+        }
+
+
+        /* =========================================
+           AUTH BUTTONS
+        ========================================= */
+
+        .auth-btn-login {
+            color: #c9aa6f !important;
+            border: 1px solid #c9aa6f !important;
+            background-color: transparent !important;
+            border-radius: 20px !important;
+            padding: 6px 18px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .auth-btn-login:hover {
+            background-color: #c9aa6f !important;
+            color: #1a1d20 !important;
+        }
+
+        .auth-btn-register {
+            color: #1a1d20 !important;
+            background-color: #c9aa6f !important;
+            border: 1px solid #c9aa6f !important;
+            border-radius: 20px !important;
+            padding: 6px 18px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .auth-btn-register:hover {
+            background-color: transparent !important;
+            color: #c9aa6f !important;
+            border-color: #c9aa6f !important;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+            background-color: #1a1d20 !important;
+        }
+
+        .sidebar-link a {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-link a:hover {
+            color: #c9aa6f !important;
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        .site-footer {
+            flex-shrink: 0;
+            width: 100%;
+            background-color: #1a1d20 !important;
+            padding: 18px 0 !important;
+            margin-top: auto;
+        }
+
+        .site-footer .container {
+            width: 100%;
+        }
+
+        .site-footer .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 70px;
+        }
+
+        .site-footer .footer-logo-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .site-footer .logo-footer {
+            max-height: 65px;
+            width: auto;
+            display: block;
+        }
+
+        .site-footer .footer-copyright {
+            margin: 0;
+            color: #adb5bd;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: right;
+        }
+
+
+        /* =========================================
+           MOBILE FOOTER
+        ========================================= */
+
+        @media (max-width: 767px) {
+
+            .site-footer {
+                padding: 15px 0 !important;
             }
 
-                .menu-mobile .main-menu-m {
-                    background-color: #1a1d20 !important;
-                    padding: 15px 0;
-                }
-
-                    .menu-mobile .main-menu-m li {
-                        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-                    }
-
-                        .menu-mobile .main-menu-m li a {
-                            color: #f8f9fa !important;
-                            padding: 14px 25px;
-                            font-size: 15px;
-                            font-family: 'Poppins-Medium', sans-serif;
-                            letter-spacing: 0.5px;
-                            transition: all 0.3s ease;
-                            display: block;
-                        }
-
-                            .menu-mobile .main-menu-m li a:hover {
-                                color: #c9aa6f !important;
-                                background-color: rgba(201, 170, 111, 0.08);
-                                padding-left: 30px;
-                            }
-
-            .header-cart {
-                background-color: #1a1d20 !important;
-                color: #fff !important;
+            .site-footer .footer-content {
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+                text-align: center;
+                min-height: auto;
             }
 
-            /* تنسيق أزرار تسجيل الدخول وإنشاء الحساب في الهيدر */
-            .auth-btn-login {
-                color: #c9aa6f !important;
-                border: 1px solid #c9aa6f !important;
-                background-color: transparent !important;
-                border-radius: 20px !important;
-                padding: 6px 18px !important;
-                font-weight: 500;
-                transition: all 0.3s ease;
+            .site-footer .footer-logo-wrapper {
+                justify-content: center;
+                width: 100%;
             }
 
-                .auth-btn-login:hover {
-                    background-color: #c9aa6f !important;
-                    color: #1a1d20 !important;
-                }
+            .site-footer .logo-footer {
+                max-height: 55px;
+            }
 
+            .site-footer .footer-copyright {
+                font-size: 12px;
+                text-align: center;
+                width: 100%;
+            }
+        }
+
+
+        /* =========================================
+           EXTRA SMALL DEVICES
+        ========================================= */
+
+        @media (max-width: 480px) {
+
+            .site-footer {
+                padding: 12px 0 !important;
+            }
+
+            .site-footer .logo-footer {
+                max-height: 50px;
+            }
+
+            .site-footer .footer-copyright {
+                font-size: 11px;
+            }
+
+            .auth-btn-login,
             .auth-btn-register {
-                color: #1a1d20 !important;
-                background-color: #c9aa6f !important;
-                border: 1px solid #c9aa6f !important;
-                border-radius: 20px !important;
-                padding: 6px 18px !important;
-                font-weight: 500;
-                transition: all 0.3s ease;
+                padding: 5px 12px !important;
+                font-size: 12px;
             }
+        }
 
-                .auth-btn-register:hover {
-                    background-color: transparent !important;
-                    color: #c9aa6f !important;
-                    border-color: #c9aa6f !important;
-                }
-
-            /* تنسيق أيقونة سلة التسوق لتتطابق مع الهوية الذهبية */
-            .icon-header-item.cart-styled {
-                color: #c9aa6f !important;
-                transition: transform 0.3s ease;
-            }
-
-                .icon-header-item.cart-styled:hover {
-                    transform: scale(1.1);
-                }
-
-            .icon-header-noti::after {
-                background-color: #c9aa6f !important;
-                color: #1a1d20 !important;
-                font-weight: 700;
-            }
-
-            /* تصغير حجم الفوتر مع الحفاظ على مقاس الشعار كما هو */
-            footer.bg3 {
-                padding-top: 5px !important;
-                padding-bottom: 5px !important;
-            }
-
-                footer.bg3 .container {
-                    line-height: 1;
-                }
-
-                footer.bg3 img.logo-footer {
-                    max-height: 80px !important; /* الشعار يحتفظ بوضوحه وفخامته دون تضخم */
-                    width: auto;
-                }
     </style>
 </head>
+
+
 <body class="animsition">
 
-    <!-- Header -->
+
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
+
     <header class="header-v3">
+
+        <!-- Desktop Header -->
         <div class="container-menu-desktop trans-03">
+
             <div class="wrap-menu-desktop">
+
                 <nav class="limiter-menu-desktop p-l-45">
 
+                    <!-- Logo -->
                     <div class="flex-c-m flex-w p-b-18">
-                        <a asp-controller="Home" asp-action="Index" class="logo">
-                            <img src="~/images/icons/logo-01.png" alt="IMG-LOGO" style="max-height: 120px; width: auto;">
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="logo">
+
+                            <img src="~/images/icons/logo-01.png"
+                                 alt="Rolexyal Logo"
+                                 style="max-height: 120px; width: auto;">
+
                         </a>
+
                     </div>
 
-                    <!-- Menu desktop -->
+
+                    <!-- Desktop Menu -->
                     <div class="menu-desktop">
+
                         <ul class="main-menu">
+
                             @if (User.IsInRole("Admin"))
                             {
+                                <!-- Admin -->
                                 <li>
-                                    <a asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                    <a asp-controller="Admin"
+                                       asp-action="Index">
+                                        Dashboard
+                                    </a>
                                 </li>
                             }
                             else
                             {
+                                <!-- Customer / Guest -->
                                 <li>
-                                    <a asp-controller="Home" asp-action="Index">Home</a>
+                                    <a asp-controller="Home"
+                                       asp-action="Index">
+                                        Home
+                                    </a>
                                 </li>
                             }
 
+
+                            <!-- Categories -->
                             <li>
-                                <a asp-controller="Home" asp-action="Product">Categories</a>
+                                <a asp-controller="Home"
+                                   asp-action="Product">
+                                    Categories
+                                </a>
                             </li>
 
+
+                            <!-- About -->
                             <li>
-                                <a asp-controller="Home" asp-action="About">About</a>
+                                <a asp-controller="Home"
+                                   asp-action="About">
+                                    About
+                                </a>
                             </li>
 
+
+                            <!-- Contact -->
                             <li>
-                                <a asp-controller="Home" asp-action="Contact">Contact</a>
+                                <a asp-controller="Home"
+                                   asp-action="Contact">
+                                    Contact
+                                </a>
                             </li>
+
                         </ul>
+
                     </div>
 
+
+                    <!-- Header Icons -->
                     <div class="wrap-icon-header flex-w flex-r-m h-full">
+
+
+                        <!-- Cart -->
                         @if (!User.IsInRole("Admin"))
                         {
                             <div class="flex-c-m h-full p-l-18 p-r-25 bor6">
-                                <div class="icon-header-item cart-styled hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify="2">
+
+                                <div class="icon-header-item cart-styled hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart"
+                                     data-notify="0">
+
                                     <i class="zmdi zmdi-shopping-cart"></i>
+
                                 </div>
+
                             </div>
                         }
+
+
+                        <!-- Login / Register -->
                         @if (!(User.Identity?.IsAuthenticated ?? false))
                         {
-                            <div class="flex-c-m h-full p-l-18 p-r-25 bor6 gap-2" style="display: flex; align-items: center;">
-                                <a asp-area="Identity" asp-page="/Account/Login" class="btn auth-btn-login m-r-5">Login</a>
-                                <a asp-area="Identity" asp-page="/Account/Register" class="btn auth-btn-register">Register</a>
+                            <div class="flex-c-m h-full p-l-18 p-r-25 bor6"
+                                 style="display:flex; align-items:center; gap:6px;">
+
+                                <a asp-area="Identity"
+                                   asp-page="/Account/Login"
+                                   class="btn auth-btn-login">
+
+                                    Login
+
+                                </a>
+
+                                <a asp-area="Identity"
+                                   asp-page="/Account/Register"
+                                   class="btn auth-btn-register">
+
+                                    Register
+
+                                </a>
+
                             </div>
                         }
+
+
+                        <!-- Sidebar Button -->
                         <div class="flex-c-m h-full p-lr-19">
+
                             <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 js-show-sidebar">
+
                                 <i class="zmdi zmdi-menu"></i>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </nav>
+
             </div>
+
         </div>
 
-        <!-- Header Mobile -->
+
+
+        <!-- ========================================= -->
+        <!-- MOBILE HEADER -->
+        <!-- ========================================= -->
+
         <div class="wrap-header-mobile">
+
+
+            <!-- Mobile Logo -->
             <div class="logo-mobile">
-                <a asp-controller="Home" asp-action="Index"><img src="~/images/icons/logo-01.png" alt="IMG-LOGO" style="max-height: 80px; width: auto;"></a>
+
+                <a asp-controller="Home"
+                   asp-action="Index">
+
+                    <img src="~/images/icons/logo-01.png"
+                         alt="Rolexyal Logo"
+                         style="max-height: 80px; width: auto;">
+
+                </a>
+
             </div>
 
-            <div class="wrap-icon-header flex-w flex-r-m h-full m-r-15">
-                <div class="flex-c-m h-full p-r-5">
-                    <div class="icon-header-item cart-styled hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify="2">
-                        <i class="zmdi zmdi-shopping-cart"></i>
+
+            <!-- Mobile Cart -->
+            @if (!User.IsInRole("Admin"))
+            {
+                <div class="wrap-icon-header flex-w flex-r-m h-full m-r-15">
+
+                    <div class="flex-c-m h-full p-r-5">
+
+                        <div class="icon-header-item cart-styled hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart"
+                             data-notify="0">
+
+                            <i class="zmdi zmdi-shopping-cart"></i>
+
+                        </div>
+
                     </div>
+
                 </div>
+            }
+
+
+            <!-- Hamburger -->
+            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+
+                <span class="hamburger-box">
+
+                    <span class="hamburger-inner"
+                          style="background-color:#fff;">
+                    </span>
+
+                </span>
+
             </div>
 
-            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner" style="background-color: #fff;"></span>
-                </span>
-            </div>
         </div>
 
-        <!-- Menu Mobile -->
+
+
+        <!-- ========================================= -->
+        <!-- MOBILE MENU -->
+        <!-- ========================================= -->
+
         <div class="menu-mobile">
+
             <ul class="main-menu-m">
-                <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                <li><a href="@Url.Action("Product", "Home")">Categories</a></li>
-                <li><a href="@Url.Action("About", "Home")">About</a></li>
-                <li><a href="@Url.Action("Contact", "Home")">Contact</a></li>
-                @if ((User.Identity?.IsAuthenticated ?? false))
+
+
+                @if (User.IsInRole("Admin"))
                 {
+                    <li>
+
+                        <a asp-controller="Admin"
+                           asp-action="Index">
+
+                            Dashboard
+
+                        </a>
+
+                    </li>
+                }
+                else
+                {
+                    <li>
+
+                        <a asp-controller="Home"
+                           asp-action="Index">
+
+                            Home
+
+                        </a>
+
+                    </li>
+                }
+
+
+                <!-- Categories -->
+                <li>
+
+                    <a asp-controller="Home"
+                       asp-action="Product">
+
+                        Categories
+
+                    </a>
+
+                </li>
+
+
+                <!-- About -->
+                <li>
+
+                    <a asp-controller="Home"
+                       asp-action="About">
+
+                        About
+
+                    </a>
+
+                </li>
+
+
+                <!-- Contact -->
+                <li>
+
+                    <a asp-controller="Home"
+                       asp-action="Contact">
+
+                        Contact
+
+                    </a>
+
+                </li>
+
+
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+
                     @if (User.IsInRole("Customer"))
                     {
-                        <li><a href="#">My Wishlist</a></li>
+                        <li>
+
+                            <a href="#">
+
+                                My Wishlist
+
+                            </a>
+
+                        </li>
                     }
-                    <li><a asp-controller="Home" asp-action="Profile">My Account</a></li>
+
+
+                    <li>
+
+                        <a asp-controller="Home"
+                           asp-action="Profile">
+
+                            My Account
+
+                        </a>
+
+                    </li>
+
+
+                    <li>
+
+                        <form asp-area="Identity"
+                              asp-page="/Account/Logout"
+                              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+
+                            <button type="submit"
+                                    class="btn btn-link"
+                                    style="
+                                        color:#dc3545;
+                                        text-decoration:none;
+                                        padding:14px 25px;
+                                        width:100%;
+                                        text-align:left;
+                                    ">
+
+                                Logout
+
+                            </button>
+
+                        </form>
+
+                    </li>
+
                 }
+
             </ul>
+
         </div>
+
     </header>
 
-    <!-- Sidebar -->
+
+
+    <!-- ========================================= -->
+    <!-- SIDEBAR -->
+    <!-- ========================================= -->
+
     <aside class="wrap-sidebar js-sidebar">
+
         <div class="s-full js-hide-sidebar"></div>
-        <div class="sidebar flex-col-l p-t-22 p-b-25" style="width: 300px; max-width: 80%;">
+
+
+        <div class="sidebar flex-col-l p-t-22 p-b-25"
+             style="width:300px; max-width:80%;">
+
+
+            <!-- Close Button -->
             <div class="flex-r w-full p-b-30 p-r-27">
+
                 <div class="fs-35 lh-10 p-lr-5 pointer hov-cl1 trans-04 js-hide-sidebar">
+
                     <i class="zmdi zmdi-close"></i>
+
                 </div>
+
             </div>
+
+
+            <!-- Sidebar Content -->
             <div class="sidebar-content flex-w w-full p-lr-35 js-pscroll">
+
+
                 <ul class="sidebar-link w-full">
-                    <li class="p-b-13">
-                        <a asp-controller="Home" asp-action="Index" class="stext-102 trans-04">Home</a>
-                    </li>
 
-                    <li class="p-b-13">
-                        <a asp-controller="Home" asp-action="Product" class="stext-102 trans-04 font-weight-bold d-block p-b-8">
-                            Categories
-                        </a>
-                        <ul class="list-unstyled ps-3 p-l-15">
-                            <li class="p-b-8"><a asp-controller="Home" asp-action="Product" asp-route-category="Men" class="stext-102 trans-04" style="color: #adb5bd;">- Men Watches</a></li>
-                            <li class="p-b-8"><a asp-controller="Home" asp-action="Product" asp-route-category="Women" class="stext-102 trans-04" style="color: #adb5bd;">- Women Watches</a></li>
-                            <li class="p-b-8"><a asp-controller="Home" asp-action="Product" asp-route-category="Accessories" class="stext-102 trans-04" style="color: #adb5bd;">- Accessories</a></li>
-                        </ul>
-                    </li>
 
-                    <li class="p-b-13">
-                        <a asp-controller="Home" asp-action="About" class="stext-102 trans-04">About</a>
-                    </li>
-                    <li class="p-b-13">
-                        <a asp-controller="Home" asp-action="Contact" class="stext-102 trans-04">Contact</a>
-                    </li>
-
-                    @if ((User.Identity?.IsAuthenticated ?? false))
+                    <!-- Home -->
+                    @if (User.IsInRole("Admin"))
                     {
-                        @if (User.IsInRole("Customer"))
-                        {
-                            <li class="p-b-13"><a href="#" class="stext-102 trans-04">My Wishlist</a></li>
-                        }
                         <li class="p-b-13">
-                            <a asp-controller="Home" asp-action="Profile" class="stext-102 trans-04">My Account</a>
-                        </li>
-                        <li class="p-b-13">
-                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                <button type="submit" class="nav-link btn btn-link text-danger p-0" style="text-decoration: none;">Logout</button>
-                            </form>
+
+                            <a asp-controller="Admin"
+                               asp-action="Index"
+                               class="stext-102 trans-04">
+
+                                Dashboard
+
+                            </a>
+
                         </li>
                     }
+                    else
+                    {
+                        <li class="p-b-13">
+
+                            <a asp-controller="Home"
+                               asp-action="Index"
+                               class="stext-102 trans-04">
+
+                                Home
+
+                            </a>
+
+                        </li>
+                    }
+
+
+                    <!-- Categories -->
+                    <li class="p-b-13">
+
+                        <a asp-controller="Home"
+                           asp-action="Product"
+                           class="stext-102 trans-04 font-weight-bold d-block p-b-8">
+
+                            Categories
+
+                        </a>
+
+
+                        <ul class="list-unstyled ps-3 p-l-15">
+
+                            <li class="p-b-8">
+
+                                <a asp-controller="Home"
+                                   asp-action="Product"
+                                   asp-route-category="Men"
+                                   class="stext-102 trans-04"
+                                   style="color:#adb5bd;">
+
+                                    - Men Watches
+
+                                </a>
+
+                            </li>
+
+
+                            <li class="p-b-8">
+
+                                <a asp-controller="Home"
+                                   asp-action="Product"
+                                   asp-route-category="Women"
+                                   class="stext-102 trans-04"
+                                   style="color:#adb5bd;">
+
+                                    - Women Watches
+
+                                </a>
+
+                            </li>
+
+
+                            <li class="p-b-8">
+
+                                <a asp-controller="Home"
+                                   asp-action="Product"
+                                   asp-route-category="Accessories"
+                                   class="stext-102 trans-04"
+                                   style="color:#adb5bd;">
+
+                                    - Accessories
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    <!-- About -->
+                    <li class="p-b-13">
+
+                        <a asp-controller="Home"
+                           asp-action="About"
+                           class="stext-102 trans-04">
+
+                            About
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- Contact -->
+                    <li class="p-b-13">
+
+                        <a asp-controller="Home"
+                           asp-action="Contact"
+                           class="stext-102 trans-04">
+
+                            Contact
+
+                        </a>
+
+                    </li>
+
+
+
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+
+                        <!-- Wishlist -->
+                        @if (User.IsInRole("Customer"))
+                        {
+                            <li class="p-b-13">
+
+                                <a href="#"
+                                   class="stext-102 trans-04">
+
+                                    My Wishlist
+
+                                </a>
+
+                            </li>
+                        }
+
+
+                        <!-- Account -->
+                        <li class="p-b-13">
+
+                            <a asp-controller="Home"
+                               asp-action="Profile"
+                               class="stext-102 trans-04">
+
+                                My Account
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- Logout -->
+                        <li class="p-b-13">
+
+                            <form asp-area="Identity"
+                                  asp-page="/Account/Logout"
+                                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+
+                                <button type="submit"
+                                        class="btn btn-link p-0"
+                                        style="
+                                            color:#dc3545;
+                                            text-decoration:none;
+                                        ">
+
+                                    Logout
+
+                                </button>
+
+                            </form>
+
+                        </li>
+
+                    }
+
                 </ul>
 
+
+
+                <!-- Sidebar Logo -->
                 <div class="flex-c-m flex-w p-t-30 w-full">
-                    <a asp-controller="Home" asp-action="Index" class="logo">
-                        <img src="~/images/icons/logo-01.png" alt="IMG-LOGO" style="max-height: 120px; width: auto;">
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="logo">
+
+                        <img src="~/images/icons/logo-01.png"
+                             alt="Rolexyal Logo"
+                             style="max-height:120px; width:auto;">
+
                     </a>
+
                 </div>
+
             </div>
+
         </div>
+
     </aside>
 
-    <!-- Cart Sidebar -->
-    <div class="wrap-header-cart js-panel-cart">
-        <div class="s-full js-hide-cart"></div>
-        <div class="header-cart flex-col-l p-l-65 p-r-25">
-            <div class="header-cart-title flex-w flex-sb-m p-b-8">
-                <span class="mtext-103" style="color: #fff;">Your Cart</span>
-                <div class="fs-35 lh-10 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart" style="color: #fff;">
-                    <i class="zmdi zmdi-close"></i>
-                </div>
-            </div>
-            <div class="header-cart-content flex-w js-pscroll">
-                <ul class="header-cart-wrapitem w-full">
-                    <li class="header-cart-item flex-w flex-t m-b-12">
-                        <div class="header-cart-item-img" style="width: 60px; height: 80px; overflow: hidden; background: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                            <img src="~/images/Men/Watch10/timberland-watch.png" alt="TIMBERLAND WATCH" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                        </div>
-                        <div class="header-cart-item-txt p-t-8" style="padding-left: 15px; width: calc(100% - 60px);">
-                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04" style="color: #f8f9fa; display: block; text-decoration: none;">Timberland Classic Men Watch</a>
-                            <span class="header-cart-item-info" style="color: #adb5bd;">1 x $145.00</span>
-                        </div>
-                    </li>
-                </ul>
-                <div class="w-full">
-                    <div class="header-cart-total w-full p-tb-40" style="color: #fff; font-size: 18px; border-top: 1px solid rgba(255,255,255,0.1);">Total: $145.00</div>
-                    <div class="header-cart-buttons flex-w w-full">
-                        <a asp-controller="Customer" asp-action="Cart" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-r-8 m-b-10">View Cart</a>
-                        <a asp-controller="Customer" asp-action="Checkout" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-b-10">Check Out</a>
+
+
+    <!-- ========================================= -->
+    <!-- CART SIDEBAR -->
+    <!-- ========================================= -->
+
+    @if (!User.IsInRole("Admin"))
+    {
+        <div class="wrap-header-cart js-panel-cart">
+
+            <div class="s-full js-hide-cart"></div>
+
+
+            <div class="header-cart flex-col-l p-l-65 p-r-25">
+
+
+                <!-- Cart Header -->
+                <div class="header-cart-title flex-w flex-sb-m p-b-8">
+
+                    <span class="mtext-103"
+                          style="color:#fff;">
+
+                        Your Cart
+
+                    </span>
+
+
+                    <div class="fs-35 lh-10 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart"
+                         style="color:#fff;">
+
+                        <i class="zmdi zmdi-close"></i>
+
                     </div>
+
                 </div>
+
+
+
+                <!-- Cart Content -->
+                <div class="header-cart-content flex-w js-pscroll">
+
+
+                    <!-- Empty Cart -->
+                    <div class="w-full text-center p-t-40 p-b-40">
+
+                        <i class="zmdi zmdi-shopping-cart"
+                           style="
+                               font-size:45px;
+                               color:#c9aa6f;
+                           ">
+                        </i>
+
+
+                        <p class="stext-102 m-t-15"
+                           style="color:#adb5bd;">
+
+                            Your cart is currently empty.
+
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- Cart Buttons -->
+                    <div class="w-full">
+
+
+                        <div class="header-cart-buttons flex-w w-full">
+
+
+                            <a asp-controller="Customer"
+                               asp-action="Cart"
+                               class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-r-8 m-b-10">
+
+                                View Cart
+
+                            </a>
+
+
+                            <a asp-controller="Customer"
+                               asp-action="Checkout"
+                               class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-b-10">
+
+                                Check Out
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
-    </div>
+    }
 
-    @RenderBody()
 
-    <!-- Footer -->
-    <footer class="bg3 p-t-5 p-b-5" style="background-color: #1a1d20 !important;">
+
+    <!-- ========================================= -->
+    <!-- PAGE CONTENT -->
+    <!-- ========================================= -->
+
+    <main class="page-content">
+
+        @RenderBody()
+
+    </main>
+
+
+
+    <!-- ========================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================= -->
+
+    <footer class="site-footer">
+
         <div class="container">
-            <div class="flex-w flex-sb-m">
-                <div class="p-b-0">
-                    <a asp-controller="Home" asp-action="Index" class="logo">
-                        <img src="~/images/icons/logo-01.png" alt="IMG-LOGO" class="logo-footer" style="max-height: 70px; width: auto;">
+
+            <div class="footer-content">
+
+
+                <!-- Footer Logo -->
+                <div class="footer-logo-wrapper">
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="logo">
+
+                        <img src="~/images/icons/logo-01.png"
+                             alt="Rolexyal Logo"
+                             class="logo-footer">
+
                     </a>
+
                 </div>
-                <div class="p-b-0">
-                    <p class="stext-107" style="color: #adb5bd; font-size: 12px;">
-                        Copyright &copy; @DateTime.Now.Year All rights reserved
+
+
+                <!-- Copyright -->
+                <div>
+
+                    <p class="footer-copyright">
+
+                        Copyright &copy; @DateTime.Now.Year
+                        Rolexyal.
+                        All rights reserved.
+
                     </p>
+
                 </div>
+
             </div>
+
         </div>
+
     </footer>
 
-    <div class="btn-back-to-top" id="myBtn">
-        <span class="symbol-btn-back-to-top"><i class="zmdi zmdi-chevron-up"></i></span>
+
+
+    <!-- ========================================= -->
+    <!-- BACK TO TOP -->
+    <!-- ========================================= -->
+
+    <div class="btn-back-to-top"
+         id="myBtn">
+
+        <span class="symbol-btn-back-to-top">
+
+            <i class="zmdi zmdi-chevron-up"></i>
+
+        </span>
+
     </div>
 
+
+
+    <!-- ========================================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================================= -->
+
     <script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
+
     <script src="~/vendor/animsition/js/animsition.min.js"></script>
+
     <script src="~/vendor/bootstrap/js/popper.js"></script>
+
     <script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
+
     <script src="~/vendor/select2/select2.min.js"></script>
+
+
+    <!-- Select2 -->
     <script>
-            $(".js-select2").each(function() {
-                $(this).select2({
-                    minimumResultsForSearch: 20,
-                    dropdownParent: $(this).next('.dropDownSelect2')
-                });
-            })
-    </script>
-    <script src="~/vendor/daterangepicker/moment.min.js"></script>
-    <script src="~/vendor/daterangepicker/daterangepicker.js"></script>
-    <script src="~/vendor/slick/slick.min.js"></script>
-    <script src="~/js/slick-custom.js"></script>
-    <script src="~/vendor/parallax100/parallax100.js"></script>
-    <script>
-            $('.parallax100').parallax100();
-    </script>
-    <script src="~/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-    <script src="~/vendor/isotope/isotope.pkgd.min.js"></script>
-    <script src="~/vendor/sweetalert/sweetalert.min.js"></script>
-    <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script>
-            $('.js-pscroll').each(function() {
-                $(this).css('position', 'relative');
-                $(this).css('overflow', 'hidden');
-                var ps = new PerfectScrollbar(this, {
-                    wheelSpeed: 1,
-                    scrollingThreshold: 1000,
-                    wheelPropagation: false,
-                });
-                $(window).on('resize', function() {
-                    ps.update();
-                })
+
+        $(".js-select2").each(function () {
+
+            $(this).select2({
+
+                minimumResultsForSearch: 20,
+
+                dropdownParent:
+                    $(this).next('.dropDownSelect2')
+
             });
+
+        });
+
     </script>
+
+
+    <!-- Date Range Picker -->
+    <script src="~/vendor/daterangepicker/moment.min.js"></script>
+
+    <script src="~/vendor/daterangepicker/daterangepicker.js"></script>
+
+
+    <!-- Slick -->
+    <script src="~/vendor/slick/slick.min.js"></script>
+
+    <script src="~/js/slick-custom.js"></script>
+
+
+    <!-- Parallax -->
+    <script src="~/vendor/parallax100/parallax100.js"></script>
+
+    <script>
+
+        $('.parallax100').parallax100();
+
+    </script>
+
+
+    <!-- Magnific Popup -->
+    <script src="~/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+
+
+    <!-- Isotope -->
+    <script src="~/vendor/isotope/isotope.pkgd.min.js"></script>
+
+
+    <!-- Sweet Alert -->
+    <script src="~/vendor/sweetalert/sweetalert.min.js"></script>
+
+
+    <!-- Perfect Scrollbar -->
+    <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+
+    <script>
+
+        $('.js-pscroll').each(function () {
+
+            $(this).css('position', 'relative');
+
+            $(this).css('overflow', 'hidden');
+
+            var ps = new PerfectScrollbar(this, {
+
+                wheelSpeed: 1,
+
+                scrollingThreshold: 1000,
+
+                wheelPropagation: false
+
+            });
+
+
+            $(window).on('resize', function () {
+
+                ps.update();
+
+            });
+
+        });
+
+    </script>
+
+
+    <!-- Main JS -->
     <script src="~/js/main.js"></script>
 
+
+    <!-- Page Specific Scripts -->
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

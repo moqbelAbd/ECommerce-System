@@ -1,0 +1,167 @@
+﻿@model EcommerceSystem.Models.SubCategory
+
+@{
+    ViewData["Title"] = "Edit SubCategory";
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7 col-md-9">
+
+            <div class="mb-4">
+                <h2 style="color:#1a1d20; font-weight:600;">
+                    Edit SubCategory
+                </h2>
+
+                <p style="color:#888;">
+                    Update subcategory information
+                </p>
+            </div>
+
+            <div class="card"
+                 style="
+                    border:none;
+                    border-radius:12px;
+                    box-shadow:0 5px 25px rgba(0,0,0,0.08);
+                 ">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <form asp-action="Edit" method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               asp-for="SubCategoryId" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <!-- Name -->
+                        <div class="form-group mb-4">
+
+                            <label asp-for="SubCategoryName"
+                                   style="
+                                        color:#1a1d20;
+                                        font-weight:600;
+                                   ">
+                                SubCategory Name
+                            </label>
+
+                            <input asp-for="SubCategoryName"
+                                   class="form-control"
+                                   style="
+                                        height:48px;
+                                        border-radius:6px;
+                                   " />
+
+                            <span asp-validation-for="SubCategoryName"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Category -->
+                        <div class="form-group mb-4">
+
+                            <label asp-for="CategoryId"
+                                   style="
+                                        color:#1a1d20;
+                                        font-weight:600;
+                                   ">
+                                Category
+                            </label>
+
+                            <select asp-for="CategoryId"
+                                    asp-items="ViewBag.Categories"
+                                    class="form-control"
+                                    style="
+                                        height:48px;
+                                        border-radius:6px;
+                                    ">
+
+                                <option value="">
+                                    -- Select Category --
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="CategoryId"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Image -->
+                        <div class="form-group mb-4">
+
+                            <label asp-for="SubCategoryImagePath"
+                                   style="
+                                        color:#1a1d20;
+                                        font-weight:600;
+                                   ">
+                                Image Path
+                            </label>
+
+                            <input asp-for="SubCategoryImagePath"
+                                   class="form-control"
+                                   style="
+                                        height:48px;
+                                        border-radius:6px;
+                                   " />
+
+                            <span asp-validation-for="SubCategoryImagePath"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a asp-action="Index"
+                               class="btn"
+                               style="
+                                    border:1px solid #1a1d20;
+                                    color:#1a1d20;
+                                    border-radius:25px;
+                                    padding:10px 25px;
+                               ">
+                                <i class="fa fa-arrow-left mr-2"></i>
+                                Back
+                            </a>
+
+                            <button type="submit"
+                                    class="btn"
+                                    style="
+                                        background:#c9aa6f;
+                                        color:#1a1d20;
+                                        border-radius:25px;
+                                        padding:10px 28px;
+                                        font-weight:600;
+                                    ">
+                                <i class="fa fa-save mr-2"></i>
+                                Save Changes
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

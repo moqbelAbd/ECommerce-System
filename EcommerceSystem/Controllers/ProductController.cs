@@ -17,19 +17,101 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: Product
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            Guid? categoryId,
+            Guid? subCategoryId,
+            Guid? brandId,
+            Guid? modelId,
+            decimal? minPrice,
+            decimal? maxPrice,
+            string? search)
         {
-            var products = await _context.Products
+            var query = _context.Products
                 .Where(p => !p.IsDeleted)
-
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-
                 .Include(p => p.ProductSubCategories)
                     .ThenInclude(psc => psc.SubCategory)
+                .AsQueryable();
 
+            // Search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(p =>
+                    p.ProductDescription != null &&
+                    p.ProductDescription.Contains(search));
+            }
+
+            // Category
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory.CategoryId == categoryId.Value));
+            }
+
+            // SubCategory
+            if (subCategoryId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategoryId == subCategoryId.Value));
+            }
+
+            // Brand
+            if (brandId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductBrandId == brandId.Value);
+            }
+
+            // Model
+            if (modelId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductModelId == modelId.Value);
+            }
+
+            // Minimum Price
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductPrice >= minPrice.Value);
+            }
+
+            // Maximum Price
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductPrice <= maxPrice.Value);
+            }
+
+            var products = await query.ToListAsync();
+
+            // Data for filters
+            ViewBag.Categories = await _context.Categories
+                .Where(c => !c.IsDeleted)
                 .ToListAsync();
+
+            ViewBag.SubCategories = await _context.SubCategories
+                .Where(sc => !sc.IsDeleted)
+                .ToListAsync();
+
+            ViewBag.Brands = await _context.ProductBrands
+                .ToListAsync();
+
+            ViewBag.Models = await _context.ProductModels
+                .ToListAsync();
+
+            // Keep selected values
+            ViewBag.SelectedCategoryId = categoryId;
+            ViewBag.SelectedSubCategoryId = subCategoryId;
+            ViewBag.SelectedBrandId = brandId;
+            ViewBag.SelectedModelId = modelId;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.Search = search;
 
             return View(products);
         }

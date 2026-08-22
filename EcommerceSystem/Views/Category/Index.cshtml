@@ -1,0 +1,99 @@
+﻿@model IEnumerable<EcommerceSystem.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Categories</h2>
+            <p class="text-muted mb-0">Manage your product categories</p>
+        </div>
+
+        <a asp-action="Create" class="btn btn-dark">
+            <i class="fa fa-plus"></i> Add Category
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Warning"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No categories found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (var category in Model)
+            {
+                <div class="col-md-4 mb-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div style="height:220px; overflow:hidden;">
+                            <img src="@category.CategoryImagePath"
+                                 class="card-img-top"
+                                 alt="@category.CategoryName"
+                                 style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+
+                        <div class="card-body">
+
+                            <h5 class="card-title fw-bold">
+                                @category.CategoryName
+                            </h5>
+
+                            <p class="text-muted">
+                                Sub Categories:
+                                @(category.SubCategories?.Count ?? 0)
+                            </p>
+
+                            <div class="d-flex gap-2">
+
+                                <a asp-action="Details"
+                                   asp-route-id="@category.CategoryId"
+                                   class="btn btn-outline-dark btn-sm">
+                                    Details
+                                </a>
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@category.CategoryId"
+                                   class="btn btn-outline-warning btn-sm">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@category.CategoryId"
+                                   class="btn btn-outline-danger btn-sm">
+                                    Delete
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

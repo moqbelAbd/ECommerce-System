@@ -1,4 +1,3 @@
-
 using EcommerceSystem.Data;
 using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,14 +8,9 @@ namespace EcommerceSystem.Controllers
 {
     public class CustomerController : Controller
     {
-
         private readonly ApplicationDbContext _context;
-        public CustomerController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
 
-        public IActionResult Index()
+        public CustomerController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -28,6 +22,7 @@ namespace EcommerceSystem.Controllers
         {
             return View();
         }
+
         public IActionResult OrderHistory()
         {
             return View();
@@ -47,13 +42,13 @@ namespace EcommerceSystem.Controllers
         {
             return View();
         }
+
         public IActionResult OrderDetails(int id)
         {
             return View();
         }
 
         // GET: Customer/CompleteProfile
-        // Shows the form to the newly registered user
         [HttpGet]
         public IActionResult CompleteProfile()
         {
@@ -61,17 +56,21 @@ namespace EcommerceSystem.Controllers
         }
 
         // POST: Customer/CompleteProfile
-        // Saves their data and creates the Customer record
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CompleteProfile(string firstName, string lastName, string location)
+        public async Task<IActionResult> CompleteProfile(
+            string firstName,
+            string lastName,
+            string location)
         {
-            // Grab the ApplicationUserId of the person who just registered and logged in
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
+                return RedirectToPage(
+                    "/Account/Login",
+                    new { area = "Identity" });
             }
 
             var customer = new Customer
@@ -84,12 +83,12 @@ namespace EcommerceSystem.Controllers
             };
 
             _context.Customers.Add(customer);
+
             await _context.SaveChangesAsync();
 
-            // Redirect them to the homepage (or wherever you want them to go next)
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(
+                "Index",
+                "Home");
         }
     }
 }
-
-

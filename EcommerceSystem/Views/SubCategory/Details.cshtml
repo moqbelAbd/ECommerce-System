@@ -1,0 +1,167 @@
+﻿@model EcommerceSystem.Models.SubCategory
+
+@{
+    ViewData["Title"] = "SubCategory Details";
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 style="color:#1a1d20; font-weight:600;">
+            SubCategory Details
+        </h2>
+
+        <p style="color:#888;">
+            View subcategory information
+        </p>
+    </div>
+
+    <div class="row">
+
+        <!-- Image -->
+        <div class="col-lg-5 mb-4">
+
+            <div class="card h-100"
+                 style="
+                    border:none;
+                    border-radius:12px;
+                    box-shadow:0 5px 25px rgba(0,0,0,0.08);
+                 ">
+
+                <div class="card-body d-flex align-items-center justify-content-center"
+                     style="min-height:350px;">
+
+                    <img src="@Model.SubCategoryImagePath"
+                         alt="@Model.SubCategoryName"
+                         style="
+                            max-width:100%;
+                            max-height:300px;
+                            object-fit:contain;
+                         " />
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Information -->
+        <div class="col-lg-7">
+
+            <div class="card"
+                 style="
+                    border:none;
+                    border-radius:12px;
+                    box-shadow:0 5px 25px rgba(0,0,0,0.08);
+                 ">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="mb-4">
+
+                        <small style="
+                            color:#c9aa6f;
+                            text-transform:uppercase;
+                            letter-spacing:1px;
+                            font-weight:600;
+                        ">
+                            SubCategory
+                        </small>
+
+                        <h2 style="
+                            color:#1a1d20;
+                            margin-top:8px;
+                        ">
+                            @Model.SubCategoryName
+                        </h2>
+
+                    </div>
+
+                    <hr />
+
+                    <!-- Category -->
+                    <div class="mb-4">
+
+                        <label style="
+                            color:#888;
+                            font-size:13px;
+                        ">
+                            Category
+                        </label>
+
+                        <h5 style="color:#1a1d20;">
+                            @(Model.Category?.CategoryName ?? "N/A")
+                        </h5>
+
+                    </div>
+
+                    <!-- Products -->
+                    <div class="mb-4">
+
+                        <label style="
+                            color:#888;
+                            font-size:13px;
+                        ">
+                            Products
+                        </label>
+
+                        <h5 style="color:#1a1d20;">
+                            @(Model.Products?.Count ?? 0)
+                        </h5>
+
+                    </div>
+
+                    <hr />
+
+                    <!-- Buttons -->
+                    <div class="d-flex flex-wrap mt-4">
+
+                        <a asp-action="Edit"
+                           asp-route-id="@Model.SubCategoryId"
+                           class="btn mr-2 mb-2"
+                           style="
+                                background:#c9aa6f;
+                                color:#1a1d20;
+                                border-radius:25px;
+                                padding:10px 25px;
+                                font-weight:600;
+                           ">
+                            <i class="fa fa-pencil mr-2"></i>
+                            Edit
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@Model.SubCategoryId"
+                           class="btn mr-2 mb-2"
+                           style="
+                                border:1px solid #dc3545;
+                                color:#dc3545;
+                                border-radius:25px;
+                                padding:10px 25px;
+                           ">
+                            <i class="fa fa-trash mr-2"></i>
+                            Delete
+                        </a>
+
+                        <a asp-action="Index"
+                           class="btn mb-2"
+                           style="
+                                border:1px solid #1a1d20;
+                                color:#1a1d20;
+                                border-radius:25px;
+                                padding:10px 25px;
+                           ">
+                            Back
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
