@@ -28,7 +28,9 @@ public string? ApplicationUserId { get; set; }
 public EcommerceSystem.Data.ApplicationUser? ApplicationUser { get; set; }
 
 public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+public ICollection<CustomerPaymentCard> CustomerPaymentCards { get; set; } = new HashSet<CustomerPaymentCard>();
+public ICollection<CustomerPhoneNumber> CustomerPhoneNumbers { get; set; } = new HashSet<CustomerPhoneNumber>();
 
-}
+    }
 
 }

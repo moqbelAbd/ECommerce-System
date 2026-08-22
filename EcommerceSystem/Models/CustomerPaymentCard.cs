@@ -9,11 +9,13 @@ public class CustomerPaymentCard
 [Key]
 public Guid PaymentCardId { get; set;}
 
-[Required]
-[MaxLength(16)]
-public string CardNumber { get; set; } = string.Empty;
+        [MaxLength(500)]
+        public string CardNumber { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(100)]
+        public string CardHolderName { get; set; } = string.Empty;
 
-[Required]
+        [Required]
 public DateOnly CardExpire { get; set; } 
 
 public bool IsDeleted {  get; set; }
