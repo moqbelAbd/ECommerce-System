@@ -10,7 +10,10 @@ namespace EcommerceSystem.Models
         public Guid ProductBrandId { get; set; }
 
         [Required]
-        public string BrandName { get; set; }
+        [MaxLength(100)]
+        public string BrandName { get; set; } = String.Empty;
+        public ICollection<Product> Products { get; set; }
+    = new HashSet<Product>();
 
 
     }

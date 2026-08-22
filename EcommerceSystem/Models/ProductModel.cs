@@ -10,7 +10,8 @@ namespace EcommerceSystem.Models
         public Guid ProductModelId { get; set; }
 
         [Required]
-        public string ModelName { get; set; }
+        public string ModelName { get; set; } = string.Empty;
+        public ICollection<Product> Products { get; set;} = new HashSet<Product>();
 
 
     }

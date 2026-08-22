@@ -1,0 +1,122 @@
+@using EcommerceSystem.Models
+@model Product
+
+@{
+    ViewData["Title"] = "Add Product";
+
+    var brands = ViewBag.Brands as List<ProductBrand> ?? new List<ProductBrand>();
+    var models = ViewBag.Models as List<ProductModel> ?? new List<ProductModel>();
+    var subCategories = ViewBag.SubCategories as List<SubCategory> ?? new List<SubCategory>();
+    Guid? selectedSubCategoryId = ViewBag.SelectedSubCategoryId is Guid id ? id : null;
+    string? imagePaths = ViewBag.ImagePaths as string;
+}
+
+<div class="bg0 p-t-80 p-b-100">
+    <div class="container" style="max-width: 900px;">
+        <div class="flex-sb-m flex-w p-b-35">
+            <div>
+                <h1 class="ltext-103 cl5">Add Product</h1>
+                <p class="stext-102 cl6 p-t-5">Create a product for your store catalog.</p>
+            </div>
+
+            <a asp-action="Index" class="btn btn-outline-secondary m-tb-10">
+                <i class="fa fa-arrow-left m-r-6"></i> Back to products
+            </a>
+        </div>
+
+        <div class="bor10 p-all-30">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger m-b-20"></div>
+
+                <div class="row">
+                    <div class="col-md-8 m-b-20">
+                        <label asp-for="ProductName" class="form-label">Product name</label>
+                        <input asp-for="ProductName" class="form-control" placeholder="e.g. Rolex Submariner" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 m-b-20">
+                        <label asp-for="ProductPrice" class="form-label">Price</label>
+                        <input asp-for="ProductPrice" type="number" min="0" step="0.01" class="form-control" />
+                        <span asp-validation-for="ProductPrice" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 m-b-20">
+                        <label asp-for="ProductBrandId" class="form-label">Brand</label>
+                        <select asp-for="ProductBrandId" class="form-control">
+                            <option value="">Select a brand</option>
+                            @foreach (var brand in brands)
+                            {
+                                <option value="@brand.ProductBrandId">@brand.BrandName</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ProductBrandId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 m-b-20">
+                        <label asp-for="ProductModelId" class="form-label">Model</label>
+                        <select asp-for="ProductModelId" class="form-control">
+                            <option value="">Select a model</option>
+                            @foreach (var productModel in models)
+                            {
+                                <option value="@productModel.ProductModelId">@productModel.ModelName</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ProductModelId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 m-b-20">
+                        <label for="subCategoryId" class="form-label">Subcategory</label>
+                        <select id="subCategoryId" name="subCategoryId" class="form-control">
+                            <option value="">Select a subcategory</option>
+                            @foreach (var subCategory in subCategories)
+                            {
+                                if (selectedSubCategoryId == subCategory.SubCategoryId)
+                                {
+                                    <option value="@subCategory.SubCategoryId" selected>@subCategory.SubCategoryName</option>
+                                }
+                                else
+                                {
+                                    <option value="@subCategory.SubCategoryId">@subCategory.SubCategoryName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 m-b-20">
+                        <label asp-for="ProductQuantity" class="form-label">Stock quantity</label>
+                        <input asp-for="ProductQuantity" type="number" min="0" class="form-control" />
+                        <span asp-validation-for="ProductQuantity" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8 m-b-20">
+                        <label for="imagePaths" class="form-label">Image paths</label>
+                        <input id="imagePaths" name="imagePaths" value="@imagePaths" class="form-control" placeholder="~/images/watch-1.jpg, ~/images/watch-2.jpg" />
+                        <small class="form-text text-muted">Separate multiple existing image paths with commas.</small>
+                    </div>
+                </div>
+
+                <div class="m-b-25">
+                    <label asp-for="ProductDescription" class="form-label">Description</label>
+                    <textarea asp-for="ProductDescription" class="form-control" rows="5" placeholder="Describe the product."></textarea>
+                    <span asp-validation-for="ProductDescription" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save m-r-6"></i> Save product
+                    </button>
+                    <a asp-action="Index" class="btn btn-light">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

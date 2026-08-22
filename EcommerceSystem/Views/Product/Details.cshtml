@@ -1,0 +1,101 @@
+@model EcommerceSystem.Models.Product
+
+@{
+    ViewData["Title"] = Model.ProductName;
+    var images = Model.ProductImages?.ToList() ?? new List<EcommerceSystem.Models.ProductImage>();
+    var subCategories = Model.ProductSubCategories
+        .Where(link => link.SubCategory != null)
+        .Select(link => link.SubCategory!)
+        .ToList();
+}
+
+<div class="bg0 p-t-80 p-b-100">
+    <div class="container">
+        <div class="flex-sb-m flex-w p-b-35">
+            <div>
+                <h1 class="ltext-103 cl5">@Model.ProductName</h1>
+                <p class="stext-102 cl6 p-t-5">Product details</p>
+            </div>
+
+            <div class="d-flex gap-2 m-tb-10">
+                <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-primary">
+                    <i class="fa fa-edit m-r-6"></i> Edit
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to products</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 p-b-30">
+                @if (images.Any())
+                {
+                    <div class="row">
+                        @foreach (var image in images)
+                        {
+                            <div class="col-sm-6 m-b-20">
+                                <div class="bor10" style="height: 280px; overflow: hidden;">
+                                    <img src="@Url.Content(image.ProductImagePath)"
+                                         alt="@Model.ProductName"
+                                         style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="bor10 d-flex align-items-center justify-content-center" style="height: 320px;">
+                        <div class="text-center text-muted">
+                            <i class="fa fa-image fa-2x m-b-10"></i>
+                            <p class="mb-0">No product images</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="col-lg-6 p-b-30">
+                <div class="bor10 p-all-30">
+                    <div class="d-flex justify-content-between align-items-start m-b-20">
+                        <h3 class="mtext-110 cl2 mb-0">@Model.ProductName</h3>
+                        @if (Model.ProductQuantity <= 0)
+                        {
+                            <span class="badge bg-danger">Out of stock</span>
+                        }
+                        else if (Model.ProductQuantity <= 5)
+                        {
+                            <span class="badge bg-warning text-dark">Low stock: @Model.ProductQuantity</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">In stock: @Model.ProductQuantity</span>
+                        }
+                    </div>
+
+                    <p class="mtext-106 cl2 m-b-25">@Model.ProductPrice.ToString("C")</p>
+
+                    <dl class="row stext-102 cl6 m-b-25">
+                        <dt class="col-sm-4">Brand</dt>
+                        <dd class="col-sm-8">@(Model.ProductBrand?.BrandName ?? "-")</dd>
+
+                        <dt class="col-sm-4">Model</dt>
+                        <dd class="col-sm-8">@(Model.ProductModel?.ModelName ?? "-")</dd>
+
+                        <dt class="col-sm-4">Subcategories</dt>
+                        <dd class="col-sm-8">
+                            @(subCategories.Any() ? string.Join(", ", subCategories.Select(item => item.SubCategoryName)) : "-")
+                        </dd>
+                    </dl>
+
+                    <h5 class="stext-110 cl2 m-b-10">Description</h5>
+                    <p class="stext-102 cl6" style="white-space: pre-line;">@(string.IsNullOrWhiteSpace(Model.ProductDescription) ? "No description provided." : Model.ProductDescription)</p>
+
+                    <div class="border-top pt-3 mt-4">
+                        <a asp-action="Delete" asp-route-id="@Model.ProductId" class="btn btn-outline-danger">
+                            <i class="fa fa-trash m-r-6"></i> Delete product
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

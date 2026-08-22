@@ -38,9 +38,16 @@ namespace EcommerceSystem.Controllers
             // Search
             if (!string.IsNullOrWhiteSpace(search))
             {
+                search = search.Trim();
+
                 query = query.Where(p =>
-                    p.ProductDescription != null &&
-                    p.ProductDescription.Contains(search));
+                    p.ProductName.Contains(search) ||
+                    (p.ProductDescription != null &&
+                     p.ProductDescription.Contains(search)) ||
+                    (p.ProductBrand != null &&
+                     p.ProductBrand.BrandName.Contains(search)) ||
+                    (p.ProductModel != null &&
+                     p.ProductModel.ModelName.Contains(search)));
             }
 
             // Category
@@ -48,6 +55,7 @@ namespace EcommerceSystem.Controllers
             {
                 query = query.Where(p =>
                     p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
                         psc.SubCategory.CategoryId == categoryId.Value));
             }
 
@@ -87,7 +95,9 @@ namespace EcommerceSystem.Controllers
                     p.ProductPrice <= maxPrice.Value);
             }
 
-            var products = await query.ToListAsync();
+            var products = await query
+                .OrderBy(p => p.ProductName)
+                .ToListAsync();
 
             // Data for filters
             ViewBag.Categories = await _context.Categories
@@ -158,7 +168,7 @@ namespace EcommerceSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await LoadProductDropdowns();
+                await LoadProductDropdowns(subCategoryId, imagePaths);
                 return View(product);
             }
 
@@ -183,6 +193,7 @@ namespace EcommerceSystem.Controllers
             {
                 var productSubCategory = new ProductSubCategory
                 {
+                    ProductSubCategoryId = Guid.NewGuid(),
                     ProductId = product.ProductId,
                     SubCategoryId = subCategoryId.Value
                 };
@@ -213,13 +224,14 @@ namespace EcommerceSystem.Controllers
             if (product == null)
                 return NotFound();
 
-            // Get current SubCategory
-            ViewBag.SelectedSubCategoryId =
-                product.ProductSubCategories
-                    .Select(psc => (Guid?)psc.SubCategoryId)
-                    .FirstOrDefault();
+            var selectedSubCategoryId = product.ProductSubCategories
+                .Select(psc => (Guid?)psc.SubCategoryId)
+                .FirstOrDefault();
 
-            await LoadProductDropdowns();
+            var imagePaths = string.Join(", ", product.ProductImages
+                .Select(image => image.ProductImagePath));
+
+            await LoadProductDropdowns(selectedSubCategoryId, imagePaths);
 
             return View(product);
         }
@@ -238,7 +250,7 @@ namespace EcommerceSystem.Controllers
 
             if (!ModelState.IsValid)
             {
-                await LoadProductDropdowns();
+                await LoadProductDropdowns(subCategoryId, imagePaths);
                 return View(product);
             }
 
@@ -253,6 +265,9 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             // Update product information
+            existingProduct.ProductName =
+                product.ProductName;
+
             existingProduct.ProductDescription =
                 product.ProductDescription;
 
@@ -293,6 +308,7 @@ namespace EcommerceSystem.Controllers
                 existingProduct.ProductSubCategories.Add(
                     new ProductSubCategory
                     {
+                        ProductSubCategoryId = Guid.NewGuid(),
                         ProductId = existingProduct.ProductId,
                         SubCategoryId = subCategoryId.Value
                     });
@@ -355,17 +371,25 @@ namespace EcommerceSystem.Controllers
         }
 
         // Load dropdown data
-        private async Task LoadProductDropdowns()
+        private async Task LoadProductDropdowns(
+            Guid? selectedSubCategoryId = null,
+            string? imagePaths = null)
         {
             ViewBag.Brands = await _context.ProductBrands
+                .OrderBy(brand => brand.BrandName)
                 .ToListAsync();
 
             ViewBag.Models = await _context.ProductModels
+                .OrderBy(model => model.ModelName)
                 .ToListAsync();
 
             ViewBag.SubCategories = await _context.SubCategories
                 .Where(sc => !sc.IsDeleted)
+                .OrderBy(subCategory => subCategory.SubCategoryName)
                 .ToListAsync();
+
+            ViewBag.SelectedSubCategoryId = selectedSubCategoryId;
+            ViewBag.ImagePaths = imagePaths;
         }
 
         // Split image paths

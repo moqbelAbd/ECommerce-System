@@ -60,9 +60,9 @@
             <div class="flex-w flex-c-m m-tb-10">
 
                 <form asp-controller="Customer"
-                      asp-action="Search"
-                      method="get"
-                      class="bor8 dis-flex p-l-15">
+      asp-action="Index"
+      method="get"
+      class="bor8 dis-flex p-l-15">
 
                     <button type="submit"
                             class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
@@ -170,9 +170,9 @@
                         ?? "~/images/product-01.jpg";
 
 
-                    var productName =
-                        product.ProductDescription
-                        ?? $"{product.ProductBrand?.BrandName} {product.ProductModel?.ModelName}".Trim();
+var productName =
+    product.ProductDescription
+    ?? $"{product.ProductBrand?.BrandName} {product.ProductModel?.ModelName}".Trim();
 
 
                     <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">

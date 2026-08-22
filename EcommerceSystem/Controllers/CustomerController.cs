@@ -1,15 +1,12 @@
 using EcommerceSystem.Data;
 using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace EcommerceSystem.Controllers
 {
-    [Authorize]
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,64 +16,175 @@ namespace EcommerceSystem.Controllers
             _context = context;
         }
 
-        // GET: Customer
+        // =========================================================
+        // PUBLIC SHOP
+        // Guest + Customer
+        // =========================================================
+
         public async Task<IActionResult> Index(
             Guid? categoryId,
-            Guid? subCategoryId)
+            Guid? subCategoryId,
+            string? searchTerm)
         {
-            var customer = _context.Customers.ToList();
-            return View();
-        }
+            var query = _context.Products
+                .Where(p => !p.IsDeleted)
 
-        public IActionResult OrderHistory()
-        {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                .Include(p => p.ProductBrand)
 
-            var customer = await _context.Customers
-                .Include(c => c.CustomerPaymentCards.Where(card => !card.IsDeleted))
-                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+                .Include(p => p.ProductModel)
 
-            // ÅÐÇ áã íßä ÇáÚãíá ãæÌæÏÇð¡ Þæãí ÈÅäÔÇÁ ßÇÆä ãÄÞÊ Ãæ ÊæÌíåå áÊßãáÉ ÇáÈÑæÝÇíá
-            if (customer == null)
+                .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
+                .AsQueryable();
+
+
+            // =====================================================
+            // Category Filter
+            // =====================================================
+
+            if (categoryId.HasValue)
             {
-                customer = new Customer { ApplicationUserId = userId, CustomerPaymentCards = new List<CustomerPaymentCard>() };
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
+                        psc.SubCategory.CategoryId == categoryId.Value));
             }
-            else
+
+
+            // =====================================================
+            // SubCategory Filter
+            // =====================================================
+
+            if (subCategoryId.HasValue)
             {
-                foreach (var card in customer.CustomerPaymentCards)
-                {
-                    try { card.CardNumber = _protector.Unprotect(card.CardNumber); }
-                    catch { card.CardNumber = "********"; }
-                }
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategoryId == subCategoryId.Value));
             }
 
-            return View(customer);
+
+            // =====================================================
+            // Search
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.Trim();
+
+                query = query.Where(p =>
+                    p.ProductName.Contains(searchTerm)
+
+                    ||
+
+                    (p.ProductDescription != null &&
+                     p.ProductDescription.Contains(searchTerm))
+
+                    ||
+
+                    (p.ProductBrand != null &&
+                     p.ProductBrand.BrandName.Contains(searchTerm))
+
+                    ||
+
+                    (p.ProductModel != null &&
+                     p.ProductModel.ModelName.Contains(searchTerm))
+
+                    ||
+
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
+                        psc.SubCategory.SubCategoryName.Contains(searchTerm))
+                );
+            }
+
+
+            // =====================================================
+            // Get Products
+            // =====================================================
+
+            var products = await query
+                .OrderBy(p => p.ProductName)
+                .ToListAsync();
+
+
+            // =====================================================
+            // Get Categories + SubCategories
+            // =====================================================
+
+            var categories = await _context.Categories
+                .Where(c => !c.IsDeleted)
+                .Include(c => c.SubCategories)
+                .ToListAsync();
+
+
+            // =====================================================
+            // ViewBag
+            // =====================================================
+
+            ViewBag.Categories = categories;
+
+            ViewBag.SelectedCategoryId = categoryId;
+
+            ViewBag.SelectedSubCategoryId = subCategoryId;
+
+            ViewBag.SearchTerm = searchTerm;
+
+
+            return View(products);
         }
 
-        public IActionResult OrderDetails(int id)
+
+        // =========================================================
+        // PUBLIC PRODUCT DETAILS
+        // Guest + Customer
+        // =========================================================
+
+        public async Task<IActionResult> Details(Guid? id)
         {
-            return View();
+            if (id == null)
+                return NotFound();
+
+
+            var product = await _context.Products
+                .Where(p => !p.IsDeleted)
+
+                .Include(p => p.ProductBrand)
+
+                .Include(p => p.ProductModel)
+
+                .Include(p => p.ProductImages)
+
+                .Include(p => p.ProductReviews)
+                    .ThenInclude(r => r.Customer)
+
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id.Value);
+
+
+            if (product == null)
+                return NotFound();
+
+
+            return View(product);
         }
 
-        // GET: Customer/CompleteProfile
-        [HttpGet]
-        public IActionResult CompleteProfile()
-        {
-            return View();
-        }
 
-        public IActionResult CompleteProfile() => View();
+        // =========================================================
+        // CUSTOMER ONLY
+        // =========================================================
 
-        // POST: Customer/CompleteProfile
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CompleteProfile(
-            string firstName,
-            string lastName,
-            string location)
+        [Authorize]
+        public async Task<IActionResult> OrderHistory()
         {
-            var userId = User.FindFirstValue(
-                ClaimTypes.NameIdentifier);
+            string? userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier);
+
 
             if (userId == null)
             {
@@ -85,18 +193,100 @@ namespace EcommerceSystem.Controllers
                     new { area = "Identity" });
             }
 
+
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c =>
+                    c.ApplicationUserId == userId);
+
+
+            if (customer == null)
+            {
+                return RedirectToAction("CompleteProfile");
+            }
+
+
+            return View(customer);
+        }
+
+
+        // =========================================================
+        // ORDER DETAILS
+        // =========================================================
+
+        [Authorize]
+        public IActionResult OrderDetails(int id)
+        {
+            return View();
+        }
+
+
+        // =========================================================
+        // COMPLETE PROFILE
+        // =========================================================
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CompleteProfile()
+        {
+            return View();
+        }
+
+
+        // =========================================================
+        // COMPLETE PROFILE POST
+        // =========================================================
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompleteProfile(
+            string firstName,
+            string lastName,
+            string location)
+        {
+            var userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            if (userId == null)
+            {
+                return RedirectToPage(
+                    "/Account/Login",
+                    new { area = "Identity" });
+            }
+
+
+            var existingCustomer = await _context.Customers
+                .FirstOrDefaultAsync(c =>
+                    c.ApplicationUserId == userId);
+
+
+            if (existingCustomer != null)
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Home");
+            }
+
+
             var customer = new Customer
             {
                 ApplicationUserId = userId,
+
                 FirstName = firstName,
+
                 LastName = lastName,
+
                 Location = location,
+
                 IsDeleted = false
             };
+
 
             _context.Customers.Add(customer);
 
             await _context.SaveChangesAsync();
+
 
             return RedirectToAction(
                 "Index",
