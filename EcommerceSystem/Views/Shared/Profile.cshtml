@@ -1,4 +1,6 @@
-﻿@{
+﻿@model EcommerceSystem.Models.Customer
+
+@{
     ViewData["Title"] = "User Profile - Rolexyal";
 }
 
@@ -12,88 +14,97 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3 p-b-30">
-                <div class="p-all-20 bg6 bor4">
-                    <h5 class="mtext-102 cl2 p-b-20 border-bottom">Account Menu</h5>
-                    <ul class="nav flex-column p-t-10">
-                        <li class="nav-item m-b-10">
-                            <a asp-controller="Home" asp-action="Profile" class="stext-102 cl1 hov-cl1 trans-04 d-block p-tb-8 p-lr-15 bg0 bor8" style="text-decoration: none; font-weight: 600;">
-                                <i class="fa fa-user-o m-r-10"></i> Profile Information
-                            </a>
-                        </li>
-                        @if (User.IsInRole("Customer"))
-                        {
-                            <li class="nav-item m-b-10">
-                                <a asp-controller="Customer" asp-action="OrderHistory" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15" style="text-decoration: none;">
-                                    <i class="fa fa-shopping-bag m-r-10"></i> My Orders
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-controller="Customer" asp-action="Wishlist" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15" style="text-decoration: none;">
-                                    <i class="fa fa-heart-o m-r-10"></i> Wishlist
-                                </a>
-                            </li>            
-                        }
-                    </ul>
-                </div>
+                <partial name="_AccountMenu" />
             </div>
-
+            <!-- نموذج البيانات -->
             <div class="col-md-9 p-b-30">
                 <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
                     <div class="d-flex align-items-center justify-content-between p-b-25 border-bottom m-b-30">
                         <div>
                             <h4 class="mtext-105 cl2">Profile Information</h4>
-                            <p class="stext-107 cl6">View and update your personal details for Rolexyal orders.</p>
+                            <p class="stext-107 cl6">View and manage your personal details and phone numbers.</p>
                         </div>
-                        <div class="size-108 rounded-circle d-flex align-items-center justify-content-center text-white fs-20" style="background-color: #717fe0; width: 50px; height: 50px;">
+                        <div class="size-108 rounded-circle d-flex align-items-center justify-content-center text-white fs-20" style="background-color: #c9aa6f; width: 50px; height: 50px;">
                             <i class="fa fa-user"></i>
                         </div>
                     </div>
 
-                    <form>
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                    }
+
+                    <form asp-action="UpdateProfile" method="post">
                         <div class="row">
+                            <!-- First Name -->
                             <div class="col-md-6 p-b-20">
-                                <label class="stext-102 cl2 p-b-5 font-weight-bold">Full Name</label>
+                                <label class="stext-102 cl2 p-b-5 font-weight-bold">First Name</label>
                                 <div class="bor8 bg0">
-                                    <input type="text" class="stext-111 cl2 size-111 p-lr-20" value="Zain Haubsh" />
+                                    <input type="text" name="firstName" class="stext-111 cl2 size-111 p-lr-20" value="@Model.FirstName" required />
                                 </div>
                             </div>
 
+                            <!-- Last Name -->
+                            <div class="col-md-6 p-b-20">
+                                <label class="stext-102 cl2 p-b-5 font-weight-bold">Last Name</label>
+                                <div class="bor8 bg0">
+                                    <input type="text" name="lastName" class="stext-111 cl2 size-111 p-lr-20" value="@Model.LastName" required />
+                                </div>
+                            </div>
+
+                            <!-- Email Address -->
                             <div class="col-md-6 p-b-20">
                                 <label class="stext-102 cl2 p-b-5 font-weight-bold">Email Address</label>
                                 <div class="bor8 bg6">
-                                    <input type="text" class="stext-111 cl6 size-111 p-lr-20" value="zain@rolexyal.com" disabled />
+                                    <input type="text" class="stext-111 cl6 size-111 p-lr-20" value="@ViewBag.Email" disabled />
                                 </div>
                             </div>
 
-                            <div class="col-md-6 p-b-20">
-                                <label class="stext-102 cl2 p-b-5 font-weight-bold">Phone Number</label>
-                                <div class="bor8 bg0">
-                                    <input type="text" class="stext-111 cl2 size-111 p-lr-20" value="+962 7xxxxxxxx" />
-                                </div>
-                            </div>
-
+                            <!-- Location / City -->
                             <div class="col-md-6 p-b-20">
                                 <label class="stext-102 cl2 p-b-5 font-weight-bold">City / Location</label>
                                 <div class="bor8 bg0">
-                                    <input type="text" class="stext-111 cl2 size-111 p-lr-20" value="Amman, Jordan" />
+                                    <input type="text" name="location" class="stext-111 cl2 size-111 p-lr-20" value="@Model.Location" placeholder="Amman, Jordan" />
                                 </div>
                             </div>
                         </div>
 
-                        <div class="p-all-20 bg6 bor4 m-t-10 m-b-30">
-                            <div class="d-flex align-items-center">
-                                <i class="fa fa-info-circle cl1 fs-20 m-r-15"></i>
-                                <p class="stext-107 cl6 mb-0">
-                                    Your data is secure with us and will only be used to process your luxury watch deliveries across Jordan.
-                                </p>
+                        <!-- قسم إدارة أرقام الهواتف المتعددة -->
+                        <div class="p-t-15 p-b-20 border-top m-t-10">
+                            <label class="stext-102 cl2 p-b-5 font-weight-bold">Phone Numbers</label>
+
+                            <!-- عرض الأرقام المسجلة مسبقاً -->
+                            <ul class="list-group m-b-15">
+                                @if (Model.CustomerPhoneNumbers != null && Model.CustomerPhoneNumbers.Any())
+                                {
+                                    @foreach (var phone in Model.CustomerPhoneNumbers)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center bg6 bor8 m-b-5 p-lr-20" style="padding: 10px 20px;">
+                                            <span><i class="fa fa-phone m-r-10" style="color: #c9aa6f;"></i> @phone.PhoneNumber</span>
+                                            <button type="submit" formaction="@Url.Action("DeletePhoneNumber", new { phoneId = phone.PhoneNumberId })" class="btn btn-sm text-danger" style="border: none; background: none;">
+                                                <i class="fa fa-trash fs-18"></i>
+                                            </button>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted stext-107">No phone numbers added yet.</p>
+                                }
+                            </ul>
+
+                            <!-- حقل لإضافة رقم هاتف جديد -->
+                            <div class="input-group bor8 bg0">
+                                <input type="text" name="newPhoneNumber" class="stext-111 cl2 size-111 p-lr-20 border-0 w-full" placeholder="Add new phone number (+962...)" />
                             </div>
                         </div>
 
-                        <div class="flex-l-m">
-                            <button type="button" class="flex-c-m stext-101 cl0 size-118 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer">
+                        <div class="flex-l-m m-t-20">
+                            <button type="submit" class="flex-c-m stext-101 cl0 size-118 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="background-color: #c9aa6f; color: #1a1d20; font-weight: 600;">
                                 Save Changes
                             </button>
                         </div>
+
                     </form>
                 </div>
             </div>

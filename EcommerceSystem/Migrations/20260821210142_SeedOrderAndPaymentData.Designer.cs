@@ -4,6 +4,7 @@ using EcommerceSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260821210142_SeedOrderAndPaymentData")]
+    partial class SeedOrderAndPaymentData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,15 +195,10 @@ namespace EcommerceSystem.Migrations
                     b.Property<DateOnly>("CardExpire")
                         .HasColumnType("date");
 
-                    b.Property<string>("CardHolderName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("CardNumber")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
@@ -909,7 +907,7 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.CustomerPaymentCard", b =>
                 {
                     b.HasOne("EcommerceSystem.Models.Customer", "Customer")
-                        .WithMany("CustomerPaymentCards")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -920,7 +918,7 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.CustomerPhoneNumber", b =>
                 {
                     b.HasOne("EcommerceSystem.Models.Customer", "Customer")
-                        .WithMany("CustomerPhoneNumbers")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1038,7 +1036,7 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.ProductSubCategory", b =>
                 {
                     b.HasOne("EcommerceSystem.Models.Product", "Product")
-                        .WithMany("ProductSubCategories")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1169,10 +1167,6 @@ namespace EcommerceSystem.Migrations
 
             modelBuilder.Entity("EcommerceSystem.Models.Customer", b =>
                 {
-                    b.Navigation("CustomerPaymentCards");
-
-                    b.Navigation("CustomerPhoneNumbers");
-
                     b.Navigation("Orders");
                 });
 
@@ -1184,8 +1178,6 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>
                 {
                     b.Navigation("ProductImages");
-
-                    b.Navigation("ProductSubCategories");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.SubCategory", b =>

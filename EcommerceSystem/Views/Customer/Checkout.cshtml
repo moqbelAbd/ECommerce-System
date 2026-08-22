@@ -1,14 +1,14 @@
-﻿@{
+﻿@model EcommerceSystem.Models.Customer
+
+@{
     ViewData["Title"] = "Checkout";
 }
 
-
-<!-- Checkout Section -->
-<form class="bg0 m-t-60 p-b-140" method="post">
+<form class="bg0 m-t-60 p-b-140" method="post" asp-controller="Customer" asp-action="PlaceOrder">
     <div class="container">
         <div class="row">
 
-            <!-- تفاصيل الشحن وعناوين التوصيل -->
+            <!-- عناوين التوصيل -->
             <div class="col-lg-7 m-b-50">
                 <div class="bor10 p-lr-40 p-t-35 p-b-40" style="border-radius: 12px; background: #fff;">
                     <h4 class="mtext-109 cl2 p-b-25" style="font-weight: 600;">
@@ -19,13 +19,13 @@
                         <div class="col-md-6 m-b-20">
                             <label class="stext-102 cl6 p-b-5 block" style="font-weight: 500;">First Name</label>
                             <div class="bor8 bg0">
-                                <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="firstName" placeholder="Zain" required />
+                                <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="firstName" value="@Model.FirstName" required />
                             </div>
                         </div>
                         <div class="col-md-6 m-b-20">
                             <label class="stext-102 cl6 p-b-5 block" style="font-weight: 500;">Last Name</label>
                             <div class="bor8 bg0">
-                                <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="lastName" placeholder="Haubsh" required />
+                                <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="lastName" value="@Model.LastName" required />
                             </div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <!--  ملخص الطلب وطرق الدفع -->
+            <!-- ملخص الطلب وطرق الدفع -->
             <div class="col-lg-5 m-b-50">
                 <div class="bor10 p-lr-40 p-t-35 p-b-40" style="border-radius: 12px; background: #fff;">
                     <h4 class="mtext-109 cl2 p-b-25" style="font-weight: 600;">
@@ -100,38 +100,60 @@
                         </div>
                     </div>
 
-                    <!-- قسم تفاصيل الفيزا والبطاقات المحفوظة) -->
+                    <!-- البطاقات المحفوظة -->
                     <div id="visaDetailsSection" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #e5e5e5; margin-bottom: 25px;">
 
                         <h6 class="stext-110 cl2 p-b-12" style="font-weight: 600;">Saved Cards</h6>
 
-                        <div class="form-check m-b-10" style="padding-left: 25px;">
-                            <input class="form-check-input" type="radio" name="savedCard" id="card1" checked>
-                            <label class="form-check-label stext-111 cl6" for="card1" style="cursor: pointer;">
-                                💳 Visa ending in <b>4242</b> (Exp: 08/28)
-                            </label>
-                        </div>
+                        @if (Model.CustomerPaymentCards != null && Model.CustomerPaymentCards.Any())
+                        {
+                            @foreach (var card in Model.CustomerPaymentCards)
+                            {
+                                <div class="form-check m-b-10" style="padding-left: 25px;">
+                                    <input class="form-check-input" type="radio" name="selectedCardId" id="card_@card.PaymentCardId" value="@card.PaymentCardId">
+                                    <label class="form-check-label stext-111 cl6" for="card_@card.PaymentCardId" style="cursor: pointer;">
+                                        💳 @card.CardHolderName - ending in <b>@(card.CardNumber.Length > 4 ? card.CardNumber.Substring(card.CardNumber.Length - 4) : card.CardNumber)</b>
+                                    </label>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="stext-111 cl6 m-b-15">No saved cards found.</p>
+                        }
 
                         <hr style="border-top: 1px solid #e0e0e0; margin: 15px 0;">
 
-                        <!-- خيار إضافة بطاقة جديدة -->
+                        <!--  إضافة بطاقة جديدة  -->
                         <h6 class="stext-110 cl2 p-b-12" style="font-weight: 600;">Or Add a New Card</h6>
 
                         <div class="m-b-12">
-                            <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="text" placeholder="Card Number (4242 •••• •••• ••••)">
+                            <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="text" name="newCardHolderName" placeholder="Name on Card">
+                        </div>
+
+                        <div class="m-b-12">
+                            <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="text" name="newCardNumber" placeholder="Card Number (16 digits)" maxlength="16">
                         </div>
 
                         <div class="row">
                             <div class="col-7 m-b-12">
-                                <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="text" placeholder="MM / YY">
+                                <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="date" name="newCardExpire">
                             </div>
                             <div class="col-5 m-b-12">
-                                <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="text" placeholder="CVV">
+                                <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="password" name="dummyCVV" placeholder="CVV" maxlength="4">
                             </div>
                         </div>
 
+                        <div class="form-check m-t-10" style="padding-left: 25px;">
+                            <input class="form-check-input" type="checkbox" name="saveNewCard" id="saveNewCardCheck" value="true">
+                            <label class="form-check-label stext-111 cl6" for="saveNewCardCheck" style="cursor: pointer; font-size: 13px;">
+                                Save this card for future purchases
+                            </label>
+                        </div>
+
                     </div>
-                    <button type="submit" class="flex-c-m stext-101 cl0 size-116 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="border-radius: 8px; font-weight: 600;">
+
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-116 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="background-color: #c9aa6f; color: #1a1d20; border-radius: 8px; font-weight: 700;">
                         Place Order
                     </button>
 

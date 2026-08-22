@@ -4,6 +4,7 @@ using EcommerceSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260821185950_added-BrandModels")]
+    partial class addedBrandModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,15 +195,10 @@ namespace EcommerceSystem.Migrations
                     b.Property<DateOnly>("CardExpire")
                         .HasColumnType("date");
 
-                    b.Property<string>("CardHolderName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("CardNumber")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
@@ -318,33 +316,6 @@ namespace EcommerceSystem.Migrations
                     b.HasKey("OrderStatusId");
 
                     b.ToTable("OrderStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderStatusId = 1,
-                            OrderStatusName = "Pending"
-                        },
-                        new
-                        {
-                            OrderStatusId = 2,
-                            OrderStatusName = "Processing"
-                        },
-                        new
-                        {
-                            OrderStatusId = 3,
-                            OrderStatusName = "Shipped"
-                        },
-                        new
-                        {
-                            OrderStatusId = 4,
-                            OrderStatusName = "Delivered"
-                        },
-                        new
-                        {
-                            OrderStatusId = 5,
-                            OrderStatusName = "Cancelled"
-                        });
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.PaymentStatus", b =>
@@ -362,28 +333,6 @@ namespace EcommerceSystem.Migrations
                     b.HasKey("PaymentStatusId");
 
                     b.ToTable("PaymentStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            PaymentStatusId = 1,
-                            PaymentStatusName = "Pending"
-                        },
-                        new
-                        {
-                            PaymentStatusId = 2,
-                            PaymentStatusName = "Completed"
-                        },
-                        new
-                        {
-                            PaymentStatusId = 3,
-                            PaymentStatusName = "Failed"
-                        },
-                        new
-                        {
-                            PaymentStatusId = 4,
-                            PaymentStatusName = "Refunded"
-                        });
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.PaymentType", b =>
@@ -401,23 +350,6 @@ namespace EcommerceSystem.Migrations
                     b.HasKey("PaymentTypeId");
 
                     b.ToTable("PaymentTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            PaymentTypeId = 1,
-                            PaymentTypeName = "Credit Card"
-                        },
-                        new
-                        {
-                            PaymentTypeId = 2,
-                            PaymentTypeName = "PayPal"
-                        },
-                        new
-                        {
-                            PaymentTypeId = 3,
-                            PaymentTypeName = "Cash on Delivery (COD)"
-                        });
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>
@@ -909,7 +841,7 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.CustomerPaymentCard", b =>
                 {
                     b.HasOne("EcommerceSystem.Models.Customer", "Customer")
-                        .WithMany("CustomerPaymentCards")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -920,7 +852,7 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.CustomerPhoneNumber", b =>
                 {
                     b.HasOne("EcommerceSystem.Models.Customer", "Customer")
-                        .WithMany("CustomerPhoneNumbers")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1038,7 +970,7 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.ProductSubCategory", b =>
                 {
                     b.HasOne("EcommerceSystem.Models.Product", "Product")
-                        .WithMany("ProductSubCategories")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1169,10 +1101,6 @@ namespace EcommerceSystem.Migrations
 
             modelBuilder.Entity("EcommerceSystem.Models.Customer", b =>
                 {
-                    b.Navigation("CustomerPaymentCards");
-
-                    b.Navigation("CustomerPhoneNumbers");
-
                     b.Navigation("Orders");
                 });
 
@@ -1184,8 +1112,6 @@ namespace EcommerceSystem.Migrations
             modelBuilder.Entity("EcommerceSystem.Models.Product", b =>
                 {
                     b.Navigation("ProductImages");
-
-                    b.Navigation("ProductSubCategories");
                 });
 
             modelBuilder.Entity("EcommerceSystem.Models.SubCategory", b =>

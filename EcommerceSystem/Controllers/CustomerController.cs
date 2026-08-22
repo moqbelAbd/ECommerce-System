@@ -1,11 +1,15 @@
 using EcommerceSystem.Data;
 using EcommerceSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace EcommerceSystem.Controllers
 {
+    [Authorize]
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,27 +24,33 @@ namespace EcommerceSystem.Controllers
             Guid? categoryId,
             Guid? subCategoryId)
         {
+            var customer = _context.Customers.ToList();
             return View();
         }
 
         public IActionResult OrderHistory()
         {
-            return View();
-        }
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        public IActionResult OrderConfirmation()
-        {
-            return View();
-        }
+            var customer = await _context.Customers
+                .Include(c => c.CustomerPaymentCards.Where(card => !card.IsDeleted))
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
-        public IActionResult Wishlist()
-        {
-            return View();
-        }
+            // ÅĞÇ áã íßä ÇáÚãíá ãæÌæÏÇğ¡ Şæãí ÈÅäÔÇÁ ßÇÆä ãÄŞÊ Ãæ ÊæÌíåå áÊßãáÉ ÇáÈÑæİÇíá
+            if (customer == null)
+            {
+                customer = new Customer { ApplicationUserId = userId, CustomerPaymentCards = new List<CustomerPaymentCard>() };
+            }
+            else
+            {
+                foreach (var card in customer.CustomerPaymentCards)
+                {
+                    try { card.CardNumber = _protector.Unprotect(card.CardNumber); }
+                    catch { card.CardNumber = "********"; }
+                }
+            }
 
-        public IActionResult Checkout()
-        {
-            return View();
+            return View(customer);
         }
 
         public IActionResult OrderDetails(int id)
@@ -54,6 +64,8 @@ namespace EcommerceSystem.Controllers
         {
             return View();
         }
+
+        public IActionResult CompleteProfile() => View();
 
         // POST: Customer/CompleteProfile
         [HttpPost]

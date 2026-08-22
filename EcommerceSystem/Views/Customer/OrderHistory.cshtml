@@ -13,29 +13,9 @@
         <div class="row">
 
             <div class="col-md-3 p-b-30">
-                <div class="p-all-20 bg6 bor4">
-                    <h5 class="mtext-102 cl2 p-b-20 border-bottom">Account Menu</h5>
-                    <ul class="nav flex-column p-t-10">
-                        <li class="nav-item m-b-10">
-                            <a asp-controller="Home" asp-action="Profile" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15" style="text-decoration: none;">
-                                <i class="fa fa-user-o m-r-10"></i> Profile Information
-                            </a>
-                        </li>
-                        <li class="nav-item m-b-10">
-                            <a asp-controller="Customer" asp-action="OrderHistory" class="stext-102 cl1 hov-cl1 trans-04 d-block p-tb-8 p-lr-15 bg0 bor8" style="text-decoration: none; font-weight: 600;">
-                                <i class="fa fa-shopping-bag m-r-10"></i> My Orders
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-controller="Customer" asp-action="Wishlist" class="stext-102 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-15" style="text-decoration: none;">
-                                <i class="fa fa-heart-o m-r-10"></i> Wishlist
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <partial name="_AccountMenu" />
             </div>
 
-            <!-- محتوى سجل الطلبات -->
             <div class="col-md-9 p-b-30">
                 <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
                     <div class="p-b-25 border-bottom m-b-30">
