@@ -62,19 +62,19 @@
                     Title = category.CategoryName,
                     Subtitle = $"Subcategories: {category.SubCategories?.Count ?? 0}",
                     DetailsUrl = Url.Action("Details", "Category", new { id = category.CategoryId }),
-                    ButtonText = "Quick View",
+                    ButtonText = "َView",
                     ShowAdminActions = User.IsInRole("Admin"),
                     EditUrl = Url.Action("Edit", "Category", new { id = category.CategoryId }),
                     DeleteUrl = Url.Action("Delete", "Category", new { id = category.CategoryId })
                 };
 
-                <partial name="_CardPartial" model="cardData" />
+                <partial name="_CategoryCardPartial" model="cardData" />
             }
         </div>
     }
 </div>
 
-<!-- Styling for Product-Card Hover Effect -->
+<!-- Styling for Card Hover Effect -->
 <style>
     .block2-pic:hover .block2-btn {
         opacity: 1 !important;

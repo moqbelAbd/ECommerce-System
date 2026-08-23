@@ -8,7 +8,6 @@
         <div class="slick1">
             <div class="item-slick1" style="background-image: url('@Url.Content("~/images/slide-01.jpg")');">
                 <div class="container h-full">
-                    <!-- إضافة p-t-150 لتنزيل النصوص للأسفل قليلاً لكي لا تغطيها الأسهم -->
                     <div class="flex-col-l-m h-full p-t-150 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
                             <span class="ltext-101 cl2 respon2">
@@ -169,16 +168,16 @@
             </div>
         </div>
 
-        <!-- Product Grid (Using _CardPartial) -->
+        <!-- Product Grid (Using _ProductCardPartial) -->
         <div class="row isotope-grid">
             @{
-                // قائمة مؤقتة للمنتجات (يمكن استبدالها بـ Model قادم من الكنترولر لاحقاً)
-                var sampleProducts = new[]
-                {
-                    new { ImageUrl = Url.Content("~/images/Men/Watch10/timberland-watch.png"), Title = "Timberland Classic Men Watch", Subtitle = "$145.00", DetailsUrl = "#" },
-                    new { ImageUrl = Url.Content("~/images/Men/GiftBox1/bigotti-giftset.png"), Title = "Bigotti Milano Men Gift Set", Subtitle = "$189.50", DetailsUrl = "#" },
-                    new { ImageUrl = Url.Content("~/images/Women/Watch5/watch5-daniel-klein.png"), Title = "Daniel Klein Elegant Women Watch", Subtitle = "$95.00", DetailsUrl = "#" }
-                };
+    var sampleProducts = new[]
+    {
+        new { Id = 1, ImageUrl = Url.Content("~/images/Men/Watch10/timberland-watch.png"), Title = "Timberland Classic Men Watch", Subtitle = "$145.00" },
+        new { Id = 2, ImageUrl = Url.Content("~/images/Men/GiftBox1/bigotti-giftset.png"), Title = "Bigotti Milano Men Gift Set", Subtitle = "$189.50" },
+        new { Id = 3, ImageUrl = Url.Content("~/images/Women/Watch5/watch5-daniel-klein.png"), Title = "Daniel Klein Elegant Women Watch", Subtitle = "$95.00" }
+    };
+}
             }
 
             @foreach (var prod in sampleProducts)
@@ -188,14 +187,14 @@
                     ImageUrl = prod.ImageUrl,
                     Title = prod.Title,
                     Subtitle = prod.Subtitle,
-                    DetailsUrl = prod.DetailsUrl,
+                    DetailsUrl = Url.Action("Details", "Product", new { id = prod.Id }),
                     ButtonText = "Quick View",
                     ShowAdminActions = User.IsInRole("Admin"),
-                    EditUrl = "#",
-                    DeleteUrl = "#"
+                    EditUrl = Url.Action("Edit", "Product", new { id = prod.Id }),
+                    DeleteUrl = Url.Action("Delete", "Product", new { id = prod.Id })
                 };
 
-                <partial name="_CardPartial" model="cardData" />
+                <partial name="_ProductCardPartial" model="cardData" />
             }
         </div>
 
@@ -207,7 +206,7 @@
     </div>
 </section>
 
-<!-- Testimonials Section (Converted to Slick Slider) -->
+<!-- Testimonials Section -->
 <section class="sec-testimonials bg6 p-t-80 p-b-80">
     <div class="container">
         <div class="p-b-42">
