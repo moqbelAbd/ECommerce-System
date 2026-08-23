@@ -278,10 +278,11 @@
 
                         <!-- Categories: Click text to go to page, click arrow to toggle subcategories -->
                         <!-- Categories with Independent Link, Golden Arrow, and Subcategories -->
+                        <!-- Categories with Independent Link, Golden Arrow, and Subcategories -->
                         <li class="p-b-13">
                             <div class="d-flex justify-content-between align-items-center w-full">
-                                <!-- الكلمة تنقلك لصفحة التصنيفات مباشرة -->
-                                <a asp-controller="Home" asp-action="Product" class="stext-102 trans-04 font-weight-bold" style="flex-grow: 1;">Categories</a>
+                                <!-- الكلمة تنقلك لصفحة التصنيفات الرئيسية Category/Index مباشرة -->
+                                <a asp-controller="Category" asp-action="Index" class="stext-102 trans-04 font-weight-bold" style="flex-grow: 1;">Categories</a>
 
                                 <!-- سهم القائمة المنسدلة الرئيسي باللون الذهبي -->
                                 <span data-toggle="collapse" data-target="#mainCategoriesCollapse" aria-expanded="false" style="cursor: pointer; padding: 5px 10px; display: inline-block;">
@@ -294,7 +295,7 @@
 
                                 <!-- التصنيف الأول: Men Watches -->
                                 <div class="p-b-8 d-flex justify-content-between align-items-center">
-                                    <a asp-controller="Home" asp-action="Product" asp-route-category="Men" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Men Watches</a>
+                                    <a asp-controller="Home" asp-action="Shop" asp-route-category="Men" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Men Watches</a>
                                     <span data-toggle="collapse" data-target="#subMen" aria-expanded="false" style="cursor: pointer; padding: 2px 8px;">
                                         <i class="fa fa-angle-down" style="font-size: 13px; color: #c9aa6f;"></i>
                                     </span>
@@ -306,7 +307,7 @@
 
                                 <!-- التصنيف الثاني: Women Watches -->
                                 <div class="p-b-8 d-flex justify-content-between align-items-center">
-                                    <a asp-controller="Home" asp-action="Product" asp-route-category="Women" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Women Watches</a>
+                                    <a asp-controller="Home" asp-action="Shop" asp-route-category="Women" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Women Watches</a>
                                     <span data-toggle="collapse" data-target="#subWomen" aria-expanded="false" style="cursor: pointer; padding: 2px 8px;">
                                         <i class="fa fa-angle-down" style="font-size: 13px; color: #c9aa6f;"></i>
                                     </span>
@@ -318,7 +319,7 @@
 
                                 <!-- التصنيف الثالث: Accessories -->
                                 <div class="p-b-8 d-flex justify-content-between align-items-center">
-                                    <a asp-controller="Home" asp-action="Product" asp-route-category="Accessories" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Accessories</a>
+                                    <a asp-controller="Home" asp-action="Shop" asp-route-category="Accessories" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Accessories</a>
                                     <span data-toggle="collapse" data-target="#subAcc" aria-expanded="false" style="cursor: pointer; padding: 2px 8px;">
                                         <i class="fa fa-angle-down" style="font-size: 13px; color: #c9aa6f;"></i>
                                     </span>

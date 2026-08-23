@@ -4,115 +4,127 @@
     ViewData["Title"] = "Category Details";
 }
 
+<!-- Title Banner -->
+<section class="bg-img1 txt-center p-lr-15 p-tb-75" style="background-image: url('/images/bg-01.jpg');">
+    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
+        CATEGORY OVERVIEW
+    </h2>
+</section>
+
 <div class="container py-5">
+    <div class="row g-5 align-items-start">
 
-    <div class="row">
-
+        <!-- Category Image Column -->
         <div class="col-md-5">
-
-            <img src="@Model.CategoryImagePath"
-                 alt="@Model.CategoryName"
-                 class="img-fluid rounded shadow"
-                 style="width:100%; max-height:400px; object-fit:cover;">
-
+            <div class="card shadow-sm border-0" style="border-radius: 16px; overflow: hidden; background: #fff;">
+                <div style="height: 350px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                    <img src="@Model.CategoryImagePath"
+                         alt="@Model.CategoryName"
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
         </div>
 
+        <!-- Category Info & Subcategories Column -->
         <div class="col-md-7">
 
-            <h2 class="fw-bold mb-3">
-                @Model.CategoryName
-            </h2>
+            <div class="bg-white p-4 p-md-5 shadow-sm border-0" style="border-radius: 16px;">
 
-            <p class="text-muted">
-                Category ID:
-                @Model.CategoryId
-            </p>
+                <h2 class="fw-bold mb-2" style="color: #111; font-size: 32px;">
+                    @Model.CategoryName
+                </h2>
 
-            <hr />
+                <p class="text-muted mb-4" style="font-size: 13px;">
+                    <i class="fa fa-fingerprint m-r-5"></i> Category ID: <span class="text-secondary">@Model.CategoryId</span>
+                </p>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
+                <hr class="my-4 text-muted" />
 
-                <h4>
-                    Sub Categories
-                </h4>
+                <!-- Subcategories Header & Add Button (Admin Only) -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0" style="font-size: 20px; color: #222;">
+                        Sub Categories <span class="badge bg-dark ms-2" style="font-size: 12px;">@(Model.SubCategories?.Where(x => !x.IsDeleted).Count() ?? 0)</span>
+                    </h4>
 
-                <a asp-controller="SubCategory"
-                   asp-action="Create"
-                   asp-route-categoryId="@Model.CategoryId"
-                   class="btn btn-dark btn-sm">
-                    <i class="fa fa-plus"></i>
-                    Add Sub Category
-                </a>
-
-            </div>
-
-            @if (Model.SubCategories == null ||
-                 !Model.SubCategories.Any())
-            {
-                <div class="alert alert-info">
-                    No sub categories found.
-                </div>
-            }
-            else
-            {
-                <div class="list-group">
-
-                    @foreach (var subCategory in Model.SubCategories
-                        .Where(x => !x.IsDeleted))
+                    @if (User.IsInRole("Admin"))
                     {
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <a asp-controller="SubCategory"
+                           asp-action="Create"
+                           asp-route-categoryId="@Model.CategoryId"
+                           class="btn btn-dark btn-sm px-3 py-2" style="border-radius: 20px;">
+                            <i class="fa fa-plus m-r-5 text-warning"></i> Add Sub Category
+                        </a>
+                    }
+                </div>
 
-                            <span>
-                                @subCategory.SubCategoryName
-                            </span>
+                <!-- Subcategories List -->
+                @if (Model.SubCategories == null || !Model.SubCategories.Where(x => !x.IsDeleted).Any())
+                {
+                    <div class="alert alert-light border text-center py-4 text-muted rounded-3">
+                        <i class="fa fa-folder-open-o fs-3 mb-2 d-block text-secondary"></i>
+                        No sub categories found for this category.
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                        @foreach (var subCategory in Model.SubCategories.Where(x => !x.IsDeleted))
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center p-3 border-light bg-light-subtle">
+                                <span class="fw-medium text-dark" style="font-size: 15px;">
+                                    <i class="fa fa-angle-right m-r-8 text-warning"></i> @subCategory.SubCategoryName
+                                </span>
 
-                            <div>
+                                <div class="d-flex gap-2">
+                                    <a asp-controller="SubCategory"
+                                       asp-action="Details"
+                                       asp-route-id="@subCategory.SubCategoryId"
+                                       class="btn btn-sm btn-outline-dark px-3" style="border-radius: 20px;">
+                                        Details
+                                    </a>
 
-                                <a asp-controller="SubCategory"
-                                   asp-action="Details"
-                                   asp-route-id="@subCategory.SubCategoryId"
-                                   class="btn btn-sm btn-outline-dark">
-                                    Details
-                                </a>
-
-                                <a asp-controller="SubCategory"
-                                   asp-action="Edit"
-                                   asp-route-id="@subCategory.SubCategoryId"
-                                   class="btn btn-sm btn-outline-warning">
-                                    Edit
-                                </a>
-
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-controller="SubCategory"
+                                           asp-action="Edit"
+                                           asp-route-id="@subCategory.SubCategoryId"
+                                           class="btn btn-sm btn-outline-warning px-3" style="border-radius: 20px;">
+                                            Edit
+                                        </a>
+                                    }
+                                </div>
                             </div>
+                        }
+                    </div>
+                }
 
+                <!-- Action Buttons Bottom -->
+                <div class="mt-5 pt-3 border-top d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                        <i class="fa fa-arrow-left m-r-5"></i> Back to List
+                    </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit"
+                               asp-route-id="@Model.CategoryId"
+                               class="btn btn-warning px-4 py-2 text-dark fw-medium" style="border-radius: 20px;">
+                                <i class="fa fa-pencil m-r-5"></i> Edit Category
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@Model.CategoryId"
+                               class="btn btn-danger px-4 py-2" style="border-radius: 20px;">
+                                <i class="fa fa-trash m-r-5"></i> Delete
+                            </a>
                         </div>
                     }
-
                 </div>
-            }
-
-            <div class="mt-4">
-
-                <a asp-action="Edit"
-                   asp-route-id="@Model.CategoryId"
-                   class="btn btn-warning">
-                    Edit Category
-                </a>
-
-                <a asp-action="Delete"
-                   asp-route-id="@Model.CategoryId"
-                   class="btn btn-danger">
-                    Delete
-                </a>
-
-                <a asp-action="Index"
-                   class="btn btn-secondary">
-                    Back
-                </a>
 
             </div>
 
         </div>
 
     </div>
-
 </div>

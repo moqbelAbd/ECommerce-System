@@ -292,5 +292,46 @@ namespace EcommerceSystem.Controllers
                 "Index",
                 "Home");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Cart()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (customer == null)
+            {
+                return RedirectToAction("CompleteProfile");
+            }
+
+            return View();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Checkout()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var customer = await _context.Customers
+                .Include(c => c.CustomerPaymentCards)
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (customer == null)
+            {
+                return RedirectToAction("CompleteProfile");
+            }
+
+            return View(customer);
+        }
     }
 }
