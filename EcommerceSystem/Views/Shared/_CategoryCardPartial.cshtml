@@ -1,6 +1,11 @@
 ﻿@model dynamic
 
-<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
+@{
+    string extraClasses = "";
+    try { extraClasses = (string)Model.ExtraClasses; } catch { }
+}
+
+<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item @extraClasses">
     <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
 
         <!-- Image & Hover Button -->
