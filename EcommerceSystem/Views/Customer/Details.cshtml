@@ -18,84 +18,47 @@
     var subCategory = Model.ProductSubCategories
         ?.FirstOrDefault()
         ?.SubCategory;
+
+        
+    var averageRating = ViewBag.AverageRating != null ? (double)ViewBag.AverageRating : 0;
+    var totalReviews = ViewBag.TotalReviews != null ? (int)ViewBag.TotalReviews : 0;
+    var filteredReviews = ViewBag.FilteredReviews as List<EcommerceSystem.Models.ProductReview> ?? new List<EcommerceSystem.Models.ProductReview>();
 }
 
 <!-- Product Detail -->
 <section class="sec-product-detail bg0 p-t-65 p-b-60">
 
     <div class="container">
-
-        <div class="row">
-
-            <!-- ========================================= -->
-            <!-- Product Images -->
-            <!-- ========================================= -->
-
+ <div class="row">
             <div class="col-md-6 col-lg-7 p-b-30">
-
                 <div class="p-l-25 p-r-30 p-lr-0-lg">
+                    <div class="wrap-slick3 flex-sb w-full">
+                        <div class="wrap-slick3-dots"></div>
+                        <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-                    <div class="wrap-slick3 flex-sb flex-w">
-
-                        <!-- Thumbnails -->
-
-                        <div class="wrap-slick3-dots">
-                            <ul class="slick3-dots">
-
-                                @foreach (var image in images)
-                                {
-                                    <li>
-                                        <img src="@image.ProductImagePath"
-                                             alt="@Model.ProductName" />
-                                    </li>
-                                }
-
-                            </ul>
-                        </div>
-
-
-                        <!-- Main Images -->
-
-                        <div class="slick3">
-
-                            @if (images.Any())
+                        <div class="slick3 gallery-lb">
+                            @if (Model.ProductImages != null && Model.ProductImages.Any())
                             {
-                                @foreach (var image in images)
+                                foreach (var img in Model.ProductImages)
                                 {
-                                    <div class="item-slick3"
-                                         data-thumb="@image.ProductImagePath">
-
-                                        <div class="wrap-pic-w pos-relative">
-
-                                            <img src="@image.ProductImagePath"
-                                                 alt="@Model.ProductName" />
-
+                                    <div class="item-slick3" data-thumb="@Url.Content(img.ProductImagePath)">
+                                        <div class="wrap-pic-w pos-relative" style="height: 450px; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 12px; border: 1px solid #eee;">
+                                            <img src="@Url.Content(img.ProductImagePath)" alt="@Model.ProductName" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                         </div>
-
                                     </div>
                                 }
                             }
                             else
                             {
-                                <div class="item-slick3"
-                                     data-thumb="~/images/product-01.jpg">
-
-                                    <div class="wrap-pic-w pos-relative">
-
-                                        <img src="~/images/product-01.jpg"
-                                             alt="@Model.ProductName" />
-
+                                <div class="item-slick3" data-thumb="~/images/product-01.jpg">
+                                    <div class="wrap-pic-w pos-relative" style="height: 450px; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 12px; border: 1px solid #eee;">
+                                        <img src="~/images/product-01.jpg" alt="Default" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                     </div>
-
                                 </div>
                             }
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
 
 
@@ -115,6 +78,25 @@
 
                     </h4>
 
+                        <!-- Average Rating Display -->
+                    <div class="flex-w flex-m p-t-15 p-b-23">
+                        <div class="fs-18 rej-ratings m-r-15" style="color: #ffc107;">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= Math.Round(averageRating))
+                                {
+                                    <i class="fa fa-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-star-o"></i>
+                                }
+                            }
+                        </div>
+                        <span class="stext-102 cl3">
+                            <strong>@averageRating.ToString("0.0")</strong> / 5.0 (@totalReviews Reviews)
+                        </span>
+                    </div>
 
                     <!-- Price -->
 
@@ -144,10 +126,6 @@
 
                                 Brand:
 
-                            </span>
-
-                            <span class="stext-102 cl6">
-
                                 @brandName
 
                             </span>
@@ -160,10 +138,6 @@
                             <span class="stext-102 cl3 size-111">
 
                                 Model:
-
-                            </span>
-
-                            <span class="stext-102 cl6">
 
                                 @modelName
 
@@ -180,10 +154,6 @@
 
                                     Category:
 
-                                </span>
-
-                                <span class="stext-102 cl6">
-
                                     @subCategory.SubCategoryName
 
                                 </span>
@@ -196,16 +166,13 @@
 
                         <div class="flex-w flex-m p-b-10">
 
-                            <span class="stext-102 cl3 size-111">
-
-                                Availability:
-
-                            </span>
+                           
 
                             @if (Model.ProductQuantity > 0)
                             {
-                                <span class="stext-102 cl6">
+                        <span class="stext-102 cl3 size-111">
 
+                                Availability:
                                     In Stock
 
                                     (@Model.ProductQuantity available)
@@ -214,8 +181,9 @@
                             }
                             else
                             {
-                                <span class="stext-102 cl11">
+                            <span class="stext-102 cl3 size-111">
 
+                                Availability:
                                     Out of Stock
 
                                 </span>

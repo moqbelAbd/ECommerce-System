@@ -2,7 +2,6 @@
     ViewData["Title"] = "Shopping Cart";
 }
 
-<!-- breadcrumb مع مسافة علوية لضمان ظهوره وعدم اختفائه تحت الهيدر -->
 <div class="container p-t-100 p-b-20">
     <div class="bread-crumb flex-w p-l-25 p-r-15 p-lr-0-lg">
         <a asp-controller="Home" asp-action="Index" class="stext-109 cl8 hov-cl1 trans-04">
@@ -20,7 +19,8 @@
 <form class="bg0 p-t-25 p-b-85" method="post">
     <div class="container">
         <div class="row">
-            <!-- قائمة المنتجات -->
+
+            <!-- Products list -->
             <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
                 <div class="m-l-25 m-r--38 m-lr-0-xl">
                     <div class="wrap-table-shopping-cart">
@@ -33,7 +33,6 @@
                                 <th class="column-5">Total</th>
                             </tr>
 
-                            <!-- المنتج الأول -->
                             <tr class="table_row">
                                 <td class="column-1">
                                     <div class="how-itemcart1" style="width: 60px; height: 80px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff;">
@@ -58,7 +57,6 @@
                                 <td class="column-5">$145.00</td>
                             </tr>
 
-                            <!-- المنتج الثاني -->
                             <tr class="table_row">
                                 <td class="column-1">
                                     <div class="how-itemcart1" style="width: 60px; height: 80px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff;">
@@ -93,7 +91,7 @@
                 </div>
             </div>
 
-            <!-- ملخص السلة -->
+            <!-- Cart info -->
             <div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm" style="border-radius: 12px;">
                     <h4 class="mtext-109 cl2 p-b-30" style="font-weight: 600;">
