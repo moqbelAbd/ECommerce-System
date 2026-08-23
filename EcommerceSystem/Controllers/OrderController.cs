@@ -114,7 +114,7 @@ namespace EcommerceSystem.Controllers
         // POST: Order/UpdateStatus
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStatus(Guid orderId, int orderStatusId)
+        public async Task<IActionResult> UpdateStatus(Guid orderId, int orderStatusId, string? returnUrl)
         {
             var order = await _context.Orders
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
@@ -133,6 +133,11 @@ namespace EcommerceSystem.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Order status updated successfully.";
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
             return RedirectToAction(nameof(Index));
         }
