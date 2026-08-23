@@ -1,4 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@using EcommerceSystem.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext _context
+
+@{
+    // جلب التصنيفات الرئيسية مع التصنيفات الفرعية غير المحذوفة من قاعدة البيانات
+    var sidebarCategories = await _context.Categories
+        .Where(c => !c.IsDeleted)
+        .Include(c => c.SubCategories.Where(sc => !sc.IsDeleted))
+        .OrderBy(c => c.CategoryName)
+        .ToListAsync();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>@ViewData["Title"] - Rolexyal</title>
@@ -21,103 +34,121 @@
     <link rel="stylesheet" type="text/css" href="~/css/util.css">
     <link rel="stylesheet" type="text/css" href="~/css/main.css">
 
-    <!-- Custom Styling -->
+    <!-- Custom Styling & Footer Fix -->
     <style>
-            .menu-mobile {
+        /* جعل الصفحة بأكملها تأخذ ارتفاع الشاشة لضمان ثبات الفوتر في الأسفل */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body.animsition {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* جعل محتوى الصفحة يأخذ المساحة المرنة ليدفع الفوتر للأسفل */
+        .page-content-wrapper {
+            flex: 1 0 auto;
+        }
+
+        .menu-mobile {
+            background-color: #1a1d20 !important;
+            border-top: 1px solid rgba(201, 170, 111, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+            .menu-mobile .main-menu-m {
                 background-color: #1a1d20 !important;
-                border-top: 1px solid rgba(201, 170, 111, 0.2);
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                padding: 15px 0;
             }
 
-                .menu-mobile .main-menu-m {
-                    background-color: #1a1d20 !important;
-                    padding: 15px 0;
+                .menu-mobile .main-menu-m li {
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
                 }
 
-                    .menu-mobile .main-menu-m li {
-                        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                    .menu-mobile .main-menu-m li a {
+                        color: #f8f9fa !important;
+                        padding: 14px 25px;
+                        font-size: 15px;
+                        font-family: 'Poppins-Medium', sans-serif;
+                        letter-spacing: 0.5px;
+                        transition: all 0.3s ease;
+                        display: block;
                     }
 
-                        .menu-mobile .main-menu-m li a {
-                            color: #f8f9fa !important;
-                            padding: 14px 25px;
-                            font-size: 15px;
-                            font-family: 'Poppins-Medium', sans-serif;
-                            letter-spacing: 0.5px;
-                            transition: all 0.3s ease;
-                            display: block;
+                        .menu-mobile .main-menu-m li a:hover {
+                            color: #c9aa6f !important;
+                            background-color: rgba(201, 170, 111, 0.08);
+                            padding-left: 30px;
                         }
 
-                            .menu-mobile .main-menu-m li a:hover {
-                                color: #c9aa6f !important;
-                                background-color: rgba(201, 170, 111, 0.08);
-                                padding-left: 30px;
-                            }
+        .header-cart {
+            background-color: #1a1d20 !important;
+            color: #fff !important;
+        }
 
-            .header-cart {
-                background-color: #1a1d20 !important;
-                color: #fff !important;
+        .auth-btn-login {
+            color: #c9aa6f !important;
+            border: 1px solid #c9aa6f !important;
+            background-color: transparent !important;
+            border-radius: 20px !important;
+            padding: 6px 18px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .auth-btn-login:hover {
+                background-color: #c9aa6f !important;
+                color: #1a1d20 !important;
             }
 
-            .auth-btn-login {
-                color: #c9aa6f !important;
-                border: 1px solid #c9aa6f !important;
+        .auth-btn-register {
+            color: #1a1d20 !important;
+            background-color: #c9aa6f !important;
+            border: 1px solid #c9aa6f !important;
+            border-radius: 20px !important;
+            padding: 6px 18px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .auth-btn-register:hover {
                 background-color: transparent !important;
-                border-radius: 20px !important;
-                padding: 6px 18px !important;
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
-
-                .auth-btn-login:hover {
-                    background-color: #c9aa6f !important;
-                    color: #1a1d20 !important;
-                }
-
-            .auth-btn-register {
-                color: #1a1d20 !important;
-                background-color: #c9aa6f !important;
-                border: 1px solid #c9aa6f !important;
-                border-radius: 20px !important;
-                padding: 6px 18px !important;
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
-
-                .auth-btn-register:hover {
-                    background-color: transparent !important;
-                    color: #c9aa6f !important;
-                    border-color: #c9aa6f !important;
-                }
-
-            .icon-header-item.cart-styled {
                 color: #c9aa6f !important;
-                transition: transform 0.3s ease;
+                border-color: #c9aa6f !important;
             }
 
-                .icon-header-item.cart-styled:hover {
-                    transform: scale(1.1);
-                }
+        .icon-header-item.cart-styled {
+            color: #c9aa6f !important;
+            transition: transform 0.3s ease;
+        }
 
-            .icon-header-noti::after {
-                background-color: #c9aa6f !important;
-                color: #1a1d20 !important;
-                font-weight: 700;
+            .icon-header-item.cart-styled:hover {
+                transform: scale(1.1);
             }
 
-            footer.bg3 {
-                padding-top: 5px !important;
-                padding-bottom: 5px !important;
+        .icon-header-noti::after {
+            background-color: #c9aa6f !important;
+            color: #1a1d20 !important;
+            font-weight: 700;
+        }
+
+        footer.bg3 {
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            flex-shrink: 0;
+        }
+
+            footer.bg3 .container {
+                line-height: 1;
             }
 
-                footer.bg3 .container {
-                    line-height: 1;
-                }
-
-                footer.bg3 img.logo-footer {
-                    max-height: 80px !important;
-                    width: auto;
-                }
+            footer.bg3 img.logo-footer {
+                max-height: 80px !important;
+                width: auto;
+            }
     </style>
 </head>
 <body class="animsition">
@@ -231,6 +262,7 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <li><a href="@Url.Action("Index", "Admin")">Dashboard</a></li>
+                    <li><a href="@Url.Action("Index", "Product")">Manage Products</a></li>
                 }
                 else
                 {
@@ -256,17 +288,22 @@
         <div class="s-full js-hide-sidebar"></div>
         <div class="sidebar flex-col-l p-t-22 p-b-25" style="width: 300px; max-width: 80%; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
             <div>
-                <div class="flex-r w-full p-b-30 p-r-27">
-                    <div class="fs-35 lh-10 p-lr-5 pointer hov-cl1 trans-04 js-hide-sidebar">
+                <!-- زر الإغلاق (مثبت في الحافة تماماً) -->
+                <div class="w-full d-flex justify-content-end p-r-15 p-t-5">
+                    <div class="fs-35 lh-10 pointer hov-cl1 trans-04 js-hide-sidebar p-2">
                         <i class="zmdi zmdi-close"></i>
                     </div>
                 </div>
-                <div class="sidebar-content flex-w w-full p-lr-35 js-pscroll">
+
+                <div class="sidebar-content flex-w w-full p-lr-35 js-pscroll" style="max-height: calc(100vh - 160px);">
                     <ul class="sidebar-link w-full">
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="p-b-13">
                                 <a asp-controller="Admin" asp-action="Index" class="stext-102 trans-04">Dashboard</a>
+                            </li>
+                            <li class="p-b-13">
+                                <a asp-controller="Product" asp-action="Index" class="stext-102 trans-04 fw-bold" style="color: #c9aa6f;">Manage Products</a>
                             </li>
                         }
                         else
@@ -276,60 +313,43 @@
                             </li>
                         }
 
-                        <!-- Categories: Click text to go to page, click arrow to toggle subcategories -->
-                        <!-- Categories with Independent Link, Golden Arrow, and Subcategories -->
-                        <!-- Categories with Independent Link, Golden Arrow, and Subcategories -->
+                        <!-- Categories & Subcategories from Database -->
                         <li class="p-b-13">
                             <div class="d-flex justify-content-between align-items-center w-full">
-                                <!-- الكلمة تنقلك لصفحة التصنيفات الرئيسية Category/Index مباشرة -->
-                                <a asp-controller="Category" asp-action="Index" class="stext-102 trans-04 font-weight-bold" style="flex-grow: 1;">Categories</a>
-
-                                <!-- سهم القائمة المنسدلة الرئيسي باللون الذهبي -->
+                                <a asp-controller="Home" asp-action="Shop" class="stext-102 trans-04 font-weight-bold" style="flex-grow: 1;">Categories</a>
                                 <span data-toggle="collapse" data-target="#mainCategoriesCollapse" aria-expanded="false" style="cursor: pointer; padding: 5px 10px; display: inline-block;">
                                     <i class="fa fa-angle-down trans-04" style="font-size: 16px; font-weight: bold; color: #c9aa6f;"></i>
                                 </span>
                             </div>
 
-                            <!-- القائمة المنسدلة للتصنيفات الأساسية -->
                             <div class="collapse list-unstyled ps-3 p-l-15 p-t-8" id="mainCategoriesCollapse">
-
-                                <!-- التصنيف الأول: Men Watches -->
-                                <div class="p-b-8 d-flex justify-content-between align-items-center">
-                                    <a asp-controller="Home" asp-action="Shop" asp-route-category="Men" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Men Watches</a>
-                                    <span data-toggle="collapse" data-target="#subMen" aria-expanded="false" style="cursor: pointer; padding: 2px 8px;">
-                                        <i class="fa fa-angle-down" style="font-size: 13px; color: #c9aa6f;"></i>
-                                    </span>
-                                </div>
-                                <div class="collapse ps-3 p-l-15 p-b-5" id="subMen">
-                                    <a href="#" class="stext-102 trans-04 d-block p-b-4" style="color: #6c757d; font-size: 13px;">• Subcategory 1</a>
-                                    <a href="#" class="stext-102 trans-04 d-block p-b-4" style="color: #6c757d; font-size: 13px;">• Subcategory 2</a>
-                                </div>
-
-                                <!-- التصنيف الثاني: Women Watches -->
-                                <div class="p-b-8 d-flex justify-content-between align-items-center">
-                                    <a asp-controller="Home" asp-action="Shop" asp-route-category="Women" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Women Watches</a>
-                                    <span data-toggle="collapse" data-target="#subWomen" aria-expanded="false" style="cursor: pointer; padding: 2px 8px;">
-                                        <i class="fa fa-angle-down" style="font-size: 13px; color: #c9aa6f;"></i>
-                                    </span>
-                                </div>
-                                <div class="collapse ps-3 p-l-15 p-b-5" id="subWomen">
-                                    <a href="#" class="stext-102 trans-04 d-block p-b-4" style="color: #6c757d; font-size: 13px;">• Subcategory 1</a>
-                                    <a href="#" class="stext-102 trans-04 d-block p-b-4" style="color: #6c757d; font-size: 13px;">• Subcategory 2</a>
-                                </div>
-
-                                <!-- التصنيف الثالث: Accessories -->
-                                <div class="p-b-8 d-flex justify-content-between align-items-center">
-                                    <a asp-controller="Home" asp-action="Shop" asp-route-category="Accessories" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- Accessories</a>
-                                    <span data-toggle="collapse" data-target="#subAcc" aria-expanded="false" style="cursor: pointer; padding: 2px 8px;">
-                                        <i class="fa fa-angle-down" style="font-size: 13px; color: #c9aa6f;"></i>
-                                    </span>
-                                </div>
-                                <div class="collapse ps-3 p-l-15 p-b-5" id="subAcc">
-                                    <a href="#" class="stext-102 trans-04 d-block p-b-4" style="color: #6c757d; font-size: 13px;">• Subcategory 1</a>
-                                </div>
-
+                                @foreach (var cat in sidebarCategories)
+                                {
+                                    var collapseId = $"subCat_{cat.CategoryId}";
+                                    <div class="p-b-8 d-flex justify-content-between align-items-center">
+                                        <!-- الضغط على اسم التصنيف الرئيسي يأخذ لصفحة Shop مع الـ categoryId -->
+                                        <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@cat.CategoryId" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- @cat.CategoryName</a>
+                                        @if (cat.SubCategories != null && cat.SubCategories.Any())
+                                        {
+                                            <span data-toggle="collapse" data-target="#@collapseId" aria-expanded="false" style="cursor: pointer; padding: 2px 8px;">
+                                                <i class="fa fa-angle-down" style="font-size: 13px; color: #c9aa6f;"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                    @if (cat.SubCategories != null && cat.SubCategories.Any())
+                                    {
+                                        <div class="collapse ps-3 p-l-15 p-b-5" id="@collapseId">
+                                            @foreach (var sub in cat.SubCategories)
+                                            {
+                                                <!-- الضغط على التصنيف الفرعي يأخذ لصفحة Shop مع الـ categoryId و subCategoryId -->
+                                                <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@cat.CategoryId" asp-route-subCategoryId="@sub.SubCategoryId" class="stext-102 trans-04 d-block p-b-4" style="color: #6c757d; font-size: 13px;">• @sub.SubCategoryName</a>
+                                            }
+                                        </div>
+                                    }
+                                }
                             </div>
                         </li>
+
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="p-b-13">
@@ -337,6 +357,9 @@
                             </li>
                             <li class="p-b-13">
                                 <a asp-controller="Admin" asp-action="Orders" class="stext-102 trans-04">Orders</a>
+                            </li>
+                            <li class="p-b-13">
+                                <a asp-controller="Admin" asp-action="Testimonials" class="stext-102 trans-04">Testimonials</a>
                             </li>
                         }
                         else if (User.IsInRole("Customer"))
@@ -352,7 +375,7 @@
                 </div>
             </div>
 
-            <!-- Logo and Logout side by side fixed at the bottom of the sidebar -->
+            <!-- Logo and Logout at the bottom -->
             <div class="w-full p-lr-35 p-b-20">
                 <div class="d-flex align-items-center justify-content-between w-full">
                     <a asp-controller="Home" asp-action="Index" class="logo">
@@ -408,7 +431,10 @@
         </div>
     }
 
-    @RenderBody()
+    <!-- تغليف المحتوى لضمان دفع الفوتر للأسفل دائمًا -->
+    <div class="page-content-wrapper">
+        @RenderBody()
+    </div>
 
     <!-- Footer -->
     <footer class="bg3 p-t-5 p-b-5" style="background-color: #1a1d20 !important;">
@@ -438,12 +464,12 @@
     <script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="~/vendor/select2/select2.min.js"></script>
     <script>
-            $(".js-select2").each(function() {
-                $(this).select2({
-                    minimumResultsForSearch: 20,
-                    dropdownParent: $(this).next('.dropDownSelect2')
-                });
-            })
+        $(".js-select2").each(function() {
+            $(this).select2({
+                minimumResultsForSearch: 20,
+                dropdownParent: $(this).next('.dropDownSelect2')
+            });
+        })
     </script>
     <script src="~/vendor/daterangepicker/moment.min.js"></script>
     <script src="~/vendor/daterangepicker/daterangepicker.js"></script>
@@ -451,25 +477,25 @@
     <script src="~/js/slick-custom.js"></script>
     <script src="~/vendor/parallax100/parallax100.js"></script>
     <script>
-            $('.parallax100').parallax100();
+        $('.parallax100').parallax100();
     </script>
     <script src="~/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
     <script src="~/vendor/isotope/isotope.pkgd.min.js"></script>
     <script src="~/vendor/sweetalert/sweetalert.min.js"></script>
     <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script>
-            $('.js-pscroll').each(function() {
-                $(this).css('position', 'relative');
-                $(this).css('overflow', 'hidden');
-                var ps = new PerfectScrollbar(this, {
-                    wheelSpeed: 1,
-                    scrollingThreshold: 1000,
-                    wheelPropagation: false,
-                });
-                $(window).on('resize', function() {
-                    ps.update();
-                })
+        $('.js-pscroll').each(function() {
+            $(this).css('position', 'relative');
+            $(this).css('overflow', 'hidden');
+            var ps = new PerfectScrollbar(this, {
+                wheelSpeed: 1,
+                scrollingThreshold: 1000,
+                wheelPropagation: false,
             });
+            $(window).on('resize', function() {
+                ps.update();
+            })
+        });
     </script>
     <script src="~/js/main.js"></script>
 

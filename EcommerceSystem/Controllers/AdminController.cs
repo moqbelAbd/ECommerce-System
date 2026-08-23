@@ -215,5 +215,48 @@ namespace EcommerceSystem.Controllers
 
             return View(customers);
         }
+        // عرض جميع الـ Testimonials للأدمن
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Testimonials()
+        {
+            var testimonials = await _context.Testimonials
+                .Include(t => t.Customer)
+                .OrderByDescending(t => t.TestimonialId)
+                .ToListAsync();
+
+            return View(testimonials);
+        }
+
+        // تبديل حالة الموافقة (Approval Toggle)
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleTestimonialApproval(Guid id)
+        {
+            var testimonial = await _context.Testimonials.FindAsync(id);
+            if (testimonial != null)
+            {
+                testimonial.IsApproved = !testimonial.IsApproved;
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Testimonial status updated successfully.";
+            }
+            return RedirectToAction(nameof(Testimonials));
+        }
+
+        // حذف رأي
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTestimonial(Guid id)
+        {
+            var testimonial = await _context.Testimonials.FindAsync(id);
+            if (testimonial != null)
+            {
+                _context.Testimonials.Remove(testimonial);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Testimonial deleted successfully.";
+            }
+            return RedirectToAction(nameof(Testimonials));
+        }
     }
 }

@@ -158,7 +158,7 @@
                         ImageUrl = Url.Content(imagePath),
                         Title = product.ProductName,
                         Subtitle = product.ProductPrice.ToString("C"),
-                        DetailsUrl = Url.Action("Details", "Customer", new { id = product.ProductId }),
+                        DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }),
                         ButtonText = "Quick View",
                         ShowAdminActions = User.IsInRole("Admin"),
                         EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
@@ -178,53 +178,82 @@
     </div>
 </section>
 
-<!-- Testimonials Section -->
+<!-- Testimonials Section (مع إرجاع السلايدر باستخدام testimonial-slick) -->
 <section class="sec-testimonials bg6 p-t-80 p-b-80">
     <div class="container">
-        <div class="p-b-42">
-            <h3 class="ltext-105 cl5 txt-center respon1">
+        <div class="p-b-42 d-flex justify-content-between align-items-center flex-wrap">
+            <h3 class="ltext-105 cl5 respon1 m-0">
                 What Our Customers Say
             </h3>
+
+            <!-- زر فتح نافذة إضافة الرأي -->
+            @if (User.Identity != null && User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+            {
+                <button type="button" id="openTestimonialModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                    <i class="fa fa-pencil m-r-8"></i> Add Review
+                </button>
+            }
         </div>
 
-        <div class="wrap-slick2">
-            <div class="slick2">
-                <div class="item-slick2 p-lr-15">
-                    <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
-                        <p class="stext-114 cl6 p-b-26">
-                            "The quality of the watches is exceptional! Fast delivery and amazing customer service here in Amman."
-                        </p>
-                        <span class="mtext-107 cl2 font-weight-bold">
-                            - Ahmad Omar
-                        </span>
-                    </div>
-                </div>
+        @{
+            var testimonials = ViewBag.Testimonials as List<EcommerceSystem.Models.Testimonial> ?? new List<EcommerceSystem.Models.Testimonial>();
+        }
 
-                <div class="item-slick2 p-lr-15">
-                    <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
-                        <p class="stext-114 cl6 p-b-26">
-                            "I ordered a classic leather watch and it exceeded my expectations. Beautiful packaging too!"
-                        </p>
-                        <span class="mtext-107 cl2 font-weight-bold">
-                            - Sarah Naser
-                        </span>
-                    </div>
-                </div>
-
-                <div class="item-slick2 p-lr-15">
-                    <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
-                        <p class="stext-114 cl6 p-b-26">
-                            "Best watch store online! Great variety of modern designs and very reasonable prices."
-                        </p>
-                        <span class="mtext-107 cl2 font-weight-bold">
-                            - Tariq Ziad
-                        </span>
-                    </div>
+        @if (!testimonials.Any())
+        {
+            <div class="text-center py-4 text-muted">
+                <p>No customer reviews yet. Be the first to share your experience!</p>
+            </div>
+        }
+        else
+        {
+            <div class="wrap-slick2">
+                <div class="testimonial-slick">
+                    @foreach (var t in testimonials)
+                    {
+                        <div class="item-slick2 p-lr-15">
+                            <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
+                                <p class="stext-114 cl6 p-b-26">
+                                    "@t.CustomerTestimonial"
+                                </p>
+                                <span class="mtext-107 cl2 font-weight-bold">
+                                    - @(t.Customer != null ? $"{t.Customer.FirstName} {t.Customer.LastName}" : "Valued Customer")
+                                </span>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
-        </div>
+        }
     </div>
 </section>
+
+<!-- Testimonial Modal (Popup) -->
+<div class="modal fade" id="testimonialModal" tabindex="-1" aria-labelledby="testimonialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" style="margin-top: 80px; max-width: 650px;">
+        <div class="modal-content bor10 p-all-30 bg-white shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h4 class="modal-title mtext-105 cl2 fw-bold" id="testimonialModalLabel">Share Your Experience</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-controller="Home" asp-action="AddTestimonial" method="post">
+                <div class="modal-body p-t-20 p-b-20">
+                    <div class="mb-3">
+                        <label class="stext-102 cl3 mb-2 d-block fw-bold" style="font-size: 15px;">Your Review</label>
+                        <textarea name="customerTestimonial" class="form-control" rows="5" placeholder="Write your experience with our store..." required maxlength="250" style="font-size: 14px; padding: 12px;"></textarea>
+                        <small class="text-muted">Maximum 250 characters. Will be reviewed before publishing.</small>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="font-size: 14px;">Cancel</button>
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 trans-04" style="width: auto; height: 42px; font-size: 14px;">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- FAQ -->
 <section class="sec-faq bg0 p-t-80 p-b-90">
@@ -239,7 +268,7 @@
         </div>
 
         <div class="wrap-slick2">
-            <div class="slick2">
+            <div class="faq-slick">
                 <div class="item-slick2 p-lr-15">
                     <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
                         <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
@@ -290,9 +319,10 @@
 
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if ($('.slick2').length > 0) {
-                $('.slick2').slick({
+        document.addEventListener("DOMContentLoaded", function () {
+            // تفعيل الـ Slick Slider للـ Testimonials بشكل مستقل وآمن
+            if ($('.testimonial-slick').length > 0) {
+                $('.testimonial-slick').slick({
                     slidesToShow: 3,
                     slidesToScroll: 1,
                     infinite: true,
@@ -301,19 +331,63 @@
                     arrows: true,
                     dots: false,
                     responsive: [
-                        {
-                            breakpoint: 1200,
-                            settings: { slidesToShow: 3 }
-                        },
-                        {
-                            breakpoint: 992,
-                            settings: { slidesToShow: 2 }
-                        },
-                        {
-                            breakpoint: 576,
-                            settings: { slidesToShow: 1 }
-                        }
+                        { breakpoint: 1200, settings: { slidesToShow: 3 } },
+                        { breakpoint: 992, settings: { slidesToShow: 2 } },
+                        { breakpoint: 576, settings: { slidesToShow: 1 } }
                     ]
+                });
+            }
+
+            // تفعيل الـ Slick Slider للـ FAQ بشكل مستقل وآمن
+            if ($('.faq-slick').length > 0) {
+                $('.faq-slick').slick({
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    autoplay: true,
+                    autoplaySpeed: 4000,
+                    arrows: true,
+                    dots: false,
+                    responsive: [
+                        { breakpoint: 1200, settings: { slidesToShow: 3 } },
+                        { breakpoint: 992, settings: { slidesToShow: 2 } },
+                        { breakpoint: 576, settings: { slidesToShow: 1 } }
+                    ]
+                });
+            }
+
+            // تفعيل الـ Popup للـ Testimonial بنفس طريقة الـ Product Review تماماً
+            const openBtn = document.getElementById("openTestimonialModalBtn");
+            const modal = document.getElementById("testimonialModal");
+
+            if (openBtn && modal) {
+                const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+
+                openBtn.addEventListener("click", function () {
+                    modal.style.display = "block";
+                    modal.classList.add("show");
+                    modal.style.backgroundColor = "rgba(0,0,0,0.5)";
+                    document.body.classList.add("modal-open");
+                });
+
+                closeButtons.forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        modal.style.display = "none";
+                        modal.classList.remove("show");
+                        document.body.classList.remove("modal-open");
+                        const backdrop = document.querySelector(".modal-backdrop");
+                        if (backdrop) backdrop.remove();
+                    });
+                });
+
+                window.addEventListener("click", function (event) {
+                    if (event.target === modal) {
+                        modal.style.display = "none";
+                        modal.classList.remove("show");
+                        document.body.classList.remove("modal-open");
+                        const backdrop = document.querySelector(".modal-backdrop");
+                        if (backdrop) backdrop.remove();
+                    }
                 });
             }
         });

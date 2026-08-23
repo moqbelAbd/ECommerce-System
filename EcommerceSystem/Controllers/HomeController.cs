@@ -36,12 +36,54 @@ namespace EcommerceSystem.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            ViewBag.FeaturedCategories = featuredCategories;
+            // جلب الـ Testimonials المعتمدة فقط للـ Home
+            var approvedTestimonials = await _context.Testimonials
+                .Where(t => t.IsApproved)
+                .Include(t => t.Customer)
+                .OrderByDescending(t => t.TestimonialId)
+                .Take(9) // أقصى حد 9 آراء
+                .ToListAsync();
 
-            // تمرير المنتجات مباشرة إلى الـ View عبر الـ Model
+            ViewBag.FeaturedProducts = featuredProducts;
+            ViewBag.FeaturedCategories = featuredCategories;
+            ViewBag.Testimonials = approvedTestimonials;
+
             return View(featuredProducts ?? new List<Product>());
         }
 
+        // دالة POST لإضافة رأي جديد من قِبل العميل
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTestimonial(string customerTestimonial)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (customer == null)
+            {
+                return RedirectToAction("CompleteProfile", "Customer");
+            }
+
+            if (!string.IsNullOrWhiteSpace(customerTestimonial))
+            {
+                var testimonial = new Testimonial
+                {
+                    TestimonialId = Guid.NewGuid(),
+                    CustomerTestimonial = customerTestimonial,
+                    CustomerId = customer.CustomerId,
+                    IsApproved = false // تبدأ كـ غير معتمدة لحين موافقة الأدمن
+                };
+
+                _context.Testimonials.Add(testimonial);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Your testimonial has been submitted and is pending admin approval.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
         public IActionResult Privacy()
         {
             return View();
