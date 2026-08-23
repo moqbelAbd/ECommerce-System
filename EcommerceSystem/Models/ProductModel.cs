@@ -14,6 +14,8 @@ namespace EcommerceSystem.Models
         public ICollection<Product> Products { get; set;} = new HashSet<Product>();
 
         public Guid ProductBrandId { get; set; }
+
+        [ForeignKey("ProductBrandId")]
         public ProductBrand ProductBrand { get; set; }
 
 

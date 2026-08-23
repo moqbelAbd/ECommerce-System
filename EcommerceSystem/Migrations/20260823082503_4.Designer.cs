@@ -4,6 +4,7 @@ using EcommerceSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260823082503_4")]
+    partial class _4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,7 +268,6 @@ namespace EcommerceSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderId");
@@ -291,7 +293,6 @@ namespace EcommerceSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("ItemTotalPrice")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("OrderId")
@@ -557,61 +558,61 @@ namespace EcommerceSystem.Migrations
                         {
                             ProductModelId = new Guid("e1111111-1111-1111-1111-111111111111"),
                             ModelName = "Submariner",
-                            ProductBrandId = new Guid("b1111111-1111-1111-1111-111111111111")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e1111111-2222-2222-2222-222222222222"),
                             ModelName = "Datejust",
-                            ProductBrandId = new Guid("b1111111-1111-1111-1111-111111111111")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e2222222-1111-1111-1111-111111111111"),
                             ModelName = "Le Locle",
-                            ProductBrandId = new Guid("b2222222-2222-2222-2222-222222222222")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e2222222-2222-2222-2222-222222222222"),
                             ModelName = "PRX",
-                            ProductBrandId = new Guid("b2222222-2222-2222-2222-222222222222")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e3333333-1111-1111-1111-111111111111"),
                             ModelName = "G-Shock",
-                            ProductBrandId = new Guid("b3333333-3333-3333-3333-333333333333")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e3333333-2222-2222-2222-222222222222"),
                             ModelName = "Edifice",
-                            ProductBrandId = new Guid("b3333333-3333-3333-3333-333333333333")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e4444444-1111-1111-1111-111111111111"),
                             ModelName = "Series 9",
-                            ProductBrandId = new Guid("b4444444-4444-4444-4444-444444444444")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e4444444-2222-2222-2222-222222222222"),
                             ModelName = "Ultra 2",
-                            ProductBrandId = new Guid("b4444444-4444-4444-4444-444444444444")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e5555555-1111-1111-1111-111111111111"),
-                            ModelName = "Meisterstück",
-                            ProductBrandId = new Guid("b5555555-5555-5555-5555-555555555555")
+                            ModelName = "eeisterstück",
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             ProductModelId = new Guid("e5555555-2222-2222-2222-222222222222"),
                             ModelName = "Sartorial",
-                            ProductBrandId = new Guid("b5555555-5555-5555-5555-555555555555")
+                            ProductBrandId = new Guid("00000000-0000-0000-0000-000000000000")
                         });
                 });
 
@@ -1048,7 +1049,7 @@ namespace EcommerceSystem.Migrations
                     b.HasOne("EcommerceSystem.Models.ProductBrand", "ProductBrand")
                         .WithMany("ProductModels")
                         .HasForeignKey("ProductBrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ProductBrand");
