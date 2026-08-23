@@ -1,4 +1,5 @@
 ﻿@using EcommerceSystem.Models
+@model IEnumerable<Product>
 @{
     ViewData["Title"] = "Home Page - Rolexyal";
 
@@ -26,7 +27,7 @@
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                            <a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                                 Shop Now
                             </a>
                         </div>
@@ -50,7 +51,7 @@
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
-                            <a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                                 Shop Now
                             </a>
                         </div>
@@ -74,7 +75,7 @@
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">
-                            <a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                                 Shop Now
                             </a>
                         </div>
@@ -96,7 +97,7 @@
                     <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
                         <div class="block1 wrap-pic-w">
                             <img src="@Url.Content(category.CategoryImagePath)" alt="@category.CategoryName">
-                            <a asp-controller="Category" asp-action="Details" asp-route-id="@category.CategoryId"
+                            <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@category.CategoryId"
                                class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                                 <div class="block1-txt-child1 flex-col-l">
                                     <span class="block1-name ltext-102 trans-04 p-b-8">
@@ -131,54 +132,49 @@
                 <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
                     All Products
                 </button>
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-                    Watches
-                </button>
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".straps">
-                    Necklaces
-                </button>
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".accessories">
-                    Rings
-                </button>
             </div>
         </div>
 
-        <!-- Product Grid (Using _CardPartial) -->
-        <div class="row isotope-grid">
-            @{
-                // قائمة مؤقتة للمنتجات (يمكن استبدالها بـ Model قادم من الكنترولر لاحقاً)
-                var sampleProducts = new[]
-                {
-                    new { ImageUrl = Url.Content("~/images/Men/Watch10/timberland-watch.png"), Title = "Timberland Classic Men Watch", Subtitle = "$145.00", DetailsUrl = "#" },
-                    new { ImageUrl = Url.Content("~/images/Men/GiftBox1/bigotti-giftset.png"), Title = "Bigotti Milano Men Gift Set", Subtitle = "$189.50", DetailsUrl = "#" },
-                    new { ImageUrl = Url.Content("~/images/Women/Watch5/watch5-daniel-klein.png"), Title = "Daniel Klein Elegant Women Watch", Subtitle = "$95.00", DetailsUrl = "#" }
-                };
-            }
-
-            @foreach (var prod in sampleProducts)
-            {
-                var cardData = new
-                {
-                    ImageUrl = prod.ImageUrl,
-                    Title = prod.Title,
-                    Subtitle = prod.Subtitle,
-                    DetailsUrl = prod.DetailsUrl,
-                    ButtonText = "Quick View",
-                    ShowAdminActions = User.IsInRole("Admin"),
-                    EditUrl = "#",
-                    DeleteUrl = "#"
-                };
-
-                <partial name="_CardPartial" model="cardData" />
-            }
-        </div>
-
-            <div class="flex-c-m flex-w w-full p-t-45">
-                <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-                    View All Products
-                </a>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="text-center py-5">
+                <div class="alert alert-info d-inline-block px-5 py-3">
+                    No products found.
+                </div>
             </div>
         }
+        else
+        {
+            <div class="row isotope-grid">
+                @foreach (var product in Model)
+                {
+                    var imagePath = product.ProductImages
+                        .FirstOrDefault()
+                        ?.ProductImagePath
+                        ?? "~/images/product-01.jpg";
+
+                    var cardData = new
+                    {
+                        ImageUrl = Url.Content(imagePath),
+                        Title = product.ProductName,
+                        Subtitle = product.ProductPrice.ToString("C"),
+                        DetailsUrl = Url.Action("Details", "Customer", new { id = product.ProductId }),
+                        ButtonText = "Quick View",
+                        ShowAdminActions = User.IsInRole("Admin"),
+                        EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
+                        DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId })
+                    };
+
+                    <partial name="_ProductCardPartial" model="cardData" />
+                }
+            </div>
+        }
+
+        <div class="flex-c-m flex-w w-full p-t-45">
+            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+                View All Products
+            </a>
+        </div>
     </div>
 </section>
 

@@ -36,10 +36,10 @@ namespace EcommerceSystem.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            ViewBag.FeaturedProducts = featuredProducts;
             ViewBag.FeaturedCategories = featuredCategories;
 
-            return View();
+            // تمرير المنتجات مباشرة إلى الـ View عبر الـ Model
+            return View(featuredProducts ?? new List<Product>());
         }
 
         public IActionResult Privacy()
