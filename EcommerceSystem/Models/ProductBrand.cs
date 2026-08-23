@@ -12,9 +12,9 @@ namespace EcommerceSystem.Models
         [Required]
         [MaxLength(100)]
         public string BrandName { get; set; } = String.Empty;
-        public ICollection<Product> Products { get; set; }
-    = new HashSet<Product>();
+        public ICollection<Product> Products { get; set; }= new HashSet<Product>();
 
+        public ICollection<ProductModel> ProductModels { get; set; } = new List<ProductModel>();
 
     }
 }
