@@ -44,31 +44,13 @@ namespace EcommerceSystem.Controllers
                 .Take(9) // أقصى حد 9 آراء
                 .ToListAsync();
 
-            // جلب معرفات المنتجات المفضلة للعميل الحالي لتحديد حالة الـ Wishlist
-            var userWishlistIds = new List<Guid>();
-            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
-            {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var customer = await _context.Customers
-                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-
-                if (customer != null)
-                {
-                    userWishlistIds = await _context.Wishlists
-                        .Where(w => w.CustomerId == customer.CustomerId)
-                        .SelectMany(w => w.WishlistItems)
-                        .Select(wi => wi.ProductId)
-                        .ToListAsync();
-                }
-            }
-
             ViewBag.FeaturedProducts = featuredProducts;
             ViewBag.FeaturedCategories = featuredCategories;
             ViewBag.Testimonials = approvedTestimonials;
-            ViewBag.UserWishlistIds = userWishlistIds; // تمرير القائمة للـ View
 
             return View(featuredProducts ?? new List<Product>());
         }
+
         // دالة POST لإضافة رأي جديد من قِبل العميل
         [Authorize]
         [HttpPost]
