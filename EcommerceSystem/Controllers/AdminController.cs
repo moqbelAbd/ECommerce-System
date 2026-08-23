@@ -17,7 +17,12 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: Admin
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string? activeTab,
+            string? customerSearch,
+            string? orderSearch,
+            int? orderStatusId,
+            int? paymentStatusId)
         {
             var now = DateTime.Now;
             var startOfThisMonth = new DateTime(now.Year, now.Month, 1);
@@ -66,6 +71,107 @@ namespace EcommerceSystem.Controllers
                 .OrderByDescending(o => o.CreatedAt)
                 .Take(5)
                 .ToListAsync();
+
+            // --- Customers panel data ---
+            var customerQuery = _context.Customers
+                .Where(c => !c.IsDeleted)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(customerSearch))
+            {
+                var term = customerSearch.Trim();
+
+                customerQuery = customerQuery.Where(c =>
+                    c.FirstName.Contains(term) ||
+                    c.LastName.Contains(term) ||
+                    (c.Location != null && c.Location.Contains(term)) ||
+                    c.CustomerPhoneNumbers.Any(p => !p.IsDeleted && p.PhoneNumber.Contains(term)));
+            }
+
+            var customers = await customerQuery
+                .Select(c => new AdminCustomerListItem
+                {
+                    CustomerId = c.CustomerId,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    Location = c.Location,
+                    PhoneNumber = c.CustomerPhoneNumbers
+                        .Where(p => !p.IsDeleted)
+                        .Select(p => p.PhoneNumber)
+                        .FirstOrDefault(),
+                    OrderCount = c.Orders.Count
+                })
+                .OrderBy(c => c.FirstName)
+                .ThenBy(c => c.LastName)
+                .ToListAsync();
+
+            // --- Orders panel data ---
+            var orderQuery = _context.Orders
+                .Include(o => o.Customer)
+                    .ThenInclude(c => c!.CustomerPhoneNumbers)
+                .Include(o => o.PaymentStatus)
+                .Include(o => o.OrderStatus)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(orderSearch))
+            {
+                var term = orderSearch.Trim();
+
+                orderQuery = orderQuery.Where(o =>
+                    (o.Customer != null &&
+                        ((o.Customer.FirstName + " " + o.Customer.LastName).Contains(term) ||
+                         o.Customer.CustomerPhoneNumbers.Any(p => !p.IsDeleted && p.PhoneNumber.Contains(term)))) ||
+                    (o.Location != null && o.Location.Contains(term)));
+            }
+
+            if (orderStatusId.HasValue)
+            {
+                orderQuery = orderQuery.Where(o => o.OrderStatusId == orderStatusId.Value);
+            }
+
+            if (paymentStatusId.HasValue)
+            {
+                orderQuery = orderQuery.Where(o => o.PaymentStatusId == paymentStatusId.Value);
+            }
+
+            var orders = await orderQuery
+                .OrderByDescending(o => o.CreatedAt)
+                .Select(o => new AdminOrderListItem
+                {
+                    OrderId = o.OrderId,
+                    CustomerName = o.Customer == null
+                        ? "-"
+                        : (o.Customer.FirstName + " " + o.Customer.LastName),
+                    CustomerPhoneNumber = o.Customer == null
+                        ? null
+                        : o.Customer.CustomerPhoneNumbers
+                            .Where(p => !p.IsDeleted)
+                            .Select(p => p.PhoneNumber)
+                            .FirstOrDefault(),
+                    Location = o.Location,
+                    TotalPrice = o.TotalPrice,
+                    PaymentStatusId = o.PaymentStatusId,
+                    PaymentStatusName = o.PaymentStatus != null
+                        ? o.PaymentStatus.PaymentStatusName
+                        : "-",
+                    OrderStatusId = o.OrderStatusId,
+                    OrderStatusName = o.OrderStatus != null
+                        ? o.OrderStatus.OrderStatusName
+                        : "-"
+                })
+                .ToListAsync();
+
+            ViewBag.Customers = customers;
+            ViewBag.CustomerSearch = customerSearch;
+
+            ViewBag.Orders = orders;
+            ViewBag.OrderStatuses = await _context.OrderStatuses.OrderBy(s => s.OrderStatusId).ToListAsync();
+            ViewBag.PaymentStatuses = await _context.PaymentStatuses.OrderBy(s => s.PaymentStatusId).ToListAsync();
+            ViewBag.OrderSearch = orderSearch;
+            ViewBag.SelectedOrderStatusId = orderStatusId;
+            ViewBag.SelectedPaymentStatusId = paymentStatusId;
+
+            ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "overview" : activeTab;
 
             return View(recentOrders);
         }

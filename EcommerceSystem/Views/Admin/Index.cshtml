@@ -1,4 +1,5 @@
-﻿@using EcommerceSystem.Models
+@using EcommerceSystem.Models
+@using EcommerceSystem.Models.ViewModels
 @model IEnumerable<Order>
 
 @{
@@ -10,6 +11,19 @@
     int lowStockCount = ViewBag.LowStockCount;
     decimal? revenueChangePercent = ViewBag.RevenueChangePercent;
     decimal? ordersChangePercent = ViewBag.OrdersChangePercent;
+
+    var customers = ViewBag.Customers as List<AdminCustomerListItem> ?? new List<AdminCustomerListItem>();
+    string? customerSearch = ViewBag.CustomerSearch;
+
+    var orders = ViewBag.Orders as List<AdminOrderListItem> ?? new List<AdminOrderListItem>();
+    var orderStatuses = ViewBag.OrderStatuses as List<OrderStatus> ?? new List<OrderStatus>();
+    var paymentStatuses = ViewBag.PaymentStatuses as List<PaymentStatus> ?? new List<PaymentStatus>();
+    string? orderSearch = ViewBag.OrderSearch;
+    int? selectedOrderStatusId = ViewBag.SelectedOrderStatusId;
+    int? selectedPaymentStatusId = ViewBag.SelectedPaymentStatusId;
+
+    string activeTab = ViewBag.ActiveTab ?? "overview";
+    string currentUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <div class="container p-t-100 p-b-100">
@@ -71,34 +85,26 @@
         </div>
     </div>
 
-    <!-- روابط الإدارة السريعة -->
-    <div class="row g-4 p-b-50">
-        <div class="col-md-6">
-            <div class="p-all-20 bor4 h-100 d-flex flex-column">
-                <h5 class="mtext-103 cl2">Manage Customers</h5>
-                <p class="stext-102 cl6 p-t-5 flex-grow-1">
-                    Browse registered customers, search by name or phone, and review order activity.
-                </p>
-                <a asp-controller="Admin" asp-action="Customers" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-15" style="align-self:flex-start;">
-                    Manage Customers
-                </a>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="p-all-20 bor4 h-100 d-flex flex-column">
-                <h5 class="mtext-103 cl2">Manage Orders</h5>
-                <p class="stext-102 cl6 p-t-5 flex-grow-1">
-                    Search and filter orders, update order status, and preview full order details.
-                </p>
-                <a asp-controller="Order" asp-action="Index" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-15" style="align-self:flex-start;">
-                    Manage Orders
-                </a>
-            </div>
-        </div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <!-- Dashboard Tabs -->
+    <div class="dash-tabs p-b-25">
+        <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
+            Overview
+        </button>
+        <button type="button" class="dash-tab-btn @(activeTab == "customers" ? "active" : "")" data-tab="customers">
+            Manage Customers
+        </button>
+        <button type="button" class="dash-tab-btn @(activeTab == "orders" ? "active" : "")" data-tab="orders">
+            Manage Orders
+        </button>
     </div>
 
-    <!-- جدول الطلبات الحديثة -->
-    <div class="p-b-30">
+    <!-- ===================== OVERVIEW PANEL ===================== -->
+    <div class="dash-panel" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none");">
         <h4 class="mtext-103 cl2 p-b-20">Recent Watch Orders</h4>
         <div class="wrap-table-shopping-cart">
             <table class="table-shopping-cart">
@@ -142,4 +148,233 @@
             </table>
         </div>
     </div>
+
+    <!-- ===================== CUSTOMERS PANEL ===================== -->
+    <div class="dash-panel" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none");">
+
+        <div class="bor10 p-all-20 m-b-30">
+            <form asp-controller="Admin" asp-action="Index" method="get">
+                <input type="hidden" name="activeTab" value="customers" />
+
+                <div class="row">
+                    <div class="col-md-8 m-b-15">
+                        <label class="stext-102 cl3">Search</label>
+                        <input type="text" name="customerSearch" value="@customerSearch" class="form-control" placeholder="Search by name, phone, or location..." />
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end m-b-15">
+                        <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 m-r-10 trans-04">
+                            <i class="fa fa-filter m-r-8"></i> Apply Filters
+                        </button>
+                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="customers" class="flex-c-m stext-101 cl2 size-101 bg3 bor1 hov-btn1 p-lr-20">
+                            Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="p-b-15">
+            <span class="stext-102 cl6">Showing <strong>@customers.Count</strong> customer(s)</span>
+        </div>
+
+        @if (!customers.Any())
+        {
+            <div class="bor10 p-all-40 text-center">
+                <i class="fa fa-users fa-2x m-b-15"></i>
+                <h4 class="mtext-102 cl2">No customers found</h4>
+            </div>
+        }
+        else
+        {
+            <div class="bor10" style="border-radius:10px; overflow:hidden;">
+                <div class="table-responsive">
+                    <table class="table mb-0" style="margin-bottom:0;">
+                        <thead style="background:#1a1d20;">
+                            <tr>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Customer ID</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Phone Number</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Name</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Location</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Orders</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var customer in customers)
+                            {
+                                <tr style="vertical-align:middle; border-bottom:1px solid #eee;">
+                                    <td style="padding:16px 20px; font-family:monospace; font-size:0.85rem; color:#888;">@customer.CustomerId</td>
+                                    <td style="padding:16px 20px;">@(customer.PhoneNumber ?? "-")</td>
+                                    <td style="padding:16px 20px;"><strong style="color:#1a1d20;">@customer.FullName</strong></td>
+                                    <td style="padding:16px 20px;">@(customer.Location ?? "-")</td>
+                                    <td style="padding:16px 20px;">
+                                        <span class="badge bg-secondary" style="font-size:0.85rem; padding:6px 12px;">@customer.OrderCount</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- ===================== ORDERS PANEL ===================== -->
+    <div class="dash-panel" data-panel="orders" style="display:@(activeTab == "orders" ? "block" : "none");">
+
+        <div class="bor10 p-all-20 m-b-30">
+            <form asp-controller="Admin" asp-action="Index" method="get">
+                <input type="hidden" name="activeTab" value="orders" />
+
+                <div class="row">
+                    <div class="col-md-5 m-b-15">
+                        <label class="stext-102 cl3">Search</label>
+                        <input type="text" name="orderSearch" value="@orderSearch" class="form-control" placeholder="Customer name, phone, or location..." />
+                    </div>
+                    <div class="col-md-3 m-b-15">
+                        <label class="stext-102 cl3">Order Status</label>
+                        <select name="orderStatusId" class="form-control">
+                            <option value="">All Statuses</option>
+                            @foreach (var status in orderStatuses)
+                            {
+                                <option value="@status.OrderStatusId" selected="@(selectedOrderStatusId == status.OrderStatusId)">@status.OrderStatusName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4 m-b-15">
+                        <label class="stext-102 cl3">Payment Status</label>
+                        <select name="paymentStatusId" class="form-control">
+                            <option value="">All Payment Statuses</option>
+                            @foreach (var status in paymentStatuses)
+                            {
+                                <option value="@status.PaymentStatusId" selected="@(selectedPaymentStatusId == status.PaymentStatusId)">@status.PaymentStatusName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex m-t-10">
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 m-r-10 trans-04">
+                        <i class="fa fa-filter m-r-8"></i> Apply Filters
+                    </button>
+                    <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="orders" class="flex-c-m stext-101 cl2 size-101 bg3 bor1 hov-btn1 p-lr-20">
+                        Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="p-b-15">
+            <span class="stext-102 cl6">Showing <strong>@orders.Count</strong> order(s)</span>
+        </div>
+
+        @if (!orders.Any())
+        {
+            <div class="bor10 p-all-40 text-center">
+                <i class="fa fa-box-open fa-2x m-b-15"></i>
+                <h4 class="mtext-102 cl2">No orders found</h4>
+            </div>
+        }
+        else
+        {
+            <div class="wrap-table-shopping-cart">
+                <table class="table-shopping-cart">
+                    <thead>
+                        <tr class="table_head">
+                            <th class="column-1">Order ID</th>
+                            <th class="column-2">Customer</th>
+                            <th class="column-3">Phone</th>
+                            <th class="column-4">Location</th>
+                            <th class="column-5">Total Price</th>
+                            <th class="column-6">Payment Status</th>
+                            <th class="column-7">Order Status</th>
+                            <th class="column-8">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in orders)
+                        {
+                            <tr class="table_row">
+                                <td class="column-1">@order.OrderId</td>
+                                <td class="column-2">@order.CustomerName</td>
+                                <td class="column-3">@(order.CustomerPhoneNumber ?? "-")</td>
+                                <td class="column-4">@(order.Location ?? "-")</td>
+                                <td class="column-5"><strong>@order.TotalPrice.ToString("C")</strong></td>
+                                <td class="column-6">@order.PaymentStatusName</td>
+                                <td class="column-7">
+                                    <form asp-controller="Order" asp-action="UpdateStatus" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <input type="hidden" name="returnUrl" value="@currentUrl" />
+                                        <select name="orderStatusId" class="form-control form-select" onchange="this.form.submit()">
+                                            @foreach (var status in orderStatuses)
+                                            {
+                                                <option value="@status.OrderStatusId" selected="@(status.OrderStatusId == order.OrderStatusId)">@status.OrderStatusName</option>
+                                            }
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="column-8">
+                                    <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fa fa-eye"></i> Preview
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
 </div>
+
+<style>
+    .dash-tabs {
+        display: flex;
+        gap: 10px;
+        border-bottom: 1px solid #e6e6e6;
+    }
+
+    .dash-tab-btn {
+        background: none;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 10px 4px;
+        margin-right: 25px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #777;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .dash-tab-btn:hover {
+        color: #c4a76b;
+    }
+
+    .dash-tab-btn.active {
+        color: #c4a76b;
+        border-bottom-color: #c4a76b;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var tabButtons = document.querySelectorAll(".dash-tab-btn");
+            var panels = document.querySelectorAll(".dash-panel");
+
+            tabButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    var target = button.getAttribute("data-tab");
+
+                    tabButtons.forEach(function (btn) { btn.classList.remove("active"); });
+                    button.classList.add("active");
+
+                    panels.forEach(function (panel) {
+                        panel.style.display = (panel.getAttribute("data-panel") === target) ? "block" : "none";
+                    });
+                });
+            });
+        });
+    </script>
+}

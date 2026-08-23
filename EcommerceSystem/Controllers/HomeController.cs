@@ -20,8 +20,25 @@ namespace EcommerceSystem.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var featuredProducts = await _context.Products
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.ProductImages)
+                .OrderBy(p => p.ProductName)
+                .Take(8)
+                .ToListAsync();
+
+            var featuredCategories = await _context.Categories
+                .Where(c => !c.IsDeleted)
+                .Include(c => c.SubCategories)
+                .OrderBy(c => c.CategoryName)
+                .Take(3)
+                .ToListAsync();
+
+            ViewBag.FeaturedProducts = featuredProducts;
+            ViewBag.FeaturedCategories = featuredCategories;
+
             return View();
         }
 
@@ -46,9 +63,80 @@ namespace EcommerceSystem.Controllers
             return View();
         }
 
-        public IActionResult Shop(string category)
+        public async Task<IActionResult> Shop(
+            Guid? categoryId,
+            Guid? subCategoryId,
+            string? searchTerm,
+            decimal? minPrice,
+            decimal? maxPrice,
+            string? sort)
         {
-            return View();
+            var query = _context.Products
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+                .AsQueryable();
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
+                        psc.SubCategory.CategoryId == categoryId.Value));
+            }
+
+            if (subCategoryId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategoryId == subCategoryId.Value));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.Trim();
+
+                query = query.Where(p =>
+                    p.ProductName.Contains(term) ||
+                    (p.ProductDescription != null && p.ProductDescription.Contains(term)));
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.ProductPrice >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.ProductPrice <= maxPrice.Value);
+            }
+
+            query = sort switch
+            {
+                "price_asc" => query.OrderBy(p => p.ProductPrice),
+                "price_desc" => query.OrderByDescending(p => p.ProductPrice),
+                "name_desc" => query.OrderByDescending(p => p.ProductName),
+                _ => query.OrderBy(p => p.ProductName)
+            };
+
+            var products = await query.ToListAsync();
+
+            var categories = await _context.Categories
+                .Where(c => !c.IsDeleted)
+                .Include(c => c.SubCategories)
+                .OrderBy(c => c.CategoryName)
+                .ToListAsync();
+
+            ViewBag.Categories = categories;
+            ViewBag.SelectedCategoryId = categoryId;
+            ViewBag.SelectedSubCategoryId = subCategoryId;
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.Sort = sort;
+
+            return View(products);
         }
 
         [Authorize]
