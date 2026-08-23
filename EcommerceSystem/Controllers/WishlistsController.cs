@@ -20,9 +20,9 @@ namespace EcommerceSystem.Controllers
         // CUSTOMER ACTIONS (Only Logged-in Customers)
         // =========================================================
 
-        // GET: Wishlists/MyWishlist
+        // GET: Wishlists/Index (عرض قائمة الأمنيات الخاصة بالعميل)
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> MyWishlist()
+        public async Task<IActionResult> Index()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers
@@ -39,7 +39,8 @@ namespace EcommerceSystem.Controllers
                         .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(w => w.CustomerId == customer.CustomerId);
 
-            return View(wishlist);
+            // تحديد مسار الـ View بالاسم الصحيح لمجلد Wishlist (مفرد)
+            return View("~/Views/Wishlist/Index.cshtml", wishlist);
         }
 
         // POST: Wishlists/ToggleWishlist
@@ -54,12 +55,11 @@ namespace EcommerceSystem.Controllers
 
             if (customer == null)
             {
-                return RedirectToAction("Login", "Account", new { area = "Identity" });
+                return Json(new { success = false, redirect = Url.Page("/Account/Login", new { area = "Identity" }) });
             }
 
-            // البحث عن قائمة الأمنيات أو إنشاء واحدة جديدة إن لم تكن موجودة
+            // 1. البحث عن قائمة الأمنيات الخاصة بالعميل أو إنشاؤها إن لم تكن موجودة
             var wishlist = await _context.Wishlists
-                .Include(w => w.WishlistItems)
                 .FirstOrDefaultAsync(w => w.CustomerId == customer.CustomerId);
 
             if (wishlist == null)
@@ -73,15 +73,17 @@ namespace EcommerceSystem.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // التحقق هل المنتج موجود في قائمة الأمنيات مسبقاً
-            var existingItem = wishlist.WishlistItems
-                .FirstOrDefault(wi => wi.ProductId == productId);
+            // 2. التحقق المباشر من وجود المنتج في جدول العناصر الوسيطة
+            var existingItem = await _context.WishlistItems
+                .FirstOrDefaultAsync(wi => wi.WishlistId == wishlist.WishlistId && wi.ProductId == productId);
+
+            bool isAdded = false;
 
             if (existingItem != null)
             {
                 // إزالة المنتج إذا كان موجوداً
                 _context.WishlistItems.Remove(existingItem);
-                TempData["Success"] = "Product removed from your wishlist.";
+                isAdded = false;
             }
             else
             {
@@ -93,13 +95,24 @@ namespace EcommerceSystem.Controllers
                     ProductId = productId
                 };
                 _context.WishlistItems.Add(wishlistItem);
-                TempData["Success"] = "Product added to your wishlist!";
+                isAdded = true;
             }
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // في حال حدوث تداخل، نقوم بإلغاء التتبع وإعادة المحاولة أو تجاهله بأمان
+                foreach (var entry in _context.ChangeTracker.Entries())
+                {
+                    entry.Reload();
+                }
+                await _context.SaveChangesAsync();
+            }
 
-            // العودة إلى نفس الصفحة التي جاء منها العميل
-            return Redirect(Request.Headers["Referer"].ToString() ?? Url.Action("Index", "Home"));
+            return Json(new { success = true, isAdded = isAdded });
         }
 
 
@@ -107,16 +120,16 @@ namespace EcommerceSystem.Controllers
         // ADMIN ACTIONS (Manage All Wishlists)
         // =========================================================
 
-        // GET: WISHLISTS
+        // GET: Wishlists/AdminList
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> AdminList()
         {
             var wishlists = await _context.Wishlists
                 .Include(w => w.Customer)
                 .Include(w => w.WishlistItems)
                 .ToListAsync();
 
-            return View(wishlists);
+            return View("AdminIndex", wishlists);
         }
 
         // GET: WISHLISTS/Details/5
@@ -139,80 +152,6 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
             }
 
-            return View(wishlist);
-        }
-
-        // GET: WISHLISTS/Create
-        [Authorize(Roles = "Admin")]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: WISHLISTS/Create
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WishlistId,CustomerId")] Wishlist wishlist)
-        {
-            if (ModelState.IsValid)
-            {
-                wishlist.WishlistId = Guid.NewGuid();
-                _context.Add(wishlist);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(wishlist);
-        }
-
-        // GET: WISHLISTS/Edit/5
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(Guid? wishlistid)
-        {
-            if (wishlistid == null)
-            {
-                return NotFound();
-            }
-
-            var wishlist = await _context.Wishlists.FindAsync(wishlistid);
-            if (wishlist == null)
-            {
-                return NotFound();
-            }
-            return View(wishlist);
-        }
-
-        // POST: WISHLISTS/Edit/5
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid wishlistid, [Bind("WishlistId,CustomerId")] Wishlist wishlist)
-        {
-            if (wishlistid != wishlist.WishlistId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(wishlist);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!WishlistExists(wishlist.WishlistId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
             return View(wishlist);
         }
 
@@ -250,7 +189,7 @@ namespace EcommerceSystem.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AdminList));
         }
 
         private bool WishlistExists(Guid wishlistid)

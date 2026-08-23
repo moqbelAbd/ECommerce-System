@@ -1,5 +1,4 @@
 ﻿@model dynamic
-
 <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
     <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
 
@@ -23,18 +22,25 @@
                 </span>
             </div>
 
-            <!-- الجانب الأيمن: المفضلة وزر السلة الذهبي (مع مسافة مريحة من الأعلى) -->
+            <!-- الجانب الأيمن: المفضلة وزر السلة الذهبي -->
             <div class="block2-txt-child2 flex-r" style="padding-top: 5px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                
                 <!-- Wishlist Icon for Customer Only -->
                 @if (User.IsInRole("Customer"))
                 {
-                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" style="text-decoration: none;" title="Add to Wishlist">
-                        <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON">
-                        <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON">
-                    </a>
+                    bool isInWishlist = Model.IsInWishlist ?? false;
+
+                    <button type="button" class="btn-toggle-wishlist p-0 border-0 bg-transparent" data-product-id="@Model.ProductId" style="cursor: pointer;" title="Add/Remove Wishlist">
+                        <div class="btn-addwish-b2 dis-block pos-relative">
+                            <!-- القلب الفاتح (غير مضاف) -->
+                            <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON" style="@(isInWishlist ? "opacity: 0;" : "opacity: 1;")">
+                            <!-- القلب الغامق (مضاف) -->
+                            <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON" style="@(isInWishlist ? "opacity: 1;" : "opacity: 0;")">
+                        </div>
+                    </button>
                 }
 
-                <!-- Add to Cart Button (اللون الذهبي الفاخر) -->
+                <!-- Add to Cart Button -->
                 @if (!User.IsInRole("Admin"))
                 {
                     <a href="#" class="cart-gold-btn" title="Add to Cart">
@@ -70,7 +76,7 @@
         box-shadow: 0 10px 20px rgba(0,0,0,0.08);
         transform: translateY(-3px);
     }
-    /* تصميم زر السلة الذهبي الفاخر والمضمون ظهوره */
+
     .cart-gold-btn {
         background-color: #c5a059 !important;
         border: none !important;
@@ -85,8 +91,52 @@
         transition: all 0.3s ease;
     }
 
-        .cart-gold-btn:hover {
-            background-color: #b08d4c !important;
-            transform: scale(1.08);
-        }
+    .cart-gold-btn:hover {
+        background-color: #b08d4c !important;
+        transform: scale(1.08);
+    }
 </style>
+
+<!-- سكريبت الـ AJAX مضمن هنا ليعمل تلقائياً مع أي كرت يتم عرضه في أي صفحة -->
+<script>
+    if (typeof wishlistScriptInitialized === 'undefined') {
+        var wishlistScriptInitialized = true;
+        document.addEventListener("DOMContentLoaded", function () {
+            document.body.addEventListener("click", function (e) {
+                const btn = e.target.closest(".btn-toggle-wishlist");
+                if (!btn) return;
+                
+                e.preventDefault();
+                const productId = btn.getAttribute("data-product-id");
+                const heart1 = btn.querySelector(".icon-heart1");
+                const heart2 = btn.querySelector(".icon-heart2");
+
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+                fetch('/Wishlists/ToggleWishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token || ''
+                    },
+                    body: `productId=${productId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.isAdded) {
+                            heart1.style.opacity = "0";
+                            heart2.style.opacity = "1";
+                        } else {
+                            heart1.style.opacity = "1";
+                            heart2.style.opacity = "0";
+                        }
+                    } else if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    }
+</script>

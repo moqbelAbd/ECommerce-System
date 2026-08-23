@@ -3,7 +3,6 @@
 @inject ApplicationDbContext _context
 
 @{
-    // جلب التصنيفات الرئيسية مع التصنيفات الفرعية غير المحذوفة من قاعدة البيانات
     var sidebarCategories = await _context.Categories
         .Where(c => !c.IsDeleted)
         .Include(c => c.SubCategories.Where(sc => !sc.IsDeleted))
@@ -34,9 +33,7 @@
     <link rel="stylesheet" type="text/css" href="~/css/util.css">
     <link rel="stylesheet" type="text/css" href="~/css/main.css">
 
-    <!-- Custom Styling & Footer Fix -->
     <style>
-        /* جعل الصفحة بأكملها تأخذ ارتفاع الشاشة لضمان ثبات الفوتر في الأسفل */
         html, body {
             height: 100%;
             margin: 0;
@@ -48,7 +45,6 @@
             min-height: 100vh;
         }
 
-        /* جعل محتوى الصفحة يأخذ المساحة المرنة ليدفع الفوتر للأسفل */
         .page-content-wrapper {
             flex: 1 0 auto;
         }
@@ -275,7 +271,8 @@
                 {
                     @if (User.IsInRole("Customer"))
                     {
-                        <li><a asp-controller="Customer" asp-action="Wishlist">My Wishlist</a></li>
+                        <!-- تم التعديل هنا إلى Index -->
+                        <li><a asp-controller="Wishlists" asp-action="Index" class="stext-102 trans-04">My Wishlist</a></li>
                     }
                     <li><a asp-controller="Home" asp-action="Profile">My Account</a></li>
                 }
@@ -288,7 +285,6 @@
         <div class="s-full js-hide-sidebar"></div>
         <div class="sidebar flex-col-l p-t-22 p-b-25" style="width: 300px; max-width: 80%; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
             <div>
-                <!-- زر الإغلاق (مثبت في الحافة تماماً) -->
                 <div class="w-full d-flex justify-content-end p-r-15 p-t-5">
                     <div class="fs-35 lh-10 pointer hov-cl1 trans-04 js-hide-sidebar p-2">
                         <i class="zmdi zmdi-close"></i>
@@ -313,7 +309,6 @@
                             </li>
                         }
 
-                        <!-- Categories & Subcategories from Database -->
                         <li class="p-b-13">
                             <div class="d-flex justify-content-between align-items-center w-full">
                                 <a asp-controller="Home" asp-action="Shop" class="stext-102 trans-04 font-weight-bold" style="flex-grow: 1;">Categories</a>
@@ -327,7 +322,6 @@
                                 {
                                     var collapseId = $"subCat_{cat.CategoryId}";
                                     <div class="p-b-8 d-flex justify-content-between align-items-center">
-                                        <!-- الضغط على اسم التصنيف الرئيسي يأخذ لصفحة Shop مع الـ categoryId -->
                                         <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@cat.CategoryId" class="stext-102 trans-04" style="color: #adb5bd; flex-grow: 1;">- @cat.CategoryName</a>
                                         @if (cat.SubCategories != null && cat.SubCategories.Any())
                                         {
@@ -341,7 +335,6 @@
                                         <div class="collapse ps-3 p-l-15 p-b-5" id="@collapseId">
                                             @foreach (var sub in cat.SubCategories)
                                             {
-                                                <!-- الضغط على التصنيف الفرعي يأخذ لصفحة Shop مع الـ categoryId و subCategoryId -->
                                                 <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@cat.CategoryId" asp-route-subCategoryId="@sub.SubCategoryId" class="stext-102 trans-04 d-block p-b-4" style="color: #6c757d; font-size: 13px;">• @sub.SubCategoryName</a>
                                             }
                                         </div>
@@ -368,14 +361,14 @@
                                 <a asp-controller="Customer" asp-action="OrderHistory" class="stext-102 trans-04">My Orders</a>
                             </li>
                             <li class="p-b-13">
-                                <a asp-controller="Customer" asp-action="Wishlist" class="stext-102 trans-04">My Wishlist</a>
+                                <!-- تم التعديل هنا إلى Index -->
+                                <a asp-controller="Wishlists" asp-action="Index" class="stext-102 trans-04">My Wishlist</a>
                             </li>
                         }
                     </ul>
                 </div>
             </div>
 
-            <!-- Logo and Logout at the bottom -->
             <div class="w-full p-lr-35 p-b-20">
                 <div class="d-flex align-items-center justify-content-between w-full">
                     <a asp-controller="Home" asp-action="Index" class="logo">
@@ -431,12 +424,10 @@
         </div>
     }
 
-    <!-- تغليف المحتوى لضمان دفع الفوتر للأسفل دائمًا -->
     <div class="page-content-wrapper">
         @RenderBody()
     </div>
 
-    <!-- Footer -->
     <footer class="bg3 p-t-5 p-b-5" style="background-color: #1a1d20 !important;">
         <div class="container">
             <div class="flex-w flex-sb-m">

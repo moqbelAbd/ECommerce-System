@@ -1,10 +1,11 @@
-﻿@using EcommerceSystem.Models
-@model IEnumerable<Product>
+﻿@model IEnumerable<EcommerceSystem.Models.Product>
 @{
     ViewData["Title"] = "Home Page - Rolexyal";
 
     var featuredCategories = ViewBag.FeaturedCategories as List<Category> ?? new List<Category>();
     var featuredProducts = ViewBag.FeaturedProducts as List<Product> ?? new List<Product>();
+
+    var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
 }
 
 <!-- Slider -->
@@ -154,16 +155,18 @@
                         ?? "~/images/product-01.jpg";
 
                     var cardData = new
-                    {
-                        ImageUrl = Url.Content(imagePath),
-                        Title = product.ProductName,
-                        Subtitle = product.ProductPrice.ToString("C"),
-                        DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }),
-                        ButtonText = "Quick View",
-                        ShowAdminActions = User.IsInRole("Admin"),
-                        EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
-                        DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId })
-                    };
+{
+    ProductId = product.ProductId,
+    IsInWishlist = userWishlistIds.Contains(product.ProductId), // <--- أضف هذا السطر هنا ليتم تمريرها للـ Partial View
+    ImageUrl = Url.Content(imagePath),
+    Title = product.ProductName,
+    Subtitle = product.ProductPrice.ToString("C"),
+    DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }),
+    ButtonText = "Quick View",
+    ShowAdminActions = User.IsInRole("Admin"),
+    EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
+    DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId })
+};
 
                     <partial name="_ProductCardPartial" model="cardData" />
                 }
@@ -178,7 +181,7 @@
     </div>
 </section>
 
-<!-- Testimonials Section (مع إرجاع السلايدر باستخدام testimonial-slick) -->
+<!-- Testimonials Section -->
 <section class="sec-testimonials bg6 p-t-80 p-b-80">
     <div class="container">
         <div class="p-b-42 d-flex justify-content-between align-items-center flex-wrap">
@@ -186,7 +189,6 @@
                 What Our Customers Say
             </h3>
 
-            <!-- زر فتح نافذة إضافة الرأي -->
             @if (User.Identity != null && User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
             {
                 <button type="button" id="openTestimonialModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
@@ -320,7 +322,7 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // تفعيل الـ Slick Slider للـ Testimonials بشكل مستقل وآمن
+            // Testimonial Slider
             if ($('.testimonial-slick').length > 0) {
                 $('.testimonial-slick').slick({
                     slidesToShow: 3,
@@ -338,7 +340,7 @@
                 });
             }
 
-            // تفعيل الـ Slick Slider للـ FAQ بشكل مستقل وآمن
+            // FAQ Slider
             if ($('.faq-slick').length > 0) {
                 $('.faq-slick').slick({
                     slidesToShow: 3,
@@ -356,7 +358,7 @@
                 });
             }
 
-            // تفعيل الـ Popup للـ Testimonial بنفس طريقة الـ Product Review تماماً
+            // Testimonial Modal Logic
             const openBtn = document.getElementById("openTestimonialModalBtn");
             const modal = document.getElementById("testimonialModal");
 
@@ -390,6 +392,42 @@
                     }
                 });
             }
+
+            // Wishlist AJAX Toggle Logic (تم نقله هنا ليعمل داخل الـ Scripts بشكل آمن)
+            document.querySelectorAll(".btn-toggle-wishlist").forEach(button => {
+                button.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute("data-product-id");
+                    const heart1 = this.querySelector(".icon-heart1");
+                    const heart2 = this.querySelector(".icon-heart2");
+
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+                    fetch('/Wishlists/ToggleWishlist', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': token || ''
+                        },
+                        body: `productId=${productId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.isAdded) {
+                                heart1.style.opacity = "0";
+                                heart2.style.opacity = "1";
+                            } else {
+                                heart1.style.opacity = "1";
+                                heart2.style.opacity = "0";
+                            }
+                        } else if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
         });
     </script>
 }
