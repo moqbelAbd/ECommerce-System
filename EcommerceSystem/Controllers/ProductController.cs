@@ -1,4 +1,5 @@
 using EcommerceSystem.Data;
+using EcommerceSystem.Helpers;
 using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace EcommerceSystem.Controllers
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public ProductController(ApplicationDbContext context)
+        public ProductController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: Product
@@ -164,11 +167,11 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> Create(
             Product product,
             Guid? subCategoryId,
-            string? imagePaths)
+            List<IFormFile>? imageFiles)
         {
             if (!ModelState.IsValid)
             {
-                await LoadProductDropdowns(subCategoryId, imagePaths);
+                await LoadProductDropdowns(subCategoryId);
                 return View(product);
             }
 
@@ -176,12 +179,17 @@ namespace EcommerceSystem.Controllers
             product.IsDeleted = false;
 
             // Add product images
-            foreach (var path in SplitImagePaths(imagePaths))
+            foreach (var imageFile in imageFiles ?? new List<IFormFile>())
             {
+                if (imageFile.Length == 0)
+                    continue;
+
+                var imagePath = await ImageUploadHelper.SaveImageAsync(imageFile, "products", _environment);
+
                 product.ProductImages.Add(new ProductImage
                 {
                     ProductImageId = Guid.NewGuid(),
-                    ProductImagePath = path,
+                    ProductImagePath = imagePath,
                     ProductId = product.ProductId
                 });
             }
@@ -228,10 +236,7 @@ namespace EcommerceSystem.Controllers
                 .Select(psc => (Guid?)psc.SubCategoryId)
                 .FirstOrDefault();
 
-            var imagePaths = string.Join(", ", product.ProductImages
-                .Select(image => image.ProductImagePath));
-
-            await LoadProductDropdowns(selectedSubCategoryId, imagePaths);
+            await LoadProductDropdowns(selectedSubCategoryId);
 
             return View(product);
         }
@@ -243,14 +248,14 @@ namespace EcommerceSystem.Controllers
             Guid id,
             Product product,
             Guid? subCategoryId,
-            string? imagePaths)
+            List<IFormFile>? imageFiles)
         {
             if (id != product.ProductId)
                 return NotFound();
 
             if (!ModelState.IsValid)
             {
-                await LoadProductDropdowns(subCategoryId, imagePaths);
+                await LoadProductDropdowns(subCategoryId);
                 return View(product);
             }
 
@@ -283,19 +288,27 @@ namespace EcommerceSystem.Controllers
             existingProduct.ProductModelId =
                 product.ProductModelId;
 
-            // Remove old images
-            _context.ProductImages.RemoveRange(
-                existingProduct.ProductImages);
+            // Replace images only when new files were uploaded
+            var uploadedFiles = (imageFiles ?? new List<IFormFile>())
+                .Where(f => f.Length > 0)
+                .ToList();
 
-            // Add new images
-            foreach (var path in SplitImagePaths(imagePaths))
+            if (uploadedFiles.Any())
             {
-                existingProduct.ProductImages.Add(new ProductImage
+                _context.ProductImages.RemoveRange(
+                    existingProduct.ProductImages);
+
+                foreach (var imageFile in uploadedFiles)
                 {
-                    ProductImageId = Guid.NewGuid(),
-                    ProductImagePath = path,
-                    ProductId = existingProduct.ProductId
-                });
+                    var imagePath = await ImageUploadHelper.SaveImageAsync(imageFile, "products", _environment);
+
+                    existingProduct.ProductImages.Add(new ProductImage
+                    {
+                        ProductImageId = Guid.NewGuid(),
+                        ProductImagePath = imagePath,
+                        ProductId = existingProduct.ProductId
+                    });
+                }
             }
 
             // Remove old Product/SubCategory relationships
@@ -372,8 +385,7 @@ namespace EcommerceSystem.Controllers
 
         // Load dropdown data
         private async Task LoadProductDropdowns(
-            Guid? selectedSubCategoryId = null,
-            string? imagePaths = null)
+            Guid? selectedSubCategoryId = null)
         {
             ViewBag.Brands = await _context.ProductBrands
                 .OrderBy(brand => brand.BrandName)
@@ -389,23 +401,6 @@ namespace EcommerceSystem.Controllers
                 .ToListAsync();
 
             ViewBag.SelectedSubCategoryId = selectedSubCategoryId;
-            ViewBag.ImagePaths = imagePaths;
-        }
-
-        // Split image paths
-        private static IEnumerable<string> SplitImagePaths(
-            string? imagePaths)
-        {
-            if (string.IsNullOrWhiteSpace(imagePaths))
-                yield break;
-
-            foreach (var path in imagePaths.Split(
-                ',',
-                StringSplitOptions.RemoveEmptyEntries |
-                StringSplitOptions.TrimEntries))
-            {
-                yield return path;
-            }
         }
     }
 }

@@ -1,0 +1,190 @@
+@using EcommerceSystem.Models.ViewModels
+@model IEnumerable<AdminCustomerListItem>
+
+@{
+    ViewData["Title"] = "Manage Customers";
+
+    string? search = ViewBag.Search;
+}
+
+<div class="bg0 p-t-80 p-b-100">
+
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="flex-sb-m flex-w p-b-35">
+
+            <div>
+                <h1 class="ltext-103 cl5">
+                    Manage Customers
+                </h1>
+
+                <p class="stext-102 cl6 p-t-5">
+                    View registered customers, search by name, phone, or location, and review order activity.
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- Filters -->
+        <div class="bor10 p-all-20 m-b-40">
+
+            <form asp-controller="Admin"
+                  asp-action="Customers"
+                  method="get">
+
+                <div class="row">
+
+                    <div class="col-md-8 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            Search
+                        </label>
+
+                        <input type="text"
+                               name="search"
+                               value="@search"
+                               class="form-control"
+                               placeholder="Search by name, phone, or location..." />
+
+                    </div>
+
+
+                    <div class="col-md-4 d-flex align-items-end m-b-15">
+
+                        <button type="submit"
+                                class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 m-r-10 trans-04">
+
+                            <i class="fa fa-filter m-r-8"></i>
+
+                            Apply Filters
+
+                        </button>
+
+
+                        <a asp-controller="Admin"
+                           asp-action="Customers"
+                           class="flex-c-m stext-101 size-101 bor1 hov-btn1 btn-outline-gold cl2 p-lr-20">
+
+                            Clear
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- Customer Count -->
+        <div class="flex-sb-m flex-w p-b-20">
+
+            <div>
+
+                <span class="stext-102 cl6">
+
+                    Showing
+
+                    <strong>
+                        @Model.Count()
+                    </strong>
+
+                    customer(s)
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Customers Table -->
+        @if (!Model.Any())
+        {
+            <div class="bor10 p-all-40 text-center">
+
+                <i class="fa fa-users fa-2x m-b-15"></i>
+
+                <h4 class="mtext-102 cl2">
+                    No customers found
+                </h4>
+
+            </div>
+        }
+        else
+        {
+            <div class="bor10" style="border-radius:10px; overflow:hidden;">
+
+                <div class="table-responsive">
+
+                    <table class="table mb-0" style="margin-bottom:0;">
+
+                        <thead style="background:#1a1d20;">
+                            <tr>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Customer ID</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Phone Number</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Name</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Location</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Orders</th>
+                            </tr>
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var customer in Model)
+                            {
+                                <tr style="vertical-align:middle; border-bottom:1px solid #eee;">
+
+                                    <!-- Customer ID -->
+                                    <td style="padding:16px 20px; font-family:monospace; font-size:0.85rem; color:#888;">
+                                        @customer.CustomerId
+                                    </td>
+
+
+                                    <!-- Phone Number -->
+                                    <td style="padding:16px 20px;">
+                                        @(customer.PhoneNumber ?? "-")
+                                    </td>
+
+
+                                    <!-- Name -->
+                                    <td style="padding:16px 20px;">
+                                        <strong style="color:#1a1d20;">
+                                            @customer.FullName
+                                        </strong>
+                                    </td>
+
+
+                                    <!-- Location -->
+                                    <td style="padding:16px 20px;">
+                                        @(customer.Location ?? "-")
+                                    </td>
+
+
+                                    <!-- Orders -->
+                                    <td style="padding:16px 20px;">
+                                        <span class="badge bg-secondary" style="font-size:0.85rem; padding:6px 12px;">
+                                            @customer.OrderCount
+                                        </span>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

@@ -1,4 +1,5 @@
 using EcommerceSystem.Data;
+using EcommerceSystem.Helpers;
 using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace EcommerceSystem.Controllers
     public class SubCategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public SubCategoryController(ApplicationDbContext context)
+        public SubCategoryController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: SubCategory
@@ -57,8 +60,15 @@ namespace EcommerceSystem.Controllers
         // POST: SubCategory/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SubCategory subCategory)
+        public async Task<IActionResult> Create(SubCategory subCategory, IFormFile? imageFile)
         {
+            ModelState.Remove(nameof(SubCategory.SubCategoryImagePath));
+
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                ModelState.AddModelError(nameof(SubCategory.SubCategoryImagePath), "Please choose an image to upload.");
+            }
+
             if (!ModelState.IsValid)
             {
                 await PopulateCategoriesAsync(subCategory.CategoryId);
@@ -67,6 +77,7 @@ namespace EcommerceSystem.Controllers
 
             subCategory.SubCategoryId = Guid.NewGuid();
             subCategory.IsDeleted = false;
+            subCategory.SubCategoryImagePath = await ImageUploadHelper.SaveImageAsync(imageFile!, "subcategories", _environment);
 
             _context.SubCategories.Add(subCategory);
             await _context.SaveChangesAsync();
@@ -97,10 +108,12 @@ namespace EcommerceSystem.Controllers
         // POST: SubCategory/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, SubCategory subCategory)
+        public async Task<IActionResult> Edit(Guid id, SubCategory subCategory, IFormFile? imageFile)
         {
             if (id != subCategory.SubCategoryId)
                 return NotFound();
+
+            ModelState.Remove(nameof(SubCategory.SubCategoryImagePath));
 
             if (!ModelState.IsValid)
             {
@@ -117,8 +130,12 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             existingSubCategory.SubCategoryName = subCategory.SubCategoryName;
-            existingSubCategory.SubCategoryImagePath = subCategory.SubCategoryImagePath;
             existingSubCategory.CategoryId = subCategory.CategoryId;
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                existingSubCategory.SubCategoryImagePath = await ImageUploadHelper.SaveImageAsync(imageFile, "subcategories", _environment);
+            }
 
             await _context.SaveChangesAsync();
 

@@ -1,0 +1,197 @@
+@model EcommerceSystem.Models.Order
+
+@{
+    ViewData["Title"] = "Order Preview";
+
+    var phoneNumber = Model.Customer?.CustomerPhoneNumbers
+        .Where(p => !p.IsDeleted)
+        .Select(p => p.PhoneNumber)
+        .FirstOrDefault();
+}
+
+<div class="bg0 p-t-80 p-b-100">
+
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="flex-sb-m flex-w p-b-35">
+
+            <div>
+                <h1 class="ltext-103 cl5">
+                    Order #@Model.OrderId
+                </h1>
+
+                <p class="stext-102 cl6 p-t-5">
+                    Placed on @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                </p>
+            </div>
+
+            <div class="m-tb-10">
+
+                <a asp-controller="Order"
+                   asp-action="Index"
+                   class="flex-c-m stext-101 size-101 bor1 hov-btn1 btn-outline-gold cl2 p-lr-15">
+
+                    Back to Orders
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <!-- Order Info -->
+            <div class="col-lg-6 p-b-30">
+
+                <div class="bor10 p-all-30">
+
+                    <h4 class="mtext-108 cl2 m-b-20">
+                        Order Information
+                    </h4>
+
+                    <dl class="row stext-102 cl6 mb-0">
+
+                        <dt class="col-sm-5">Order Status</dt>
+                        <dd class="col-sm-7">
+                            <span class="badge bg-info text-dark">
+                                @(Model.OrderStatus?.OrderStatusName ?? "-")
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-5">Payment Status</dt>
+                        <dd class="col-sm-7">
+                            <span class="badge bg-secondary">
+                                @(Model.PaymentStatus?.PaymentStatusName ?? "-")
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-5">Payment Type</dt>
+                        <dd class="col-sm-7">@(Model.PaymentType?.PaymentTypeName ?? "-")</dd>
+
+                        <dt class="col-sm-5">Location</dt>
+                        <dd class="col-sm-7">@(Model.Location ?? "-")</dd>
+
+                        <dt class="col-sm-5">Total Price</dt>
+                        <dd class="col-sm-7">
+                            <strong>@Model.TotalPrice.ToString("C")</strong>
+                        </dd>
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+
+            <!-- Customer Info -->
+            <div class="col-lg-6 p-b-30">
+
+                <div class="bor10 p-all-30">
+
+                    <h4 class="mtext-108 cl2 m-b-20">
+                        Customer Information
+                    </h4>
+
+                    <dl class="row stext-102 cl6 mb-0">
+
+                        <dt class="col-sm-5">Name</dt>
+                        <dd class="col-sm-7">
+                            @(Model.Customer == null
+                                ? "-"
+                                : $"{Model.Customer.FirstName} {Model.Customer.LastName}")
+                        </dd>
+
+                        <dt class="col-sm-5">Phone Number</dt>
+                        <dd class="col-sm-7">@(phoneNumber ?? "-")</dd>
+
+                        <dt class="col-sm-5">Location</dt>
+                        <dd class="col-sm-7">@(Model.Customer?.Location ?? "-")</dd>
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Order Items -->
+        <div class="p-b-30">
+
+            <h4 class="mtext-103 cl2 p-b-20">
+                Order Items
+            </h4>
+
+            @if (!Model.OrderItems.Any())
+            {
+                <div class="bor10 p-all-40 text-center">
+
+                    <i class="fa fa-box-open fa-2x m-b-15"></i>
+
+                    <h4 class="mtext-102 cl2">
+                        No items in this order
+                    </h4>
+
+                </div>
+            }
+            else
+            {
+                <div class="wrap-table-shopping-cart">
+
+                    <table class="table-shopping-cart">
+
+                        <thead>
+
+                            <tr class="table_head">
+
+                                <th class="column-1">Product</th>
+                                <th class="column-2">Quantity</th>
+                                <th class="column-3">Item Total Price</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr class="table_row">
+
+                                    <!-- Product -->
+                                    <td class="column-1">
+                                        @(item.Product?.ProductName ?? "Deleted product")
+                                    </td>
+
+
+                                    <!-- Quantity -->
+                                    <td class="column-2">
+                                        @item.ItemQuantity
+                                    </td>
+
+
+                                    <!-- Item Total Price -->
+                                    <td class="column-3">
+                                        <strong>@item.ItemTotalPrice.ToString("C")</strong>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,6 +1,15 @@
-﻿@{
+﻿@using EcommerceSystem.Models
+@model IEnumerable<Order>
+
+@{
     ViewData["Title"] = "Admin Dashboard - Watch Store";
-    // سيتم استخدام الـ Layout الافتراضي للموقع تلقائياً
+
+    decimal totalRevenue = ViewBag.TotalRevenue;
+    int totalOrders = ViewBag.TotalOrders;
+    int totalCustomers = ViewBag.TotalCustomers;
+    int lowStockCount = ViewBag.LowStockCount;
+    decimal? revenueChangePercent = ViewBag.RevenueChangePercent;
+    decimal? ordersChangePercent = ViewBag.OrdersChangePercent;
 }
 
 <div class="container p-t-100 p-b-100">
@@ -10,41 +19,80 @@
             <h1 class="ltext-103 cl5">Admin Dashboard</h1>
             <p class="stext-102 cl6">Welcome back, @User.Identity?.Name! Monitor store performance and recent watch orders.</p>
         </div>
-        <div>
-            <a asp-controller="Product" asp-action="Index" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                Manage Products
-            </a>
-        </div>
     </div>
 
     <!-- كروت الإحصائيات -->
-    <div class="row g-4 p-b-50">
+    <div class="row g-4 p-b-30">
         <div class="col-md-3">
             <div class="p-all-20 bg6 bor4">
                 <span class="stext-102 cl9">Total Revenue</span>
-                <h3 class="mtext-111 cl2 p-t-10">$28,450</h3>
-                <span class="stext-109 cl1">+14.2% from last month</span>
+                <h3 class="mtext-111 cl2 p-t-10">@totalRevenue.ToString("C")</h3>
+                @if (revenueChangePercent.HasValue)
+                {
+                    <span class="stext-109 @(revenueChangePercent >= 0 ? "cl1" : "text-danger")">
+                        @(revenueChangePercent >= 0 ? "+" : "")@revenueChangePercent.Value.ToString("0.0")% from last month
+                    </span>
+                }
+                else
+                {
+                    <span class="stext-109 cl6">All-time revenue</span>
+                }
             </div>
         </div>
         <div class="col-md-3">
             <div class="p-all-20 bg6 bor4">
                 <span class="stext-102 cl9">Watch Orders</span>
-                <h3 class="mtext-111 cl2 p-t-10">348</h3>
-                <span class="stext-109 cl1">+8.5% new orders</span>
+                <h3 class="mtext-111 cl2 p-t-10">@totalOrders</h3>
+                @if (ordersChangePercent.HasValue)
+                {
+                    <span class="stext-109 @(ordersChangePercent >= 0 ? "cl1" : "text-danger")">
+                        @(ordersChangePercent >= 0 ? "+" : "")@ordersChangePercent.Value.ToString("0.0")% vs last month
+                    </span>
+                }
+                else
+                {
+                    <span class="stext-109 cl6">Total orders placed</span>
+                }
             </div>
         </div>
         <div class="col-md-3">
             <div class="p-all-20 bg6 bor4">
                 <span class="stext-102 cl9">Customers</span>
-                <h3 class="mtext-111 cl2 p-t-10">1,420</h3>
-                <span class="stext-109 cl1">+6.3% active users</span>
+                <h3 class="mtext-111 cl2 p-t-10">@totalCustomers</h3>
+                <span class="stext-109 cl6">Registered customers</span>
             </div>
         </div>
         <div class="col-md-3">
             <div class="p-all-20 bg6 bor4">
                 <span class="stext-102 cl9">Low Stock Items</span>
-                <h3 class="mtext-111 cl2 p-t-10 text-danger">4</h3>
-                <span class="stext-109 text-danger">Stock remaining &lt; 5</span>
+                <h3 class="mtext-111 cl2 p-t-10 text-danger">@lowStockCount</h3>
+                <span class="stext-109 text-danger">Stock remaining &lt;= 5</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- روابط الإدارة السريعة -->
+    <div class="row g-4 p-b-50">
+        <div class="col-md-6">
+            <div class="p-all-20 bor4 h-100 d-flex flex-column">
+                <h5 class="mtext-103 cl2">Manage Customers</h5>
+                <p class="stext-102 cl6 p-t-5 flex-grow-1">
+                    Browse registered customers, search by name or phone, and review order activity.
+                </p>
+                <a asp-controller="Admin" asp-action="Customers" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-15" style="align-self:flex-start;">
+                    Manage Customers
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-all-20 bor4 h-100 d-flex flex-column">
+                <h5 class="mtext-103 cl2">Manage Orders</h5>
+                <p class="stext-102 cl6 p-t-5 flex-grow-1">
+                    Search and filter orders, update order status, and preview full order details.
+                </p>
+                <a asp-controller="Order" asp-action="Index" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-15" style="align-self:flex-start;">
+                    Manage Orders
+                </a>
             </div>
         </div>
     </div>
@@ -57,26 +105,40 @@
                 <tr class="table_head">
                     <th class="column-1">Order ID</th>
                     <th class="column-2">Customer</th>
-                    <th class="column-3">Watch Item</th>
+                    <th class="column-3">Total Price</th>
                     <th class="column-4">Status</th>
                     <th class="column-5">Action</th>
                 </tr>
 
-                <tr class="table_row">
-                    <td class="column-1">#ORD-9021</td>
-                    <td class="column-2">Sarah Ahmed</td>
-                    <td class="column-3">Classic Leather Watch</td>
-                    <td class="column-4"><span class="badge bg-success">Completed</span></td>
-                    <td class="column-5"><a href="#" class="stext-101 cl1 hov-cl1">View Details</a></td>
-                </tr>
-
-                <tr class="table_row">
-                    <td class="column-1">#ORD-9020</td>
-                    <td class="column-2">Rafi Khan</td>
-                    <td class="column-3">Sport Chronograph</td>
-                    <td class="column-4"><span class="badge bg-warning text-dark">Pending</span></td>
-                    <td class="column-5"><a href="#" class="stext-101 cl1 hov-cl1">View Details</a></td>
-                </tr>
+                @if (!Model.Any())
+                {
+                    <tr class="table_row">
+                        <td colspan="5" class="text-center">No orders yet</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var order in Model)
+                    {
+                        <tr class="table_row">
+                            <td class="column-1">@order.OrderId</td>
+                            <td class="column-2">
+                                @(order.Customer == null
+                                    ? "-"
+                                    : $"{order.Customer.FirstName} {order.Customer.LastName}")
+                            </td>
+                            <td class="column-3">@order.TotalPrice.ToString("C")</td>
+                            <td class="column-4">
+                                <span class="badge bg-info text-dark">
+                                    @(order.OrderStatus?.OrderStatusName ?? "-")
+                                </span>
+                            </td>
+                            <td class="column-5">
+                                <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="stext-101 cl1 hov-cl1">View Details</a>
+                            </td>
+                        </tr>
+                    }
+                }
             </table>
         </div>
     </div>
