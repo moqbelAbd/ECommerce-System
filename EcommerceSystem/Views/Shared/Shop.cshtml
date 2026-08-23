@@ -1,5 +1,16 @@
-﻿@{
+﻿@using EcommerceSystem.Models
+@model IEnumerable<Product>
+
+@{
     ViewData["Title"] = "Shop Products";
+
+    var subCategories = ViewBag.SubCategories as List<SubCategory> ?? new List<SubCategory>();
+    Guid? selectedCategoryId = ViewBag.SelectedCategoryId;
+    Guid? selectedSubCategoryId = ViewBag.SelectedSubCategoryId;
+    string? searchTerm = ViewBag.SearchTerm;
+
+    string Slugify(string value) =>
+        value.Trim().ToLowerInvariant().Replace(" ", "-");
 }
 
 <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('/images/bg-01.jpg');">
@@ -15,29 +26,20 @@
 
             <!-- Filter Categories -->
             <div class="flex-w flex-l-m filter-tope-group m-tb-10">
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+                <a asp-controller="Home" asp-action="Shop" asp-route-searchTerm="@searchTerm"
+                   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(selectedSubCategoryId == null ? "how-active1" : "")">
                     All Products
-                </button>
+                </a>
 
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-                    Luxury Timepieces
-                </button>
-
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".necklaces">
-                    Fine Necklaces
-                </button>
-
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".rings">
-                    Designer Rings
-                </button>
-
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-                    Shoes
-                </button>
-
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-                    Watches
-                </button>
+                @foreach (var subCategory in subCategories)
+                {
+                    <a asp-controller="Home" asp-action="Shop"
+                       asp-route-subCategoryId="@subCategory.SubCategoryId"
+                       asp-route-searchTerm="@searchTerm"
+                       class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(selectedSubCategoryId == subCategory.SubCategoryId ? "how-active1" : "")">
+                        @subCategory.SubCategoryName
+                    </a>
+                }
             </div>
 
             <div class="flex-w flex-c-m m-tb-10">
@@ -56,13 +58,15 @@
 
             <!-- Search product -->
             <div class="dis-none panel-search w-full p-t-10 p-b-15">
-                <div class="bor8 dis-flex p-l-15">
-                    <button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
+                <form asp-controller="Home" asp-action="Shop" method="get" class="bor8 dis-flex p-l-15">
+                    <input type="hidden" name="subCategoryId" value="@selectedSubCategoryId" />
+
+                    <button type="submit" class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
                         <i class="zmdi zmdi-search"></i>
                     </button>
 
-                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
-                </div>
+                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="searchTerm" value="@searchTerm" placeholder="Search">
+                </form>
             </div>
 
             <!-- Filter Panel -->
@@ -128,87 +132,47 @@
         </div>
 
         <!-- Products Grid -->
-        <div class="row isotope-grid">
-
-            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-                <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
-                    <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
-                        <img src="~/images/Men/Watch10/timberland-watch.png" alt="TIMBERLAND MEN WATCH" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
-                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
-                            Quick View
-                        </a>
-                    </div>
-                    <div class="block2-txt flex-w flex-t p-t-16 p-b-20 p-lr-20" style="display: flex; justify-content: space-between; align-items: flex-start; flex-grow: 1;">
-                        <div class="block2-txt-child1 flex-col-l" style="width: calc(100% - 35px);">
-                            <a asp-controller="Product" asp-action="Details" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                Timberland Classic Men Watch
-                            </a>
-                            <span class="stext-105 cl3" style="font-weight: 600; color: #111;">$145.00</span>
-                        </div>
-
-                        <div class="block2-txt-child2 flex-r p-t-3">
-                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON">
-                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON">
-                            </a>
-                        </div>
-                    </div>
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <div class="alert alert-info d-inline-block px-5 py-3">
+                    No products found.
                 </div>
             </div>
+        }
+        else
+        {
+            <div class="row isotope-grid">
 
-            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-                <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
-                    <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
-                        <img src="~/images/Men/GiftBox1/bigotti-giftset.png" alt="BIGOTTI MILANO GIFT SET" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
-                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
-                            Quick View
-                        </a>
-                    </div>
-                    <div class="block2-txt flex-w flex-t p-t-16 p-b-20 p-lr-20" style="display: flex; justify-content: space-between; align-items: flex-start; flex-grow: 1;">
-                        <div class="block2-txt-child1 flex-col-l" style="width: calc(100% - 35px);">
-                            <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                Bigotti Milano Men Gift Set
-                            </a>
-                            <span class="stext-105 cl3" style="font-weight: 600; color: #111;">$189.50</span>
-                        </div>
+                @foreach (var product in Model)
+                {
+                    var imagePath = product.ProductImages
+                        .FirstOrDefault()
+                        ?.ProductImagePath
+                        ?? "~/images/product-01.jpg";
 
-                        <div class="block2-txt-child2 flex-r p-t-3">
-                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON">
-                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON">
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                    var subCategorySlugs = product.ProductSubCategories
+                        .Where(psc => psc.SubCategory != null)
+                        .Select(psc => Slugify(psc.SubCategory!.SubCategoryName));
+
+                    var cardData = new
+                    {
+                        ImageUrl = Url.Content(imagePath),
+                        Title = product.ProductName,
+                        Subtitle = product.ProductPrice.ToString("C"),
+                        DetailsUrl = Url.Action("Details", "Customer", new { id = product.ProductId }),
+                        ButtonText = "Quick View",
+                        ShowAdminActions = User.IsInRole("Admin"),
+                        EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
+                        DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId }),
+                        ExtraClasses = string.Join(" ", subCategorySlugs)
+                    };
+
+                    <partial name="_CardPartial" model="cardData" />
+                }
+
             </div>
-
-            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-                <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
-                    <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
-                        <img src="~/images/Women/Watch5/watch5-daniel-klein.png" alt="DANIEL KLEIN WOMEN WATCH" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
-                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
-                            Quick View
-                        </a>
-                    </div>
-                    <div class="block2-txt flex-w flex-t p-t-16 p-b-20 p-lr-20" style="display: flex; justify-content: space-between; align-items: flex-start; flex-grow: 1;">
-                        <div class="block2-txt-child1 flex-col-l" style="width: calc(100% - 35px);">
-                            <a href="#" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                Daniel Klein Elegant Women Watch
-                            </a>
-                            <span class="stext-105 cl3" style="font-weight: 600; color: #111;">$95.00</span>
-                        </div>
-
-                        <div class="block2-txt-child2 flex-r p-t-3">
-                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON">
-                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        }
 
         <style>
                     .block2-pic:hover .block2-btn {

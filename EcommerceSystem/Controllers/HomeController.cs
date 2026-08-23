@@ -20,8 +20,24 @@ namespace EcommerceSystem.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var featuredProducts = await _context.Products
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.ProductImages)
+                .OrderBy(p => p.ProductName)
+                .Take(8)
+                .ToListAsync();
+
+            var featuredCategories = await _context.Categories
+                .Where(c => !c.IsDeleted)
+                .OrderBy(c => c.CategoryName)
+                .Take(3)
+                .ToListAsync();
+
+            ViewBag.FeaturedProducts = featuredProducts;
+            ViewBag.FeaturedCategories = featuredCategories;
+
             return View();
         }
 
@@ -46,9 +62,54 @@ namespace EcommerceSystem.Controllers
             return View();
         }
 
-        public IActionResult Shop(string category)
+        public async Task<IActionResult> Shop(Guid? categoryId, Guid? subCategoryId, string? searchTerm)
         {
-            return View();
+            var query = _context.Products
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+                .AsQueryable();
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategory != null &&
+                        psc.SubCategory.CategoryId == categoryId.Value));
+            }
+
+            if (subCategoryId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.ProductSubCategories.Any(psc =>
+                        psc.SubCategoryId == subCategoryId.Value));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.Trim();
+
+                query = query.Where(p =>
+                    p.ProductName.Contains(term) ||
+                    (p.ProductDescription != null && p.ProductDescription.Contains(term)));
+            }
+
+            var products = await query
+                .OrderBy(p => p.ProductName)
+                .ToListAsync();
+
+            var subCategories = await _context.SubCategories
+                .Where(sc => !sc.IsDeleted)
+                .OrderBy(sc => sc.SubCategoryName)
+                .ToListAsync();
+
+            ViewBag.SubCategories = subCategories;
+            ViewBag.SelectedCategoryId = categoryId;
+            ViewBag.SelectedSubCategoryId = subCategoryId;
+            ViewBag.SearchTerm = searchTerm;
+
+            return View(products);
         }
 
         [Authorize]
