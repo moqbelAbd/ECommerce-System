@@ -10,28 +10,24 @@
     var customerSearch = ViewBag.CustomerSearch as string;
 
     var isAdmin = User.IsInRole("Admin");
+    var isCustomer = User.Identity != null && User.Identity.IsAuthenticated && !isAdmin;
 }
 
 <div class="bg0 p-t-80 p-b-100">
     <div class="container">
 
-        <!-- Top Navigation / Actions for Admin (أيقونات دائرية وبدون كلام مع مسافة بينها) -->
+        <!-- Top Navigation / Actions for Admin -->
         @if (isAdmin)
         {
             <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded shadow-sm">
                 <h4 class="fw-bold mb-0" style="color: #1a1d20; font-size: 18px;">Admin Product Control</h4>
                 <div class="d-flex" style="gap: 10px;">
-                    <!-- Edit Button -->
-                    <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center" title="Edit Product" style="border-radius: 50%; width: 36px: height: 36px; width: 36px;">
+                    <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center" title="Edit Product" style="border-radius: 50%; width: 36px; height: 36px;">
                         <i class="fa fa-pencil" style="font-size: 13px;"></i>
                     </a>
-
-                    <!-- Delete Button -->
                     <a asp-action="Delete" asp-route-id="@Model.ProductId" class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center" title="Delete Product" style="border-radius: 50%; width: 36px; height: 36px;">
                         <i class="fa fa-trash" style="font-size: 13px;"></i>
                     </a>
-
-                    <!-- Back to List Button -->
                     <a asp-action="Index" class="btn btn-dark btn-sm d-flex align-items-center justify-content-center" title="Back to List" style="border-radius: 50%; width: 36px; height: 36px;">
                         <i class="fa fa-arrow-left" style="font-size: 13px;"></i>
                     </a>
@@ -128,30 +124,41 @@
         <!-- Product Reviews & Ratings Section -->
         <div class="p-t-60">
             <div class="bor10 p-all-30 bg-light rounded shadow-sm">
-                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-4">
                     <h3 class="mtext-103 cl5 m-0">
                         Customer Reviews & Ratings
                     </h3>
 
-                    <!-- Admin Filter Controls -->
-                    @if (isAdmin)
-                    {
-                        <form method="get" asp-action="Details" asp-route-id="@Model.ProductId" class="d-flex align-items-center gap-2 flex-wrap">
-                            <input type="text" name="customerSearch" value="@customerSearch" class="form-control form-control-sm" placeholder="Search customer..." style="width: 180px;">
+                    <!-- تم إضافة مسافة ومرونة تفصل بين الفلتر وزر الأداة باستخدام gap-4 -->
+                    <div class="d-flex align-items-center gap-4 flex-wrap">
+                        <!-- زر إضافة تقييم يظهر للـ Customer فقط -->
+                        @if (isCustomer)
+                        {
+                            <button type="button" id="openReviewModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                <i class="fa fa-pencil m-r-8"></i> Add Review
+                            </button>
+                        }
 
-                            <select name="ratingFilter" class="form-control form-control-sm" style="width: 140px;">
-                                <option value="">All Ratings</option>
-                                <option value="5" selected="@(selectedRating == 5)">5 Stars</option>
-                                <option value="4" selected="@(selectedRating == 4)">4 Stars</option>
-                                <option value="3" selected="@(selectedRating == 3)">3 Stars</option>
-                                <option value="2" selected="@(selectedRating == 2)">2 Stars</option>
-                                <option value="1" selected="@(selectedRating == 1)">1 Star</option>
-                            </select>
+                        <!-- Admin Filter Controls (الأساسي) -->
+                        @if (isAdmin)
+                        {
+                            <form method="get" asp-action="Details" asp-route-id="@Model.ProductId" class="d-flex align-items-center gap-2 flex-wrap m-0">
+                                <input type="text" name="customerSearch" value="@customerSearch" class="form-control form-control-sm" placeholder="Search customer..." style="width: 150px;">
 
-                            <button type="submit" class="btn btn-dark btn-sm px-3">Filter</button>
-                            <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-outline-secondary btn-sm">Reset</a>
-                        </form>
-                    }
+                                <select name="ratingFilter" class="form-control form-control-sm" style="width: 120px;">
+                                    <option value="">All Ratings</option>
+                                    <option value="5" selected="@(selectedRating == 5)">5 Stars</option>
+                                    <option value="4" selected="@(selectedRating == 4)">4 Stars</option>
+                                    <option value="3" selected="@(selectedRating == 3)">3 Stars</option>
+                                    <option value="2" selected="@(selectedRating == 2)">2 Stars</option>
+                                    <option value="1" selected="@(selectedRating == 1)">1 Star</option>
+                                </select>
+
+                                <button type="submit" class="btn btn-dark btn-sm px-3">Filter</button>
+                                <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-outline-secondary btn-sm">Reset</a>
+                            </form>
+                        }
+                    </div>
                 </div>
 
                 @if (!filteredReviews.Any())
@@ -216,3 +223,133 @@
 
     </div>
 </div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" style="margin-top: 80px; max-width: 650px;">
+        <div class="modal-content bor10 p-all-30 bg-white shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h4 class="modal-title mtext-105 cl2 fw-bold" id="reviewModalLabel">Add Your Review</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-controller="Product" asp-action="AddReview" method="post">
+                <div class="modal-body p-t-20 p-b-20">
+                    <input type="hidden" name="productId" value="@Model.ProductId" />
+
+                    <!-- Interactive Star Rating Selection -->
+                    <div class="mb-4 text-center">
+                        <label class="stext-102 cl3 mb-3 d-block fw-bold" style="font-size: 16px;">Select Rating</label>
+
+                        <div class="star-rating mb-2" style="cursor: pointer; font-size: 45px; color: #ccc; letter-spacing: 12px;">
+                            <i class="fa fa-star rating-star" data-value="1"></i>
+                            <i class="fa fa-star rating-star" data-value="2"></i>
+                            <i class="fa fa-star rating-star" data-value="3"></i>
+                            <i class="fa fa-star rating-star" data-value="4"></i>
+                            <i class="fa fa-star rating-star" data-value="5"></i>
+                        </div>
+
+                        <input type="hidden" name="rating" id="selectedRating" value="5" required />
+                        <span id="rating-text" class="text-muted d-block mt-2 stext-102 fw-bold" style="font-size: 15px;">5 Stars - Excellent</span>
+                    </div>
+
+                    <!-- Review Text Box -->
+                    <div class="mb-3">
+                        <label class="stext-102 cl3 mb-2 d-block fw-bold" style="font-size: 15px;">Your Review</label>
+                        <textarea name="reviewText" class="form-control" rows="5" placeholder="Write your experience with this product..." required maxlength="250" style="font-size: 14px; padding: 12px;"></textarea>
+                        <small class="text-muted">Maximum 250 characters.</small>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="font-size: 14px;">Cancel</button>
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 trans-04" style="width: auto; height: 42px; font-size: 14px;">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const openBtn = document.getElementById("openReviewModalBtn");
+            const modal = document.getElementById("reviewModal");
+            if (openBtn && modal) {
+                const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+
+                openBtn.addEventListener("click", function () {
+                    modal.style.display = "block";
+                    modal.classList.add("show");
+                    modal.style.backgroundColor = "rgba(0,0,0,0.5)";
+                    document.body.classList.add("modal-open");
+                });
+
+                closeButtons.forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        modal.style.display = "none";
+                        modal.classList.remove("show");
+                        document.body.classList.remove("modal-open");
+                        const backdrop = document.querySelector(".modal-backdrop");
+                        if (backdrop) backdrop.remove();
+                    });
+                });
+
+                window.addEventListener("click", function (event) {
+                    if (event.target === modal) {
+                        modal.style.display = "none";
+                        modal.classList.remove("show");
+                        document.body.classList.remove("modal-open");
+                        const backdrop = document.querySelector(".modal-backdrop");
+                        if (backdrop) backdrop.remove();
+                    }
+                });
+            }
+
+            const stars = document.querySelectorAll(".rating-star");
+            const ratingInput = document.getElementById("selectedRating");
+            const ratingText = document.getElementById("rating-text");
+
+            const descriptions = {
+                1: "1 Star - Terrible",
+                2: "2 Stars - Poor",
+                3: "3 Stars - Average",
+                4: "4 Stars - Good",
+                5: "5 Stars - Excellent"
+            };
+
+            updateStars(5);
+
+            stars.forEach(star => {
+                star.addEventListener("click", function () {
+                    const value = this.getAttribute("data-value");
+                    ratingInput.value = value;
+                    ratingText.textContent = descriptions[value];
+                    updateStars(value);
+                });
+
+                star.addEventListener("mouseover", function () {
+                    const value = this.getAttribute("data-value");
+                    updateStars(value);
+                });
+            });
+
+            const starContainer = document.querySelector(".star-rating");
+            if (starContainer) {
+                starContainer.addEventListener("mouseleave", function () {
+                    updateStars(ratingInput.value);
+                });
+            }
+
+            function updateStars(count) {
+                stars.forEach(s => {
+                    if (s.getAttribute("data-value") <= count) {
+                        s.style.color = "#ffc107";
+                    } else {
+                        s.style.color = "#ccc";
+                    }
+                });
+            }
+        });
+    </script>
+}
