@@ -4,101 +4,88 @@
     ViewData["Title"] = "Edit Category";
 }
 
+<!-- Title Banner -->
+<section class="bg-img1 txt-center p-lr-15 p-tb-75" style="background-image: url('/images/bg-01.jpg');">
+    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
+        EDIT CATEGORY
+    </h2>
+</section>
+
 <div class="container py-5">
-
     <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
 
-        <div class="col-md-7">
+            <div class="card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
 
-            <div class="card shadow-sm">
-
-                <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0">Edit Category</h4>
+                <div class="card-header bg-dark text-white p-4 text-center">
+                    <h4 class="mb-1 fw-bold" style="letter-spacing: 1px; color: #c9aa6f;">Modify Category</h4>
+                    <p class="text-muted mb-0" style="font-size: 13px; color: #adb5bd !important;">Update the category name or replace its image.</p>
                 </div>
 
-                <div class="card-body">
-
-                    <form asp-action="Edit" method="post">
-
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
 
-                        <input type="hidden"
-                               asp-for="CategoryId" />
+                        <input type="hidden" asp-for="CategoryId" />
+                        <input type="hidden" asp-for="CategoryImagePath" />
 
-                        <div asp-validation-summary="ModelOnly"
-                             class="text-danger mb-3">
-                        </div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
 
-                        <div class="mb-3">
-
-                            <label asp-for="CategoryName"
-                                   class="form-label">
-                                Category Name
+                        <!-- Category Name Field -->
+                        <div class="mb-4">
+                            <label asp-for="CategoryName" class="form-label fw-semibold" style="color: #333;">
+                                Category Name <span class="text-danger">*</span>
                             </label>
-
-                            <input asp-for="CategoryName"
-                                   class="form-control" />
-
-                            <span asp-validation-for="CategoryName"
-                                  class="text-danger">
-                            </span>
-
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
+                                    <i class="fa fa-tag text-secondary"></i>
+                                </span>
+                                <input asp-for="CategoryName" class="form-control border-start-0 bg-light" placeholder="Enter category name" style="border-radius: 0 8px 8px 0; padding: 12px;" />
+                            </div>
+                            <span asp-validation-for="CategoryName" class="text-danger d-block mt-1" style="font-size: 13px;"></span>
                         </div>
 
-                        <div class="mb-3">
-
-                            <label asp-for="CategoryImagePath"
-                                   class="form-label">
-                                Image Path
-                            </label>
-
-                            <input asp-for="CategoryImagePath"
-                                   class="form-control" />
-
-                            <span asp-validation-for="CategoryImagePath"
-                                  class="text-danger">
-                            </span>
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
+                        <!-- Current Image Preview -->
+                        <div class="mb-4 text-center bg-light p-3 rounded border">
+                            <label class="form-label fw-semibold d-block text-muted mb-2" style="font-size: 13px;">
                                 Current Image
                             </label>
-
-                            <div>
-                                <img src="@Model.CategoryImagePath"
-                                     alt="@Model.CategoryName"
-                                     style="width:180px;height:120px;object-fit:cover;"
-                                     class="rounded">
-                            </div>
-
+                            <img src="@Model.CategoryImagePath"
+                                 alt="@Model.CategoryName"
+                                 style="width: 140px; height: 100px; object-fit: cover;"
+                                 class="rounded shadow-sm">
                         </div>
 
-                        <div class="d-flex gap-2">
+                        <!-- Upload New Image Field -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: #333;">
+                                New Image (Optional)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
+                                    <i class="fa fa-image text-secondary"></i>
+                                </span>
+                                <input type="file" name="categoryImage" class="form-control border-start-0 bg-light" accept="image/*" style="border-radius: 0 8px 8px 0; padding: 10px;" />
+                            </div>
+                            <small class="form-text text-muted">Leave blank if you don't want to change the current image.</small>
+                        </div>
 
-                            <button type="submit"
-                                    class="btn btn-dark">
-                                Save Changes
-                            </button>
-
-                            <a asp-action="Index"
-                               class="btn btn-secondary">
-                                Cancel
+                        <!-- Action Buttons -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                                <i class="fa fa-arrow-left m-r-5"></i> Cancel
                             </a>
-
+                            <button type="submit" class="btn btn-dark px-5 py-2" style="border-radius: 20px; font-weight: 500; background-color: #1a1d20;">
+                                <i class="fa fa-check m-r-5 text-warning"></i> Save Changes
+                            </button>
                         </div>
 
                     </form>
-
                 </div>
             </div>
 
         </div>
-
     </div>
-
 </div>
 
 @section Scripts {
