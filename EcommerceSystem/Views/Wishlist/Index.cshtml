@@ -1,0 +1,47 @@
+@model IEnumerable<EcommerceSystem.Models.Wishlist>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WishlistItems)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.CustomerId)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Customer)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.WishlistItems)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.WishlistId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.WishlistId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.WishlistId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -93,9 +93,21 @@
                     </div>
 
                     <div class="col-md-8 m-b-20">
-                        <label for="imageFiles" class="form-label">Images</label>
-                        <input type="file" id="imageFiles" name="imageFiles" multiple accept="image/*" class="form-control" />
-                        <small class="form-text text-muted">Choose one or more product images.</small>
+                        <label class="form-label fw-bold">Product Images</label>
+                        
+                        <!-- الحاوية التي ستستقبل حقول الرفع الديناميكية -->
+                        <div id="image-inputs-container">
+                            <div class="input-group m-b-10">
+                                <input type="file" name="imageFiles" accept="image/*" class="form-control" />
+                                <button type="button" class="btn btn-outline-danger remove-image-input" style="display:none;"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- زر إضافة حقل جديد -->
+                        <button type="button" id="add-image-input-btn" class="btn btn-sm btn-outline-secondary mt-1">
+                            <i class="fa fa-plus m-r-4"></i> Add Another Image
+                        </button>
+                        <small class="form-text text-muted d-block mt-1">You can add multiple image fields.</small>
                     </div>
                 </div>
 
@@ -121,6 +133,7 @@
 
     <script>
         (function () {
+            // كود الفلترة للـ Brand و Model
             var brandSelect = document.getElementById('brandSelect');
             var modelSelect = document.getElementById('modelSelect');
             var modelOptions = Array.prototype.slice.call(modelSelect.querySelectorAll('option[data-brand-id]'));
@@ -145,8 +158,46 @@
                 }
             }
 
-            brandSelect.addEventListener('change', filterModels);
-            filterModels();
+            if (brandSelect && modelSelect) {
+                brandSelect.addEventListener('change', filterModels);
+                filterModels();
+            }
+
+            // كود إضافة حقول رفع الصور ديناميكياً
+            var container = document.getElementById('image-inputs-container');
+            var addBtn = document.getElementById('add-image-input-btn');
+
+            if (addBtn && container) {
+                addBtn.addEventListener('click', function () {
+                    var div = document.createElement('div');
+                    div.className = 'input-group m-b-10';
+                    div.innerHTML = `
+                        <input type="file" name="imageFiles" accept="image/*" class="form-control" />
+                        <button type="button" class="btn btn-outline-danger remove-image-input"><i class="fa fa-trash"></i></button>
+                    `;
+                    container.appendChild(div);
+                    updateRemoveButtons();
+                });
+
+                container.addEventListener('click', function (e) {
+                    if (e.target.closest('.remove-image-input')) {
+                        e.target.closest('.input-group').remove();
+                        updateRemoveButtons();
+                    }
+                });
+
+                function updateRemoveButtons() {
+                    var groups = container.querySelectorAll('.input-group');
+                    groups.forEach(function (group) {
+                        var removeBtn = group.querySelector('.remove-image-input');
+                        if (groups.length > 1) {
+                            removeBtn.style.display = 'block';
+                        } else {
+                            removeBtn.style.display = 'none';
+                        }
+                    });
+                }
+            }
         })();
     </script>
 }

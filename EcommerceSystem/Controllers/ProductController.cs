@@ -320,16 +320,11 @@ namespace EcommerceSystem.Controllers
             Guid id,
             Product product,
             Guid? subCategoryId,
-            List<IFormFile>? imageFiles)
+            List<IFormFile>? imageFiles,
+            List<Guid>? deleteImageIds)
         {
             if (id != product.ProductId)
                 return NotFound();
-
-            if (!ModelState.IsValid)
-            {
-                await LoadProductDropdowns(subCategoryId);
-                return View(product);
-            }
 
             var existingProduct = await _context.Products
                 .Include(p => p.ProductImages)
@@ -341,46 +336,48 @@ namespace EcommerceSystem.Controllers
             if (existingProduct == null)
                 return NotFound();
 
+            if (!ModelState.IsValid)
+            {
+                await LoadProductDropdowns(subCategoryId);
+                return View(existingProduct);
+            }
+
             // Update product information
-            existingProduct.ProductName =
-                product.ProductName;
+            existingProduct.ProductName = product.ProductName;
+            existingProduct.ProductDescription = product.ProductDescription;
+            existingProduct.ProductPrice = product.ProductPrice;
+            existingProduct.ProductQuantity = product.ProductQuantity;
+            existingProduct.ProductBrandId = product.ProductBrandId;
+            existingProduct.ProductModelId = product.ProductModelId;
 
-            existingProduct.ProductDescription =
-                product.ProductDescription;
+            // 1. Delete ONLY the images explicitly checked by the user
+            if (deleteImageIds != null && deleteImageIds.Any())
+            {
+                foreach (var imgId in deleteImageIds)
+                {
+                    var imgRecord = await _context.ProductImages.FindAsync(imgId);
+                    if (imgRecord != null)
+                    {
+                        _context.ProductImages.Remove(imgRecord);
+                    }
+                }
+            }
 
-            existingProduct.ProductPrice =
-                product.ProductPrice;
-
-            existingProduct.ProductQuantity =
-                product.ProductQuantity;
-
-            existingProduct.ProductBrandId =
-                product.ProductBrandId;
-
-            existingProduct.ProductModelId =
-                product.ProductModelId;
-
-            // Replace images only when new files were uploaded
+            // 2. Add newly uploaded images as additions (Keep all old ones unless deleted)
             var uploadedFiles = (imageFiles ?? new List<IFormFile>())
                 .Where(f => f.Length > 0)
                 .ToList();
 
-            if (uploadedFiles.Any())
+            foreach (var imageFile in uploadedFiles)
             {
-                _context.ProductImages.RemoveRange(
-                    existingProduct.ProductImages);
+                var imagePath = await ImageUploadHelper.SaveImageAsync(imageFile, "products", _environment);
 
-                foreach (var imageFile in uploadedFiles)
+                _context.ProductImages.Add(new ProductImage
                 {
-                    var imagePath = await ImageUploadHelper.SaveImageAsync(imageFile, "products", _environment);
-
-                    existingProduct.ProductImages.Add(new ProductImage
-                    {
-                        ProductImageId = Guid.NewGuid(),
-                        ProductImagePath = imagePath,
-                        ProductId = existingProduct.ProductId
-                    });
-                }
+                    ProductImageId = Guid.NewGuid(),
+                    ProductImagePath = imagePath,
+                    ProductId = existingProduct.ProductId
+                });
             }
 
             // Remove old Product/SubCategory relationships
@@ -390,7 +387,7 @@ namespace EcommerceSystem.Controllers
             // Add new relationship
             if (subCategoryId.HasValue)
             {
-                existingProduct.ProductSubCategories.Add(
+                _context.ProductSubCategories.Add(
                     new ProductSubCategory
                     {
                         ProductSubCategoryId = Guid.NewGuid(),
@@ -405,7 +402,6 @@ namespace EcommerceSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
         // GET: Product/Delete/{id}
         public async Task<IActionResult> Delete(Guid? id)
         {
