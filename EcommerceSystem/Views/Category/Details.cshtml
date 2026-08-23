@@ -1,0 +1,118 @@
+﻿@model EcommerceSystem.Models.Category
+
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="container py-5">
+
+    <div class="row">
+
+        <div class="col-md-5">
+
+            <img src="@Model.CategoryImagePath"
+                 alt="@Model.CategoryName"
+                 class="img-fluid rounded shadow"
+                 style="width:100%; max-height:400px; object-fit:cover;">
+
+        </div>
+
+        <div class="col-md-7">
+
+            <h2 class="fw-bold mb-3">
+                @Model.CategoryName
+            </h2>
+
+            <p class="text-muted">
+                Category ID:
+                @Model.CategoryId
+            </p>
+
+            <hr />
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h4>
+                    Sub Categories
+                </h4>
+
+                <a asp-controller="SubCategory"
+                   asp-action="Create"
+                   asp-route-categoryId="@Model.CategoryId"
+                   class="btn btn-dark btn-sm">
+                    <i class="fa fa-plus"></i>
+                    Add Sub Category
+                </a>
+
+            </div>
+
+            @if (Model.SubCategories == null ||
+                 !Model.SubCategories.Any())
+            {
+                <div class="alert alert-info">
+                    No sub categories found.
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+
+                    @foreach (var subCategory in Model.SubCategories
+                        .Where(x => !x.IsDeleted))
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+
+                            <span>
+                                @subCategory.SubCategoryName
+                            </span>
+
+                            <div>
+
+                                <a asp-controller="SubCategory"
+                                   asp-action="Details"
+                                   asp-route-id="@subCategory.SubCategoryId"
+                                   class="btn btn-sm btn-outline-dark">
+                                    Details
+                                </a>
+
+                                <a asp-controller="SubCategory"
+                                   asp-action="Edit"
+                                   asp-route-id="@subCategory.SubCategoryId"
+                                   class="btn btn-sm btn-outline-warning">
+                                    Edit
+                                </a>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+            <div class="mt-4">
+
+                <a asp-action="Edit"
+                   asp-route-id="@Model.CategoryId"
+                   class="btn btn-warning">
+                    Edit Category
+                </a>
+
+                <a asp-action="Delete"
+                   asp-route-id="@Model.CategoryId"
+                   class="btn btn-danger">
+                    Delete
+                </a>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

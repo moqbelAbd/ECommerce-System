@@ -9,10 +9,10 @@ namespace EcommerceSystem.Models
 
         [Required]
         [MaxLength(20)]
-        public string CategoryName { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
 
         [Required]
-        public string CategoryImagePath { get; set; }
+        public string CategoryImagePath { get; set; } = string.Empty;
 
         public bool IsDeleted { get; set; }
 

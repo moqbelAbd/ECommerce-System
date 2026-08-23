@@ -10,7 +10,7 @@ namespace EcommerceSystem.Models
         public Guid ProductImageId { get; set; }
 
         [Required]
-        public string ProductImagePath { get; set; }
+        public string ProductImagePath { get; set; } = string.Empty;
 
         public Guid ProductId { get; set; }
 

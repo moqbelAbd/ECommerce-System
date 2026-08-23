@@ -1,65 +1,24 @@
 @using EcommerceSystem.Models
+
 @model Product
 
 @{
-    ViewData["Title"] = "Product Detail";
+    ViewData["Title"] = Model.ProductName;
 
-    var productName = Model.ProductDescription
-        ?? $"{Model.ProductBrand?.BrandName} {Model.ProductModel?.ModelName}".Trim();
+    var images = Model.ProductImages?.ToList()
+        ?? new List<ProductImage>();
 
-    var images = Model.ProductImages.Any()
-        ? Model.ProductImages
-            .Select(i => i.ProductImagePath)
-            .ToList()
-        : new List<string>
-        {
-            "~/images/product-detail-01.jpg"
-        };
+    var mainImage = images.FirstOrDefault()?.ProductImagePath
+        ?? "~/images/product-01.jpg";
 
-    var subCategories = Model.ProductSubCategories
-        .Where(psc => psc.SubCategory != null)
-        .Select(psc => psc.SubCategory!)
-        .ToList();
+    var brandName = Model.ProductBrand?.BrandName ?? "Unknown Brand";
 
-    var category = subCategories
-        .FirstOrDefault()?.Category;
+    var modelName = Model.ProductModel?.ModelName ?? "Unknown Model";
+
+    var subCategory = Model.ProductSubCategories
+        ?.FirstOrDefault()
+        ?.SubCategory;
 }
-
-<!-- Breadcrumb -->
-<div class="container">
-    <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-
-        <a asp-controller="Home"
-           asp-action="Index"
-           class="stext-109 cl8 hov-cl1 trans-04">
-
-            Home
-
-            <i class="fa fa-angle-right m-l-9 m-r-10"
-               aria-hidden="true"></i>
-        </a>
-
-        @if (category != null)
-        {
-            <a asp-controller="Customer"
-               asp-action="Index"
-               asp-route-categoryId="@category.CategoryId"
-               class="stext-109 cl8 hov-cl1 trans-04">
-
-                @category.CategoryName
-
-                <i class="fa fa-angle-right m-l-9 m-r-10"
-                   aria-hidden="true"></i>
-            </a>
-        }
-
-        <span class="stext-109 cl4">
-            @productName
-        </span>
-
-    </div>
-</div>
-
 
 <!-- Product Detail -->
 <section class="sec-product-detail bg0 p-t-65 p-b-60">
@@ -68,27 +27,70 @@
 
         <div class="row">
 
+            <!-- ========================================= -->
             <!-- Product Images -->
+            <!-- ========================================= -->
+
             <div class="col-md-6 col-lg-7 p-b-30">
 
                 <div class="p-l-25 p-r-30 p-lr-0-lg">
 
-                    <div class="row">
+                    <div class="wrap-slick3 flex-sb flex-w">
 
-                        @foreach (var image in images)
-                        {
-                            <div class="col-md-6 p-b-15">
+                        <!-- Thumbnails -->
 
-                                <div class="wrap-pic-w pos-relative">
+                        <div class="wrap-slick3-dots">
+                            <ul class="slick3-dots">
 
-                                    <img src="@image"
-                                         alt="@productName"
-                                         style="width:100%;" />
+                                @foreach (var image in images)
+                                {
+                                    <li>
+                                        <img src="@image.ProductImagePath"
+                                             alt="@Model.ProductName" />
+                                    </li>
+                                }
+
+                            </ul>
+                        </div>
+
+
+                        <!-- Main Images -->
+
+                        <div class="slick3">
+
+                            @if (images.Any())
+                            {
+                                @foreach (var image in images)
+                                {
+                                    <div class="item-slick3"
+                                         data-thumb="@image.ProductImagePath">
+
+                                        <div class="wrap-pic-w pos-relative">
+
+                                            <img src="@image.ProductImagePath"
+                                                 alt="@Model.ProductName" />
+
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="item-slick3"
+                                     data-thumb="~/images/product-01.jpg">
+
+                                    <div class="wrap-pic-w pos-relative">
+
+                                        <img src="~/images/product-01.jpg"
+                                             alt="@Model.ProductName" />
+
+                                    </div>
 
                                 </div>
+                            }
 
-                            </div>
-                        }
+                        </div>
 
                     </div>
 
@@ -97,18 +99,25 @@
             </div>
 
 
+            <!-- ========================================= -->
             <!-- Product Information -->
+            <!-- ========================================= -->
+
             <div class="col-md-6 col-lg-5 p-b-30">
 
                 <div class="p-r-50 p-t-5 p-lr-0-lg">
 
                     <!-- Product Name -->
+
                     <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-                        @productName
+
+                        @Model.ProductName
+
                     </h4>
 
 
                     <!-- Price -->
+
                     <span class="mtext-106 cl2">
 
                         @Model.ProductPrice.ToString("C")
@@ -117,97 +126,234 @@
 
 
                     <!-- Description -->
+
                     <p class="stext-102 cl3 p-t-23">
 
-                        @(Model.ProductDescription
-                            ?? "No description available.")
+                        @(Model.ProductDescription ?? "No description available.")
 
                     </p>
 
 
-                    <!-- Stock -->
-                    <div class="p-t-15">
+                    <!-- Product Information -->
 
-                        @if (Model.ProductQuantity > 0)
-                        {
-                            <span class="stext-107 cl2">
+                    <div class="p-t-30">
 
-                                In stock:
-                                @Model.ProductQuantity
+                        <div class="flex-w flex-m p-b-10">
 
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="stext-107 cl11">
+                            <span class="stext-102 cl3 size-111">
 
-                                Out of stock
+                                Brand:
 
                             </span>
+
+                            <span class="stext-102 cl6">
+
+                                @brandName
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="flex-w flex-m p-b-10">
+
+                            <span class="stext-102 cl3 size-111">
+
+                                Model:
+
+                            </span>
+
+                            <span class="stext-102 cl6">
+
+                                @modelName
+
+                            </span>
+
+                        </div>
+
+
+                        @if (subCategory != null)
+                        {
+                            <div class="flex-w flex-m p-b-10">
+
+                                <span class="stext-102 cl3 size-111">
+
+                                    Category:
+
+                                </span>
+
+                                <span class="stext-102 cl6">
+
+                                    @subCategory.SubCategoryName
+
+                                </span>
+
+                            </div>
                         }
+
+
+                        <!-- Stock -->
+
+                        <div class="flex-w flex-m p-b-10">
+
+                            <span class="stext-102 cl3 size-111">
+
+                                Availability:
+
+                            </span>
+
+                            @if (Model.ProductQuantity > 0)
+                            {
+                                <span class="stext-102 cl6">
+
+                                    In Stock
+
+                                    (@Model.ProductQuantity available)
+
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="stext-102 cl11">
+
+                                    Out of Stock
+
+                                </span>
+                            }
+
+                        </div>
 
                     </div>
 
 
-                    <!-- Product Information -->
-                    <div class="p-t-15">
+                    <!-- ================================= -->
+                    <!-- Quantity + Add To Cart -->
+                    <!-- ================================= -->
 
-                        <!-- SubCategories -->
-                        @if (subCategories.Any())
-                        {
-                            <div class="p-b-5">
+                    @if (Model.ProductQuantity > 0)
+                    {
+                        <div class="p-t-30">
 
-                                <span class="stext-107 cl6">
-                                    Subcategory:
-                                </span>
+                            <div class="flex-w flex-r-m p-b-10">
 
-                                @foreach (var subCategory in subCategories)
-                                {
-                                    <span class="stext-107 cl6">
+                                <div class="size-204 flex-w flex-m respon6-next">
 
-                                        @subCategory.SubCategoryName
+                                    <div class="wrap-num-product flex-w m-r-20 m-tb-10">
 
-                                    </span>
+                                        <button type="button"
+                                                class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
 
-                                    @if (subCategory != subCategories.Last())
-                                    {
-                                        <span>, </span>
-                                    }
-                                }
+                                            <i class="fs-16 zmdi zmdi-minus"></i>
+
+                                        </button>
+
+
+                                        <input class="mtext-104 cl3 txt-center num-product"
+                                               type="number"
+                                               name="quantity"
+                                               value="1"
+                                               min="1"
+                                               max="@Model.ProductQuantity" />
+
+
+                                        <button type="button"
+                                                class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+
+                                            <i class="fs-16 zmdi zmdi-plus"></i>
+
+                                        </button>
+
+                                    </div>
+
+
+                                    <!-- Add To Cart -->
+
+                                    <form asp-controller="Cart"
+                                          asp-action="Add"
+                                          method="post"
+                                          class="flex-grow-1">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@Model.ProductId" />
+
+                                        <input type="hidden"
+                                               name="quantity"
+                                               value="1" />
+
+                                        <button type="submit"
+                                                class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+
+                                            Add to cart
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
 
                             </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-t-30">
+
+                            <button type="button"
+                                    class="flex-c-m stext-101 cl0 size-101 bg3 bor1 p-lr-15"
+                                    disabled>
+
+                                Out of stock
+
+                            </button>
+
+                        </div>
+                    }
+
+
+                    <!-- ================================= -->
+                    <!-- Wishlist -->
+                    <!-- ================================= -->
+
+                    <div class="p-t-20">
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <form asp-controller="Wishlist"
+                                  asp-action="Add"
+                                  method="post">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="productId"
+                                       value="@Model.ProductId" />
+
+                                <button type="submit"
+                                        class="stext-101 cl2 hov-cl1 trans-04">
+
+                                    <i class="zmdi zmdi-favorite-outline"></i>
+
+                                    Add to Wishlist
+
+                                </button>
+
+                            </form>
                         }
-
-
-                        <!-- Brand -->
-                        @if (Model.ProductBrand != null)
+                        else
                         {
-                            <div class="p-b-5">
+                            <a asp-area="Identity"
+                               asp-page="/Account/Login"
+                               asp-route-returnUrl="@Context.Request.Path">
 
-                                <span class="stext-107 cl6">
+                                <i class="zmdi zmdi-favorite-outline"></i>
 
-                                    Brand:
-                                    @Model.ProductBrand.BrandName
+                                Login to add to Wishlist
 
-                                </span>
-
-                            </div>
-                        }
-
-
-                        <!-- Model -->
-                        @if (Model.ProductModel != null)
-                        {
-                            <div class="p-b-5">
-
-                                <span class="stext-107 cl6">
-
-                                    Model:
-                                    @Model.ProductModel.ModelName
-
-                                </span>
-
-                            </div>
+                            </a>
                         }
 
                     </div>
@@ -215,6 +361,86 @@
                 </div>
 
             </div>
+
+        </div>
+
+
+        <!-- ============================================= -->
+        <!-- Product Reviews -->
+        <!-- ============================================= -->
+
+        <div class="bor10 p-t-30 p-b-30 p-lr-40 p-lr-15-sm">
+
+            <h5 class="mtext-108 cl2 p-b-20">
+
+                Customer Reviews
+
+            </h5>
+
+
+            @if (Model.ProductReviews != null &&
+                 Model.ProductReviews.Any())
+            {
+                foreach (var review in Model.ProductReviews
+                    .OrderByDescending(r => r.CreatedAt))
+                {
+                    <div class="p-b-20">
+
+                        <div class="flex-w flex-sb-m p-b-5">
+
+                            <span class="stext-102 cl2">
+
+                                @(review.Customer?.FirstName ?? "Customer")
+
+                            </span>
+
+                            <span class="stext-102 cl6">
+
+                                @review.CreatedAt.ToString("dd/MM/yyyy")
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="p-b-5">
+
+                            <span class="cl1">
+
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= review.CustomerProductRating)
+                                    {
+                                        <i class="zmdi zmdi-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="zmdi zmdi-star-outline"></i>
+                                    }
+                                }
+
+                            </span>
+
+                        </div>
+
+
+                        <p class="stext-102 cl6">
+
+                            @review.CustomerProductReview
+
+                        </p>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="stext-102 cl6">
+
+                    No reviews yet.
+
+                </p>
+            }
 
         </div>
 

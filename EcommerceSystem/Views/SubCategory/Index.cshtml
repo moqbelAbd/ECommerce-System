@@ -1,0 +1,187 @@
+﻿@model IEnumerable<EcommerceSystem.Models.SubCategory>
+
+@{
+    ViewData["Title"] = "SubCategories";
+}
+
+<div class="container py-5">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="color:#1a1d20; font-weight:600; margin-bottom:5px;">
+                SubCategories
+            </h2>
+            <p style="color:#888; margin:0;">
+                Manage your product subcategories
+            </p>
+        </div>
+
+        <a asp-action="Create"
+           class="btn"
+           style="
+                background:#c9aa6f;
+                color:#1a1d20;
+                border-radius:25px;
+                padding:10px 22px;
+                font-weight:600;
+           ">
+            <i class="fa fa-plus mr-2"></i>
+            Add SubCategory
+        </a>
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button"
+                    class="close"
+                    data-dismiss="alert">
+                <span>&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show">
+            @TempData["Warning"]
+            <button type="button"
+                    class="close"
+                    data-dismiss="alert">
+                <span>&times;</span>
+            </button>
+        </div>
+    }
+
+    <!-- Table Card -->
+    <div class="card"
+         style="
+            border:none;
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 5px 25px rgba(0,0,0,0.08);
+         ">
+
+        <div class="table-responsive">
+
+            <table class="table mb-0">
+
+                <thead style="background:#1a1d20; color:white;">
+                    <tr>
+                        <th style="padding:18px;">Image</th>
+                        <th style="padding:18px;">SubCategory</th>
+                        <th style="padding:18px;">Category</th>
+                        <th style="padding:18px;">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4"
+                                class="text-center py-5"
+                                style="color:#888;">
+                                No subcategories found.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr style="vertical-align:middle;">
+
+                                <!-- Image -->
+                                <td style="padding:15px;">
+                                    <div style="
+                                        width:70px;
+                                        height:70px;
+                                        border-radius:8px;
+                                        background:#f8f8f8;
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        overflow:hidden;
+                                    ">
+                                        <img src="@item.SubCategoryImagePath"
+                                             alt="@item.SubCategoryName"
+                                             style="
+                                                max-width:100%;
+                                                max-height:100%;
+                                                object-fit:contain;
+                                             " />
+                                    </div>
+                                </td>
+
+                                <!-- Name -->
+                                <td style="padding:15px;">
+                                    <strong style="color:#1a1d20;">
+                                        @item.SubCategoryName
+                                    </strong>
+                                </td>
+
+                                <!-- Category -->
+                                <td style="padding:15px;">
+                                    <span style="
+                                        color:#c9aa6f;
+                                        font-weight:600;
+                                    ">
+                                        @(item.Category?.CategoryName ?? "N/A")
+                                    </span>
+                                </td>
+
+                                <!-- Actions -->
+                                <td style="padding:15px;">
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.SubCategoryId"
+                                       class="btn btn-sm mr-1"
+                                       style="
+                                            border:1px solid #c9aa6f;
+                                            color:#c9aa6f;
+                                            border-radius:20px;
+                                       ">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.SubCategoryId"
+                                       class="btn btn-sm mr-1"
+                                       style="
+                                            border:1px solid #1a1d20;
+                                            color:#1a1d20;
+                                            border-radius:20px;
+                                       ">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.SubCategoryId"
+                                       class="btn btn-sm"
+                                       style="
+                                            border:1px solid #dc3545;
+                                            color:#dc3545;
+                                            border-radius:20px;
+                                       ">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

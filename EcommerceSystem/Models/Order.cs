@@ -22,6 +22,9 @@ public OrderStatus? OrderStatus { get; set; }
 [Required]
 public int PaymentStatusId  {get; set;}
 
+[Required]
+public string Location { get; set; }
+
 
 [ForeignKey("PaymentStatusId")]
 public PaymentStatus? PaymentStatus { get; set; }

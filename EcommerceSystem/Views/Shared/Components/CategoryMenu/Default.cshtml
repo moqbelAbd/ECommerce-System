@@ -1,0 +1,14 @@
+﻿@model IEnumerable<EcommerceSystem.Models.Category>
+
+@foreach (var category in Model)
+{
+    <li class="p-b-8">
+        <a asp-controller="Home"
+           asp-action="Product"
+           asp-route-categoryId="@category.CategoryId"
+           class="stext-102 trans-04"
+           style="color: #adb5bd;">
+            - @category.CategoryName
+        </a>
+    </li>
+}

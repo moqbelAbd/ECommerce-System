@@ -1,0 +1,77 @@
+﻿@model EcommerceSystem.Models.Category
+
+@{
+    ViewData["Title"] = "Delete Category";
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7">
+
+            <div class="card shadow-sm border-danger">
+
+                <div class="card-header bg-danger text-white">
+
+                    <h4 class="mb-0">
+                        Delete Category
+                    </h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="text-center mb-4">
+
+                        <img src="@Model.CategoryImagePath"
+                             alt="@Model.CategoryName"
+                             style="width:200px;height:140px;object-fit:cover;"
+                             class="rounded shadow">
+
+                    </div>
+
+                    <h5>
+                        Are you sure you want to delete:
+                    </h5>
+
+                    <h3 class="fw-bold">
+                        @Model.CategoryName
+                    </h3>
+
+                    <div class="alert alert-warning mt-3">
+                        This category will be <strong>soft deleted</strong>.
+                        It will not be permanently removed from the database.
+                    </div>
+
+                    <form asp-action="Delete"
+                          asp-route-id="@Model.CategoryId"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                Yes, Delete
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-secondary">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
