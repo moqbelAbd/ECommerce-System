@@ -1,4 +1,5 @@
-﻿using EcommerceSystem.Data;
+using EcommerceSystem.Data;
+using EcommerceSystem.Helpers;
 using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,12 @@ namespace EcommerceSystem.Controllers
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public CategoryController(ApplicationDbContext context)
+        public CategoryController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: Category (متاح للجميع: زوار، عملاء، وأدمن)
@@ -61,36 +64,17 @@ namespace EcommerceSystem.Controllers
         {
             ModelState.Remove(nameof(Category.CategoryImagePath));
 
+            if (categoryImage == null || categoryImage.Length == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Please select an image for the category.");
+            }
+
             if (!ModelState.IsValid)
                 return View(category);
 
-            if (categoryImage != null && categoryImage.Length > 0)
-            {
-                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "categories");
-
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(categoryImage.FileName);
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await categoryImage.CopyToAsync(fileStream);
-                }
-
-                category.CategoryImagePath = "/images/categories/" + uniqueFileName;
-            }
-            else
-            {
-                ModelState.AddModelError("", "Please select an image for the category.");
-                return View(category);
-            }
-
             category.CategoryId = Guid.NewGuid();
             category.IsDeleted = false;
+            category.CategoryImagePath = await ImageUploadHelper.SaveImageAsync(categoryImage!, "categories", _environment);
 
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
@@ -122,10 +106,12 @@ namespace EcommerceSystem.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Category category)
+        public async Task<IActionResult> Edit(Guid id, Category category, IFormFile? categoryImage)
         {
             if (id != category.CategoryId)
                 return NotFound();
+
+            ModelState.Remove(nameof(Category.CategoryImagePath));
 
             if (!ModelState.IsValid)
                 return View(category);
@@ -139,7 +125,11 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             existingCategory.CategoryName = category.CategoryName;
-            existingCategory.CategoryImagePath = category.CategoryImagePath;
+
+            if (categoryImage != null && categoryImage.Length > 0)
+            {
+                existingCategory.CategoryImagePath = await ImageUploadHelper.SaveImageAsync(categoryImage, "categories", _environment);
+            }
 
             await _context.SaveChangesAsync();
 

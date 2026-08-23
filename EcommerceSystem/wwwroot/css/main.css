@@ -2672,6 +2672,13 @@ input.num-product::-webkit-inner-spin-button {
 .bg9 {background-color: rgba(255,255,255,0.9);}
 
 /*---------------------------------------------*/
+/* Secondary button (outlined) — visually distinct from the filled gold primary button */
+.btn-outline-gold {
+  background-color: #fff;
+  border: 1px solid #c4a76b;
+}
+
+/*---------------------------------------------*/
 .bg-overlay1::before {
   content: "";
   position: absolute;

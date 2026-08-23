@@ -1,131 +1,509 @@
-﻿@model IEnumerable<EcommerceSystem.Models.Category>
+﻿@using EcommerceSystem.Models
+@model IEnumerable<Product>
 
 @{
-    ViewData["Title"] = "Categories";
+    ViewData["Title"] = "Manage Products";
+
+    var categories = ViewBag.Categories as List<Category>
+                     ?? new List<Category>();
+
+    var subCategories = ViewBag.SubCategories as List<SubCategory>
+                        ?? new List<SubCategory>();
+
+    var brands = ViewBag.Brands as List<ProductBrand>
+                 ?? new List<ProductBrand>();
+
+    var models = ViewBag.Models as List<ProductModel>
+                 ?? new List<ProductModel>();
+
+    Guid? selectedCategoryId = ViewBag.SelectedCategoryId;
+    Guid? selectedSubCategoryId = ViewBag.SelectedSubCategoryId;
+    Guid? selectedBrandId = ViewBag.SelectedBrandId;
+    Guid? selectedModelId = ViewBag.SelectedModelId;
+
+    decimal? minPrice = ViewBag.MinPrice;
+    decimal? maxPrice = ViewBag.MaxPrice;
+
+    string? search = ViewBag.Search;
 }
 
-<!-- Title Banner -->
-<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('/images/bg-01.jpg');">
-    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
-        PRODUCT CATEGORIES
-    </h2>
-</section>
+<div class="bg0 p-t-80 p-b-100">
 
-<div class="container py-5">
+    <div class="container">
 
-    <!-- Admin Actions Header -->
-    @if (User.IsInRole("Admin"))
-    {
-        <div class="d-flex justify-content-between align-items-center mb-5 p-3 bg-light rounded shadow-sm">
+        <!-- Page Header -->
+        <div class="flex-sb-m flex-w p-b-35">
+
             <div>
-                <h4 class="fw-bold mb-1" style="color: #1a1d20;">Admin Control Panel</h4>
-                <p class="text-muted mb-0" style="font-size: 14px;">Manage store categories, subcategories, and structure.</p>
+                <h1 class="ltext-103 cl5">
+                    Manage Products
+                </h1>
+
+                <p class="stext-102 cl6 p-t-5">
+                    Manage your store products, stock, prices and categories.
+                </p>
             </div>
-            <a asp-action="Create" class="btn btn-dark px-4 py-2" style="border-radius: 20px;">
-                <i class="fa fa-plus m-r-6"></i> Add Category
-            </a>
-        </div>
-    }
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
+            <div class="m-tb-10">
 
-    @if (TempData["Warning"] != null)
-    {
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            @TempData["Warning"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
+                <a asp-controller="Product"
+                   asp-action="Create"
+                   class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
 
-    @if (!Model.Any())
-    {
-        <div class="text-center py-5">
-            <div class="alert alert-info d-inline-block px-5 py-3">
-                No categories found at the moment.
+                    <i class="fa fa-plus m-r-8"></i>
+
+                    Add Product
+
+                </a>
+
             </div>
+
         </div>
-    }
-    else
-    {
-        <div class="row">
-            @foreach (var category in Model)
-            {
-                <div class="col-sm-6 col-md-4 col-lg-4 p-b-35">
-                    <!-- أضفنا كلاس category-card للتحكم بتأثير الـ Hover -->
-                    <div class="card h-100 shadow-sm border-0 category-card" style="border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
 
-                        <!-- Category Image with Hover Button -->
-                        <div style="height: 250px; overflow: hidden; position: relative; background: #f8f9fa;">
-                            <img src="@category.CategoryImagePath"
-                                 alt="@category.CategoryName"
-                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
 
-                            <!-- زر View Products يظهر عند الـ Hover -->
-                            <a asp-action="Details"
-                               asp-route-id="@category.CategoryId"
-                               class="flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 category-btn"
-                               style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); opacity: 0; visibility: hidden; transition: all 0.3s ease; border-radius: 20px; text-decoration: none; font-weight: 500; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                                View Products
-                            </a>
-                        </div>
+        <!-- Filters -->
+        <div class="bor10 p-all-20 m-b-40">
 
-                        <!-- Card Body -->
-                        <div class="card-body d-flex flex-column justify-content-between p-4 bg-white">
-                            <div>
-                                <h4 class="fw-bold mb-2" style="font-size: 20px; color: #111;">
-                                    @category.CategoryName
-                                </h4>
-                                <p class="text-muted mb-0" style="font-size: 13px;">
-                                    <i class="fa fa-tags m-r-5 text-secondary"></i> Subcategories:
-                                    <span class="badge bg-secondary">@(category.SubCategories?.Count ?? 0)</span>
-                                </p>
-                            </div>
+            <form asp-controller="Product"
+                  asp-action="Index"
+                  method="get">
 
-                            <!-- أزرار الإدارة للأدمن فقط تبقى ظاهرة ومرتبة -->
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <div class="d-flex align-items-center justify-content-end gap-2 pt-3 border-top mt-3">
-                                    <a asp-action="Edit"
-                                       asp-route-id="@category.CategoryId"
-                                       class="btn btn-outline-warning btn-sm" title="Edit" style="border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
+                <div class="row">
 
-                                    <a asp-action="Delete"
-                                       asp-route-id="@category.CategoryId"
-                                       class="btn btn-outline-danger btn-sm" title="Delete" style="border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                </div>
-                            }
-                        </div>
+                    <!-- Search -->
+                    <div class="col-md-4 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            Search
+                        </label>
+
+                        <input type="text"
+                               name="search"
+                               value="@search"
+                               class="form-control"
+                               placeholder="Search product..." />
 
                     </div>
+
+
+                    <!-- Category -->
+                    <div class="col-md-2 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            Category
+                        </label>
+
+                        <select name="categoryId"
+                                class="form-control">
+
+                            <option value="">
+                                All Categories
+                            </option>
+
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.CategoryId"
+                                        selected="@(selectedCategoryId == category.CategoryId)">
+
+                                    @category.CategoryName
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SubCategory -->
+                    <div class="col-md-2 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            SubCategory
+                        </label>
+
+                        <select name="subCategoryId"
+                                class="form-control">
+
+                            <option value="">
+                                All SubCategories
+                            </option>
+
+                            @foreach (var subCategory in subCategories)
+                            {
+                                <option value="@subCategory.SubCategoryId"
+                                        selected="@(selectedSubCategoryId == subCategory.SubCategoryId)">
+
+                                    @subCategory.SubCategoryName
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Brand -->
+                    <div class="col-md-2 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            Brand
+                        </label>
+
+                        <select name="brandId"
+                                class="form-control">
+
+                            <option value="">
+                                All Brands
+                            </option>
+
+                            @foreach (var brand in brands)
+                            {
+                                <option value="@brand.ProductBrandId"
+                                        selected="@(selectedBrandId == brand.ProductBrandId)">
+
+                                    @brand.BrandName
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Model -->
+                    <div class="col-md-2 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            Model
+                        </label>
+
+                        <select name="modelId"
+                                class="form-control">
+
+                            <option value="">
+                                All Models
+                            </option>
+
+                            @foreach (var productModel in models)
+                            {
+                                <option value="@productModel.ProductModelId"
+                                        selected="@(selectedModelId == productModel.ProductModelId)">
+
+                                    @productModel.ModelName
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
                 </div>
-            }
+
+
+                <!-- Price -->
+                <div class="row">
+
+                    <div class="col-md-2 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            Min Price
+                        </label>
+
+                        <input type="number"
+                               step="0.01"
+                               name="minPrice"
+                               value="@minPrice"
+                               class="form-control"
+                               placeholder="Min" />
+
+                    </div>
+
+
+                    <div class="col-md-2 m-b-15">
+
+                        <label class="stext-102 cl3">
+                            Max Price
+                        </label>
+
+                        <input type="number"
+                               step="0.01"
+                               name="maxPrice"
+                               value="@maxPrice"
+                               class="form-control"
+                               placeholder="Max" />
+
+                    </div>
+
+
+                    <div class="col-md-8 d-flex align-items-end m-b-15">
+
+                        <button type="submit"
+                                class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 m-r-10">
+
+                            <i class="fa fa-filter m-r-8"></i>
+
+                            Apply Filters
+
+                        </button>
+
+
+                        <a asp-controller="Product"
+                           asp-action="Index"
+                           class="flex-c-m stext-101 size-101 bor1 hov-btn1 btn-outline-gold cl2 p-lr-20">
+
+                            Clear
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
         </div>
-    }
+
+
+        <!-- Product Count -->
+        <div class="flex-sb-m flex-w p-b-20">
+
+            <div>
+
+                <span class="stext-102 cl6">
+
+                    Showing
+
+                    <strong>
+                        @Model.Count()
+                    </strong>
+
+                    product(s)
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Products Table -->
+        @if (!Model.Any())
+        {
+            <div class="bor10 p-all-40 text-center">
+
+                <i class="fa fa-box-open fa-2x m-b-15"></i>
+
+                <h4 class="mtext-102 cl2">
+                    No products found
+                </h4>
+
+                <p class="stext-102 cl6 p-t-10">
+                    Try changing your filters or add a new product.
+                </p>
+
+                <a asp-controller="Product"
+                   asp-action="Create"
+                   class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 m-t-20"
+                   style="max-width:220px;margin-left:auto;margin-right:auto;">
+
+                    Add Product
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="wrap-table-shopping-cart">
+
+                <table class="table-shopping-cart">
+
+                    <thead>
+
+                        <tr class="table_head">
+
+                            <th class="column-1">
+                                Product
+                            </th>
+
+                            <th class="column-2">
+                                Brand
+                            </th>
+
+                            <th class="column-3">
+                                Model
+                            </th>
+
+                            <th class="column-4">
+                                Price
+                            </th>
+
+                            <th class="column-5">
+                                Stock
+                            </th>
+
+                            <th class="column-6">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var product in Model)
+                        {
+                            var imagePath =
+                                product.ProductImages
+                                    .FirstOrDefault()
+                                    ?.ProductImagePath
+                                ?? "~/images/product-01.jpg";
+
+                            <tr class="table_row">
+
+                                <!-- Product -->
+                                <td class="column-1">
+
+                                    <div class="d-flex align-items-center">
+
+                                        <div style="width:80px;height:80px;overflow:hidden;margin-right:15px;">
+
+                                            <img src="@Url.Content(imagePath)"
+                                                 alt="@product.ProductName"
+                                                 style="width:100%;height:100%;object-fit:cover;" />
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <a asp-controller="Product"
+                                               asp-action="Details"
+                                               asp-route-id="@product.ProductId"
+                                               class="stext-104 cl4 hov-cl1">
+
+                                                @product.ProductName
+
+                                            </a>
+
+                                            <div class="stext-102 cl6 p-t-5">
+
+                                                @product.ProductDescription
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Brand -->
+                                <td class="column-2">
+
+                                    @(product.ProductBrand?.BrandName ?? "-")
+
+                                </td>
+
+
+                                <!-- Model -->
+                                <td class="column-3">
+
+                                    @(product.ProductModel?.ModelName ?? "-")
+
+                                </td>
+
+
+                                <!-- Price -->
+                                <td class="column-4">
+
+                                    <strong>
+                                        @product.ProductPrice.ToString("C")
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- Stock -->
+                                <td class="column-5">
+
+                                    @if (product.ProductQuantity <= 0)
+                                    {
+                                        <span class="badge bg-danger">
+                                            Out of Stock
+                                        </span>
+                                    }
+                                    else if (product.ProductQuantity <= 5)
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Low: @product.ProductQuantity
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">
+                                            @product.ProductQuantity
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Actions -->
+                                <td class="column-6">
+
+                                    <div class="d-flex">
+
+                                        <a asp-controller="Product"
+                                           asp-action="Details"
+                                           asp-route-id="@product.ProductId"
+                                           class="btn btn-sm btn-outline-secondary m-r-5">
+
+                                            <i class="fa fa-eye"></i>
+
+                                        </a>
+
+
+                                        <a asp-controller="Product"
+                                           asp-action="Edit"
+                                           asp-route-id="@product.ProductId"
+                                           class="btn btn-sm btn-outline-primary m-r-5">
+
+                                            <i class="fa fa-edit"></i>
+
+                                        </a>
+
+
+                                        <a asp-controller="Product"
+                                           asp-action="Delete"
+                                           asp-route-id="@product.ProductId"
+                                           class="btn btn-sm btn-outline-danger">
+
+                                            <i class="fa fa-trash"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
 </div>
-
-<style>
-    .category-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    }
-
-        .category-card:hover img {
-            transform: scale(1.05);
-        }
-        /* إظهار زر View Products عند تمرير الماوس على صورة البطاقة */
-        .category-card:hover .category-btn {
-            opacity: 1 !important;
-            visibility: visible !important;
-            bottom: 25px !important;
-        }
-</style>

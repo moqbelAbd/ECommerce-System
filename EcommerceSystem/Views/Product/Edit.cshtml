@@ -8,7 +8,7 @@
     var models = ViewBag.Models as List<ProductModel> ?? new List<ProductModel>();
     var subCategories = ViewBag.SubCategories as List<SubCategory> ?? new List<SubCategory>();
     Guid? selectedSubCategoryId = ViewBag.SelectedSubCategoryId is Guid id ? id : null;
-    string? imagePaths = ViewBag.ImagePaths as string;
+    var existingImages = Model.ProductImages?.ToList() ?? new List<ProductImage>();
 }
 
 <div class="bg0 p-t-80 p-b-100">
@@ -16,16 +16,16 @@
         <div class="flex-sb-m flex-w p-b-35">
             <div>
                 <h1 class="ltext-103 cl5">Edit Product</h1>
-                <p class="stext-102 cl6 p-t-5">Update catalog information, stock, and image paths.</p>
+                <p class="stext-102 cl6 p-t-5">Update catalog information, stock, and images.</p>
             </div>
 
-            <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-outline-secondary m-tb-10">
+            <a asp-action="Details" asp-route-id="@Model.ProductId" class="flex-c-m stext-101 size-101 bor1 hov-btn1 btn-outline-gold cl2 p-lr-15 m-tb-10">
                 <i class="fa fa-eye m-r-6"></i> View details
             </a>
         </div>
 
         <div class="bor10 p-all-30">
-            <form asp-action="Edit" asp-route-id="@Model.ProductId" method="post">
+            <form asp-action="Edit" asp-route-id="@Model.ProductId" method="post" enctype="multipart/form-data">
                 <input asp-for="ProductId" type="hidden" />
                 <div asp-validation-summary="ModelOnly" class="text-danger m-b-20"></div>
 
@@ -46,7 +46,7 @@
                 <div class="row">
                     <div class="col-md-4 m-b-20">
                         <label asp-for="ProductBrandId" class="form-label">Brand</label>
-                        <select asp-for="ProductBrandId" class="form-control">
+                        <select asp-for="ProductBrandId" id="brandSelect" class="form-control">
                             <option value="">Select a brand</option>
                             @foreach (var brand in brands)
                             {
@@ -58,11 +58,11 @@
 
                     <div class="col-md-4 m-b-20">
                         <label asp-for="ProductModelId" class="form-label">Model</label>
-                        <select asp-for="ProductModelId" class="form-control">
+                        <select asp-for="ProductModelId" id="modelSelect" class="form-control">
                             <option value="">Select a model</option>
                             @foreach (var productModel in models)
                             {
-                                <option value="@productModel.ProductModelId">@productModel.ModelName</option>
+                                <option value="@productModel.ProductModelId" data-brand-id="@productModel.ProductBrandId">@productModel.ModelName</option>
                             }
                         </select>
                         <span asp-validation-for="ProductModelId" class="text-danger"></span>
@@ -95,9 +95,22 @@
                     </div>
 
                     <div class="col-md-8 m-b-20">
-                        <label for="imagePaths" class="form-label">Image paths</label>
-                        <input id="imagePaths" name="imagePaths" value="@imagePaths" class="form-control" />
-                        <small class="form-text text-muted">Separate multiple existing image paths with commas. Saving replaces the current image list.</small>
+                        @if (existingImages.Any())
+                        {
+                            <label class="form-label">Current images</label>
+                            <div class="d-flex flex-wrap gap-2 m-b-10">
+                                @foreach (var image in existingImages)
+                                {
+                                    <div style="width:70px;height:70px;overflow:hidden;border-radius:6px;">
+                                        <img src="@Url.Content(image.ProductImagePath)" alt="@Model.ProductName" style="width:100%;height:100%;object-fit:cover;" />
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <label for="imageFiles" class="form-label">Replace images (optional)</label>
+                        <input type="file" id="imageFiles" name="imageFiles" multiple accept="image/*" class="form-control" />
+                        <small class="form-text text-muted">Choosing new images replaces the current image list.</small>
                     </div>
                 </div>
 
@@ -108,10 +121,10 @@
                 </div>
 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                         <i class="fa fa-save m-r-6"></i> Save changes
                     </button>
-                    <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-light">Cancel</a>
+                    <a asp-action="Details" asp-route-id="@Model.ProductId" class="flex-c-m stext-101 size-101 bor1 hov-btn1 btn-outline-gold cl2 p-lr-15">Cancel</a>
                 </div>
             </form>
         </div>
@@ -120,4 +133,35 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            var brandSelect = document.getElementById('brandSelect');
+            var modelSelect = document.getElementById('modelSelect');
+            var modelOptions = Array.prototype.slice.call(modelSelect.querySelectorAll('option[data-brand-id]'));
+
+            function filterModels() {
+                var brandId = brandSelect.value;
+                var previouslySelected = modelSelect.value;
+                var hasMatch = false;
+
+                modelOptions.forEach(function (option) {
+                    var matches = option.getAttribute('data-brand-id') === brandId;
+                    option.hidden = !matches;
+                    option.disabled = !matches;
+
+                    if (matches && option.value === previouslySelected) {
+                        hasMatch = true;
+                    }
+                });
+
+                if (!hasMatch) {
+                    modelSelect.value = '';
+                }
+            }
+
+            brandSelect.addEventListener('change', filterModels);
+            filterModels();
+        })();
+    </script>
 }

@@ -29,7 +29,7 @@
 
                 <div class="card-body p-4 p-md-5">
 
-                    <form asp-action="Create" method="post">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
 
                         @Html.AntiForgeryToken()
 
@@ -96,28 +96,28 @@
                         <!-- Image -->
                         <div class="form-group mb-4">
 
-                            <label asp-for="SubCategoryImagePath"
+                            <label for="imageFile"
                                    style="
                                         color:#1a1d20;
                                         font-weight:600;
                                    ">
-                                Image Path
+                                Image
                             </label>
 
-                            <input asp-for="SubCategoryImagePath"
+                            <input type="file"
+                                   id="imageFile"
+                                   name="imageFile"
+                                   accept="image/*"
                                    class="form-control"
-                                   placeholder="/images/SubCategories/example.jpg"
                                    style="
                                         height:48px;
                                         border-radius:6px;
                                    " />
 
-                            <span asp-validation-for="SubCategoryImagePath"
-                                  class="text-danger">
-                            </span>
+                            @Html.ValidationMessage("SubCategoryImagePath", new { @class = "text-danger" })
 
                             <small style="color:#888;">
-                                Enter the path of the subcategory image.
+                                Choose an image to upload for the subcategory.
                             </small>
 
                         </div>
@@ -126,27 +126,14 @@
                         <div class="d-flex justify-content-between mt-4">
 
                             <a asp-action="Index"
-                               class="btn"
-                               style="
-                                    border:1px solid #1a1d20;
-                                    color:#1a1d20;
-                                    border-radius:25px;
-                                    padding:10px 25px;
-                               ">
-                                <i class="fa fa-arrow-left mr-2"></i>
+                               class="flex-c-m stext-101 size-101 bor1 hov-btn1 btn-outline-gold cl2 p-lr-15">
+                                <i class="fa fa-arrow-left m-r-8"></i>
                                 Back
                             </a>
 
                             <button type="submit"
-                                    class="btn"
-                                    style="
-                                        background:#c9aa6f;
-                                        color:#1a1d20;
-                                        border-radius:25px;
-                                        padding:10px 28px;
-                                        font-weight:600;
-                                    ">
-                                <i class="fa fa-save mr-2"></i>
+                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                <i class="fa fa-save m-r-8"></i>
                                 Create
                             </button>
 
