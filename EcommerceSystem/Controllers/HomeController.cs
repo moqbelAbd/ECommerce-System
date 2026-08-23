@@ -46,7 +46,7 @@ namespace EcommerceSystem.Controllers
             return View();
         }
 
-        public IActionResult Product(string category)
+        public IActionResult Shop(string category)
         {
             return View();
         }

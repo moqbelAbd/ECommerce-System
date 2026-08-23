@@ -8,7 +8,8 @@
         <div class="slick1">
             <div class="item-slick1" style="background-image: url('@Url.Content("~/images/slide-01.jpg")');">
                 <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                    <!-- إضافة p-t-150 لتنزيل النصوص للأسفل قليلاً لكي لا تغطيها الأسهم -->
+                    <div class="flex-col-l-m h-full p-t-150 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
                             <span class="ltext-101 cl2 respon2">
                                 Luxury Collection 2026
@@ -32,7 +33,7 @@
 
             <div class="item-slick1" style="background-image: url('@Url.Content("~/images/slide-02.jpg")');">
                 <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                    <div class="flex-col-l-m h-full p-t-150 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
                             <span class="ltext-101 cl2 respon2">
                                 Classic & Casual
@@ -56,7 +57,7 @@
 
             <div class="item-slick1" style="background-image: url('@Url.Content("~/images/slide-03.jpg")');">
                 <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                    <div class="flex-col-l-m h-full p-t-150 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
                             <span class="ltext-101 cl2 respon2">
                                 Premium Accessories
@@ -170,7 +171,6 @@
 
         <!-- Product Grid -->
         <div class="row isotope-grid">
-            s
             <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
                 <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
                     <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
@@ -251,7 +251,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <style>
@@ -270,7 +269,7 @@
     </div>
 </section>
 
-<!-- Testimonials Section -->
+<!-- Testimonials Section (Converted to Slick Slider) -->
 <section class="sec-testimonials bg6 p-t-80 p-b-80">
     <div class="container">
         <div class="p-b-42">
@@ -279,37 +278,39 @@
             </h3>
         </div>
 
-        <div class="row">
-            <div class="col-md-4 p-b-30">
-                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
-                    <p class="stext-114 cl6 p-b-26">
-                        "The quality of the watches is exceptional! Fast delivery and amazing customer service here in Amman."
-                    </p>
-                    <span class="mtext-107 cl2">
-                        - Ahmad Omar
-                    </span>
+        <div class="wrap-slick2">
+            <div class="slick2">
+                <div class="item-slick2 p-lr-15">
+                    <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
+                        <p class="stext-114 cl6 p-b-26">
+                            "The quality of the watches is exceptional! Fast delivery and amazing customer service here in Amman."
+                        </p>
+                        <span class="mtext-107 cl2 font-weight-bold">
+                            - Ahmad Omar
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-4 p-b-30">
-                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
-                    <p class="stext-114 cl6 p-b-26">
-                        "I ordered a classic leather watch and it exceeded my expectations. Beautiful packaging too!"
-                    </p>
-                    <span class="mtext-107 cl2">
-                        - Sarah Naser
-                    </span>
+                <div class="item-slick2 p-lr-15">
+                    <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
+                        <p class="stext-114 cl6 p-b-26">
+                            "I ordered a classic leather watch and it exceeded my expectations. Beautiful packaging too!"
+                        </p>
+                        <span class="mtext-107 cl2 font-weight-bold">
+                            - Sarah Naser
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-4 p-b-30">
-                <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
-                    <p class="stext-114 cl6 p-b-26">
-                        "Best watch store online! Great variety of modern designs and very reasonable prices."
-                    </p>
-                    <span class="mtext-107 cl2">
-                        - Tariq Ziad
-                    </span>
+                <div class="item-slick2 p-lr-15">
+                    <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
+                        <p class="stext-114 cl6 p-b-26">
+                            "Best watch store online! Great variety of modern designs and very reasonable prices."
+                        </p>
+                        <span class="mtext-107 cl2 font-weight-bold">
+                            - Tariq Ziad
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -330,7 +331,6 @@
 
         <div class="wrap-slick2">
             <div class="slick2">
-
                 <div class="item-slick2 p-lr-15">
                     <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
                         <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
@@ -374,7 +374,6 @@
                         </p>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
