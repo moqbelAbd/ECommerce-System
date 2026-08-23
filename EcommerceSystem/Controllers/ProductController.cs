@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceSystem.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -126,30 +125,77 @@ namespace EcommerceSystem.Controllers
             return View(products);
         }
 
-        // GET: Product/Details/{id}
-        public async Task<IActionResult> Details(Guid? id)
+        // =========================================================
+        // PRODUCT DETAILS (Admin & Customer view)
+        // =========================================================
+        public async Task<IActionResult> Details(Guid? id, int? ratingFilter, string? customerSearch)
         {
             if (id == null)
                 return NotFound();
 
-            var product = await _context.Products
+            var productQuery = _context.Products
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-
                 .Include(p => p.ProductSubCategories)
                     .ThenInclude(psc => psc.SubCategory)
+                .Include(p => p.ProductReviews)
+                    .ThenInclude(r => r.Customer)
+                .AsQueryable();
 
-                .FirstOrDefaultAsync(p =>
-                    p.ProductId == id &&
-                    !p.IsDeleted);
+            var product = await productQuery.FirstOrDefaultAsync(p => p.ProductId == id && !p.IsDeleted);
 
             if (product == null)
                 return NotFound();
 
+            // تصفية المراجعات للأدمن (حسب التقييم أو اسم العميل)
+            var reviews = product.ProductReviews.AsEnumerable();
+
+            if (ratingFilter.HasValue)
+            {
+                reviews = reviews.Where(r => r.CustomerProductRating == ratingFilter.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(customerSearch))
+            {
+                reviews = reviews.Where(r => r.Customer != null &&
+                    (r.Customer.FirstName + " " + r.Customer.LastName).Contains(customerSearch, StringComparison.OrdinalIgnoreCase));
+            }
+
+            ViewBag.FilteredReviews = reviews.ToList();
+            ViewBag.SelectedRatingFilter = ratingFilter;
+            ViewBag.CustomerSearch = customerSearch;
+
+            // حساب متوسط التقييم
+            if (product.ProductReviews.Any())
+            {
+                ViewBag.AverageRating = product.ProductReviews.Average(r => r.CustomerProductRating);
+                ViewBag.TotalReviews = product.ProductReviews.Count;
+            }
+            else
+            {
+                ViewBag.AverageRating = 0;
+                ViewBag.TotalReviews = 0;
+            }
+
             return View(product);
         }
 
+        // حذف مراجعة (خاص بالأدمن)
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteReview(Guid reviewId, Guid productId)
+        {
+            var review = await _context.ProductReviews.FindAsync(reviewId);
+            if (review != null)
+            {
+                _context.ProductReviews.Remove(review);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Review deleted successfully.";
+            }
+            return RedirectToAction(nameof(Details), new { id = productId });
+        }
         // GET: Product/Create
         public async Task<IActionResult> Create()
         {
