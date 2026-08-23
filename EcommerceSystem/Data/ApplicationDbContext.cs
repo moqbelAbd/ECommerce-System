@@ -49,8 +49,22 @@ namespace EcommerceSystem.Data
                 .HasOne(oi => oi.Product)
                 .WithMany() // Leaves the other side of the relationship empty
                 .HasForeignKey(oi => oi.ProductId)
-                .OnDelete(DeleteBehavior.Restrict); // <-- THE FIX
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<ProductModel>()
+            .HasOne(pm => pm.ProductBrand)
+            .WithMany(pb => pb.ProductModels)
+            .HasForeignKey(pm => pm.ProductBrandId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            // 3. Explicit precision for decimal columns to avoid silent truncation
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalPrice)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.ItemTotalPrice)
+                .HasPrecision(18, 2);
 
             // 1. Seed Product Brands
             modelBuilder.Entity<ProductBrand>().HasData(
@@ -63,26 +77,21 @@ namespace EcommerceSystem.Data
 
             // 2. Seed Product Models
             modelBuilder.Entity<ProductModel>().HasData(
-                // Rolex Models
-                new ProductModel { ProductModelId = Guid.Parse("e1111111-1111-1111-1111-111111111111"), ModelName = "Submariner" },
-                new ProductModel { ProductModelId = Guid.Parse("e1111111-2222-2222-2222-222222222222"), ModelName = "Datejust" },
+                new ProductModel { ProductModelId = Guid.Parse("e1111111-1111-1111-1111-111111111111"), ProductBrandId = Guid.Parse("b1111111-1111-1111-1111-111111111111"), ModelName = "Submariner" },
+                new ProductModel { ProductModelId = Guid.Parse("e1111111-2222-2222-2222-222222222222"), ProductBrandId = Guid.Parse("b1111111-1111-1111-1111-111111111111"), ModelName = "Datejust" },
 
-                // Tissot Models
-                new ProductModel { ProductModelId = Guid.Parse("e2222222-1111-1111-1111-111111111111"), ModelName = "Le Locle" },
-                new ProductModel { ProductModelId = Guid.Parse("e2222222-2222-2222-2222-222222222222"), ModelName = "PRX" },
+                new ProductModel { ProductModelId = Guid.Parse("e2222222-1111-1111-1111-111111111111"), ProductBrandId = Guid.Parse("b2222222-2222-2222-2222-222222222222"), ModelName = "Le Locle" },
+                new ProductModel { ProductModelId = Guid.Parse("e2222222-2222-2222-2222-222222222222"), ProductBrandId = Guid.Parse("b2222222-2222-2222-2222-222222222222"), ModelName = "PRX" },
 
-                // Casio Models
-                new ProductModel { ProductModelId = Guid.Parse("e3333333-1111-1111-1111-111111111111"), ModelName = "G-Shock" },
-                new ProductModel { ProductModelId = Guid.Parse("e3333333-2222-2222-2222-222222222222"), ModelName = "Edifice" },
+                new ProductModel { ProductModelId = Guid.Parse("e3333333-1111-1111-1111-111111111111"), ProductBrandId = Guid.Parse("b3333333-3333-3333-3333-333333333333"), ModelName = "G-Shock" },
+                new ProductModel { ProductModelId = Guid.Parse("e3333333-2222-2222-2222-222222222222"), ProductBrandId = Guid.Parse("b3333333-3333-3333-3333-333333333333"), ModelName = "Edifice" },
 
-                // Apple Models
-                new ProductModel { ProductModelId = Guid.Parse("e4444444-1111-1111-1111-111111111111"), ModelName = "Series 9" },
-                new ProductModel { ProductModelId = Guid.Parse("e4444444-2222-2222-2222-222222222222"), ModelName = "Ultra 2" },
+                new ProductModel { ProductModelId = Guid.Parse("e4444444-1111-1111-1111-111111111111"), ProductBrandId = Guid.Parse("b4444444-4444-4444-4444-444444444444"), ModelName = "Series 9" },
+                new ProductModel { ProductModelId = Guid.Parse("e4444444-2222-2222-2222-222222222222"), ProductBrandId = Guid.Parse("b4444444-4444-4444-4444-444444444444"), ModelName = "Ultra 2" },
 
-                // Montblanc Models
-                new ProductModel { ProductModelId = Guid.Parse("e5555555-1111-1111-1111-111111111111"), ModelName = "eeisterstück" },
-                new ProductModel { ProductModelId = Guid.Parse("e5555555-2222-2222-2222-222222222222"), ModelName = "Sartorial" }
-            );
+                new ProductModel { ProductModelId = Guid.Parse("e5555555-1111-1111-1111-111111111111"), ProductBrandId = Guid.Parse("b5555555-5555-5555-5555-555555555555"), ModelName = "Meisterstück" },
+                new ProductModel { ProductModelId = Guid.Parse("e5555555-2222-2222-2222-222222222222"), ProductBrandId = Guid.Parse("b5555555-5555-5555-5555-555555555555"), ModelName = "Sartorial" }
+                );
 
             // 3. Seed Payment Types (Integers instead of Guids!)
             modelBuilder.Entity<PaymentType>().HasData(
