@@ -4,6 +4,7 @@ using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EcommerceSystem.Controllers
 {
@@ -131,27 +132,53 @@ namespace EcommerceSystem.Controllers
         // =========================================================
         // PRODUCT DETAILS (Admin & Customer view)
         // =========================================================
+        // =========================================================
+        // PUBLIC PRODUCT DETAILS
+        // Guest + Customer + Admin
+        // =========================================================
+
         public async Task<IActionResult> Details(Guid? id, int? ratingFilter, string? customerSearch)
         {
             if (id == null)
                 return NotFound();
 
             var productQuery = _context.Products
+                .Where(p => !p.IsDeleted)
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-                .Include(p => p.ProductSubCategories)
-                    .ThenInclude(psc => psc.SubCategory)
                 .Include(p => p.ProductReviews)
                     .ThenInclude(r => r.Customer)
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
                 .AsQueryable();
 
-            var product = await productQuery.FirstOrDefaultAsync(p => p.ProductId == id && !p.IsDeleted);
+            var product = await productQuery.FirstOrDefaultAsync(p => p.ProductId == id.Value);
 
             if (product == null)
                 return NotFound();
 
-            // تصفية المراجعات للأدمن (حسب التقييم أو اسم العميل)
+            // التحقق مما إذا كان المستخدم الحالي قد اشترى هذا المنتج لإنبناء ظهور زر Add Review
+            bool hasPurchased = false;
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers
+                    .Include(c => c.Orders)
+                        .ThenInclude(o => o.OrderItems)
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null)
+                {
+                    hasPurchased = customer.Orders
+                        .SelectMany(o => o.OrderItems)
+                        .Any(oi => oi.ProductId == product.ProductId);
+                }
+            }
+
+            ViewBag.HasPurchased = hasPurchased;
+
+            // تصفية المراجعات (حسب التقييم أو اسم العميل للأدمن)
             var reviews = product.ProductReviews.AsEnumerable();
 
             if (ratingFilter.HasValue)
@@ -169,7 +196,7 @@ namespace EcommerceSystem.Controllers
             ViewBag.SelectedRatingFilter = ratingFilter;
             ViewBag.CustomerSearch = customerSearch;
 
-            // حساب متوسط التقييم
+            // حساب متوسط التقييم والعدد الإجمالي
             if (product.ProductReviews.Any())
             {
                 ViewBag.AverageRating = product.ProductReviews.Average(r => r.CustomerProductRating);
@@ -183,7 +210,6 @@ namespace EcommerceSystem.Controllers
 
             return View(product);
         }
-
         // حذف مراجعة (خاص بالأدمن)
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -447,6 +473,44 @@ namespace EcommerceSystem.Controllers
                 .ToListAsync();
 
             ViewBag.SelectedSubCategoryId = selectedSubCategoryId;
+        }
+
+        // =========================================================
+        // ADD PRODUCT REVIEW (POST) - Inside ProductController
+        // =========================================================
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(Guid productId, int rating, string reviewText)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (customer == null)
+            {
+                return RedirectToAction("CompleteProfile", "Customer");
+            }
+
+            if (ModelState.IsValid && rating >= 1 && rating <= 5)
+            {
+                var review = new ProductReview
+                {
+                    ProductReviewId = Guid.NewGuid(),
+                    ProductId = productId,
+                    CustomerId = customer.CustomerId,
+                    CustomerProductRating = rating,
+                    CustomerProductReview = reviewText ?? string.Empty,
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.ProductReviews.Add(review);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Review added successfully!";
+            }
+
+            return RedirectToAction("Details", new { id = productId });
         }
     }
 }
