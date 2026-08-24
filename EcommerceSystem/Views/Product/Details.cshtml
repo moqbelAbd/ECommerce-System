@@ -134,6 +134,62 @@
                             <span class="stext-102 cl6">@Model.ProductQuantity</span>
                         </div>
                     </div>
+
+                    <!-- ========================================= -->
+                    <!-- Quantity + Add To Cart Form (مدمجة من الصفحة الأولى) -->
+                    <!-- ========================================= -->
+                    @if (!isAdmin)
+                    {
+                        @if (Model.ProductQuantity > 0)
+                        {
+                            <div class="p-t-30">
+                                <div class="flex-w flex-r-m p-b-10">
+                                    <div class="size-204 flex-w flex-m respon6-next" style="width: 100%;">
+
+                                        <form id="details-cart-form" asp-controller="Cart" asp-action="AddToCart" method="post" class="flex-w flex-m flex-grow-1" style="width: 100%;">
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="productId" value="@Model.ProductId" />
+
+                                            <!-- Quantity Selector (+/-) -->
+                                            <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                                                <button type="button" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                                    <i class="fs-16 zmdi zmdi-minus"></i>
+                                                </button>
+
+                                                <input class="mtext-104 cl3 txt-center num-product"
+                                                       type="number"
+                                                       name="quantity"
+                                                       value="1"
+                                                       min="1"
+                                                       max="@Model.ProductQuantity" />
+
+                                                <button type="button" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                                    <i class="fs-16 zmdi zmdi-plus"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Add To Cart Button -->
+                                            <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" style="border-radius: 20px;">
+                                                Add to cart
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="p-t-30">
+                                <button type="button" class="flex-c-m stext-101 cl0 size-101 bg3 bor1 p-lr-15" disabled style="border-radius: 20px;">
+                                    Out of stock
+                                </button>
+                            </div>
+                        }
+                    }
+
                 </div>
             </div>
         </div>
@@ -291,9 +347,36 @@
 </div>
 
 @section Scripts {
+    @using System.Text.Json
+@{
+        var successMessage = TempData["Success"] as string ?? TempData["SuccessMessage"] as string;
+        var warningMessage = TempData["Warning"] as string;
+        var errorMessage = TempData["ErrorMessage"] as string ?? TempData["Error"] as string;
+    }
+
+    @if (!string.IsNullOrEmpty(successMessage) || !string.IsNullOrEmpty(warningMessage) || !string.IsNullOrEmpty(errorMessage))
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        @:showToast(@Html.Raw(JsonSerializer.Serialize(successMessage)), "success");
+                }
+                    @if (!string.IsNullOrEmpty(warningMessage))
+                    {
+                        @:showToast(@Html.Raw(JsonSerializer.Serialize(warningMessage)), "warning");
+                }
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        @:showToast(@Html.Raw(JsonSerializer.Serialize(errorMessage)), "error");
+                }
+                        });
+        </script>
+    }
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Modal Logic
+            // 1. Modal Logic
             const openBtn = document.getElementById("openReviewModalBtn");
             const modal = document.getElementById("reviewModal");
             if (openBtn && modal) {
@@ -327,7 +410,7 @@
                 });
             }
 
-            // Star Rating Logic
+            // 2. Star Rating Logic
             const stars = document.querySelectorAll(".rating-star");
             const ratingInput = document.getElementById("selectedRating");
             const ratingText = document.getElementById("rating-text");
@@ -373,7 +456,7 @@
                 });
             }
 
-            // Wishlist AJAX Toggle Script (Delegation to handle clicks dynamically)
+            // 3. Wishlist AJAX Toggle Script
             document.body.addEventListener("click", function(e) {
                 const btn = e.target.closest(".btn-toggle-wishlist");
                 if (!btn) return;
@@ -399,9 +482,11 @@
                             if (data.isAdded) {
                                 if (heart1) heart1.style.opacity = "0";
                                 if (heart2) heart2.style.opacity = "1";
+                                showToast("Added to your Wishlist!", "success");
                             } else {
                                 if (heart1) heart1.style.opacity = "1";
                                 if (heart2) heart2.style.opacity = "0";
+                                showToast("Removed from your Wishlist!", "warning");
                             }
                         } else if (data.redirect) {
                             window.location.href = data.redirect;
@@ -409,6 +494,53 @@
                     })
                     .catch(error => console.error('Error:', error));
             });
+
+            // 4. AJAX Add To Cart Script (مضافة حديثاً لتفعيل الـ Toast في صفحة التفاصيل)
+            const cartForm = document.getElementById("details-cart-form");
+            if (cartForm) {
+                cartForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(cartForm);
+                    const productId = formData.get("productId");
+                    const quantity = formData.get("quantity") || 1;
+
+                    fetch(`/Cart/AddToCart?productId=${productId}&quantity=${quantity}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // إظهار التوست عند النجاح
+                                showToast(data.message || "Product added to cart successfully!", "success");
+
+                                // تحديث السلة الجانبية وسحب محتواها الجديد
+                                fetch('/Cart/RefreshSidebarCart')
+                                    .then(response => response.text())
+                                    .then(html => {
+                                        const sidebarContainer = document.getElementById('cart-sidebar-container');
+                                        if (sidebarContainer) {
+                                            sidebarContainer.innerHTML = html;
+                                        }
+
+                                        const panelCart = document.querySelector('.js-panel-cart');
+                                        if (panelCart) {
+                                            panelCart.classList.add('show-header-cart');
+                                        }
+
+                                        // تحديث الرقم الموجود على أيقونة الهيدر إن وجد
+                                        location.reload(); // أو تحديث العداد برمجياً لتجنب الريفريش الكامل
+                                    });
+                            } else {
+                                showToast(data.message || "Error adding product to cart", "error");
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            }
         });
     </script>
 }

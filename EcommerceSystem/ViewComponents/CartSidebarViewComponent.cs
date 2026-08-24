@@ -40,10 +40,7 @@ namespace EcommerceSystem.ViewComponents
                         {
                             ProductId = ci.ProductId,
                             ProductName = ci.Product!.ProductName,
-
-                            // FIX: Safely handles products with no images
-                            ImageUrl = ci.Product.ProductImages.FirstOrDefault().ProductImagePath,
-
+                            ImageUrl = ci.Product.ProductImages.Select(img => img.ProductImagePath).FirstOrDefault() ?? "/images/products/default-product",
                             Price = ci.Product.ProductPrice,
                             Quantity = ci.ItemQuantity
                         }).ToList();
@@ -73,7 +70,7 @@ namespace EcommerceSystem.ViewComponents
                                 {
                                     ProductId = product.ProductId,
                                     ProductName = product.ProductName,
-                                    ImageUrl = product.ProductImages.FirstOrDefault().ProductImagePath ,
+                                    ImageUrl = product.ProductImages.Select(img => img.ProductImagePath).FirstOrDefault() ?? "/images/products/default-product",
                                     Price = product.ProductPrice,
                                     Quantity = item.Quantity
                                 });

@@ -1,0 +1,26 @@
+@using System.Text.Json
+@{
+    var successMessage = TempData["Success"] as string ?? TempData["SuccessMessage"] as string;
+    var warningMessage = TempData["Warning"] as string;
+    var errorMessage = TempData["ErrorMessage"] as string ?? TempData["Error"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successMessage) || !string.IsNullOrEmpty(warningMessage) || !string.IsNullOrEmpty(errorMessage))
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                @:showToast(@Html.Raw(JsonSerializer.Serialize(successMessage)), "success");
+            }
+            @if (!string.IsNullOrEmpty(warningMessage))
+            {
+                @:showToast(@Html.Raw(JsonSerializer.Serialize(warningMessage)), "warning");
+            }
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                @:showToast(@Html.Raw(JsonSerializer.Serialize(errorMessage)), "error");
+            }
+        });
+    </script>
+}

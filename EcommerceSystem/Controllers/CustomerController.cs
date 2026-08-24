@@ -361,7 +361,7 @@ namespace EcommerceSystem.Controllers
                 {
                     ProductId = ci.ProductId,
                     ProductName = ci.Product!.ProductName,
-                    ImageUrl = ci.Product.ProductImages?.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
+                    ImageUrl = ci.Product.ProductImages.Select(img => img.ProductImagePath).FirstOrDefault() ?? "/images/products/default-product",
                     Price = ci.Product.ProductPrice,        
                     Quantity = ci.ItemQuantity
                 }).ToList();

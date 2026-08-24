@@ -192,18 +192,18 @@
                         ?? "~/images/product-01.jpg";
 
                     var cardData = new
-{
-    ProductId = product.ProductId,                          // <--- مهم جداً للـ AJAX
-    IsInWishlist = userWishlistIds.Contains(product.ProductId), // <--- لتلوين القلب إذا كان مضافاً
-    ImageUrl = Url.Content(imagePath),
-    Title = product.ProductName,
-    Subtitle = product.ProductPrice.ToString("C"),
-    DetailsUrl = Url.Action("Details", "Customer", new { id = product.ProductId }),
-    ButtonText = "Quick View",
-    ShowAdminActions = User.IsInRole("Admin"),
-    EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
-    DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId })
-};
+                    {
+                        ProductId = product.ProductId,                          // <--- مهم جداً للـ AJAX
+                        IsInWishlist = userWishlistIds.Contains(product.ProductId), // <--- لتلوين القلب إذا كان مضافاً
+                        ImageUrl = Url.Content(imagePath),
+                        Title = product.ProductName,
+                        Subtitle = product.ProductPrice.ToString("C"),
+                        DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }), // <--- تم التعديل هنا ليطوجه إلى Product/Details
+                        ButtonText = "Quick View",
+                        ShowAdminActions = User.IsInRole("Admin"),
+                        EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
+                        DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId })
+                    };
 
                     <partial name="_ProductCardPartial" model="cardData" />
                 }
@@ -222,26 +222,26 @@
         border-bottom: 1px solid #eee;
     }
 
-    .shop-cat-nav-list > li {
-        position: relative;
-        margin-right: 30px;
-    }
+        .shop-cat-nav-list > li {
+            position: relative;
+            margin-right: 30px;
+        }
 
-    .shop-cat-nav-list > li > a {
-        display: inline-block;
-        padding: 12px 0;
-        font-size: 15px;
-        color: #333;
-        text-decoration: none;
-        border-bottom: 2px solid transparent;
-        transition: all 0.2s ease;
-    }
+            .shop-cat-nav-list > li > a {
+                display: inline-block;
+                padding: 12px 0;
+                font-size: 15px;
+                color: #333;
+                text-decoration: none;
+                border-bottom: 2px solid transparent;
+                transition: all 0.2s ease;
+            }
 
-    .shop-cat-nav-list > li:hover > a,
-    .shop-cat-nav-list > li.active > a {
-        color: #c4a76b;
-        border-bottom-color: #c4a76b;
-    }
+            .shop-cat-nav-list > li:hover > a,
+            .shop-cat-nav-list > li.active > a {
+                color: #c4a76b;
+                border-bottom-color: #c4a76b;
+            }
 
     .shop-subcat-dropdown {
         display: none;
@@ -271,11 +271,11 @@
         white-space: nowrap;
     }
 
-    .shop-subcat-dropdown li a:hover,
-    .shop-subcat-dropdown li.active a {
-        background: #f8f5ee;
-        color: #c4a76b;
-    }
+        .shop-subcat-dropdown li a:hover,
+        .shop-subcat-dropdown li.active a {
+            background: #f8f5ee;
+            color: #c4a76b;
+        }
 
     .block2-pic:hover .block2-btn {
         opacity: 1 !important;
