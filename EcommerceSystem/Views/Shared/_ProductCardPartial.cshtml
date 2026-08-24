@@ -43,7 +43,7 @@
                 <!-- Add to Cart Button -->
                 @if (!User.IsInRole("Admin"))
                 {
-                    <a href="#" class="cart-gold-btn" title="Add to Cart">
+                    <a href="javascript:void(0)" class="cart-gold-btn ajax-cart-btn" data-product-id="@Model.ProductId" title="Add to Cart">
                         <i class="fa fa-shopping-cart" style="font-size: 13px; color: #fff;"></i>
                     </a>
                 }
