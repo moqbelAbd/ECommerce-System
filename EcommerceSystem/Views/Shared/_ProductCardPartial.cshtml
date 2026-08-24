@@ -139,4 +139,56 @@
             });
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+            // Find all buttons with the ajax-cart-btn class
+            const cartButtons = document.querySelectorAll('.ajax-cart-btn');
+
+            cartButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault(); // Stop default anchor behavior
+                    
+                    // Grab the ID from the data-product-id attribute
+                    const productId = this.getAttribute('data-product-id');
+
+                    // Send the POST request to your controller
+                    fetch(`/Cart/AddToCart?productId=${productId}&quantity=1`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                         .then(data => {
+                            if (data.success) {
+        
+                                // Fetch the updated sidebar HTML
+                                fetch('/Cart/RefreshSidebarCart')
+                                    .then(response => response.text())
+                                    .then(html => {
+                                        // 1. Replace the old sidebar with the new one
+                                        document.getElementById('cart-sidebar-container').innerHTML = html;
+                
+                                        // 2. Open the newly injected sidebar
+                                        const panelCart = document.querySelector('.js-panel-cart');
+                                        panelCart.classList.add('show-header-cart');
+
+                                        // 3. RE-BIND THE CLOSE EVENTS TO THE NEW HTML
+                                        const hideCartElements = document.querySelectorAll('.js-hide-cart');
+                                        hideCartElements.forEach(el => {
+                                            el.addEventListener('click', function(e) {
+                                                e.preventDefault();
+                                                panelCart.classList.remove('show-header-cart');
+                                            });
+                                        });
+                                    });
+
+                            } else {
+                                alert("Error: " + data.message);
+                            }
+                        })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        });
 </script>
