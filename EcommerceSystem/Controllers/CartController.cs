@@ -111,15 +111,28 @@ namespace EcommerceSystem.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-                var cart = await _context.Carts.Include(c => c.CartItems).FirstOrDefaultAsync(c => c.CustomerId == customer!.CustomerId);
-
-                if (cart != null)
+                if (customer != null)
                 {
-                    var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-                    if (itemToRemove != null)
+                    var cart = await _context.Carts
+                        .Include(c => c.CartItems)
+                        .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
+
+                    if (cart != null)
                     {
-                        _context.CartItems.Remove(itemToRemove);
-                        await _context.SaveChangesAsync();
+                        var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+                        if (itemToRemove != null)
+                        {
+                            _context.CartItems.Remove(itemToRemove);
+                            try
+                            {
+                                await _context.SaveChangesAsync();
+                            }
+                            catch (DbUpdateConcurrencyException)
+                            {
+                                // تجاهل الخطأ في حال كانت العنصر محذوف مسبقاً لتجنب توقف البرنامج
+                                _context.Entry(itemToRemove).State = EntityState.Detached;
+                            }
+                        }
                     }
                 }
             }
@@ -139,10 +152,9 @@ namespace EcommerceSystem.Controllers
                 }
             }
 
-            // Reload the Cart page to reflect changes
-            return RedirectToAction("Cart", "Customer");
+            // إرجاع الـ JSON المطلوب للـ AJAX والـ Toast
+            return Json(new { success = true, message = "Product removed from cart successfully!" });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateCart(Dictionary<Guid, int> quantities)

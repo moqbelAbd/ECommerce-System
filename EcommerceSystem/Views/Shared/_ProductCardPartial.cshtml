@@ -1,20 +1,24 @@
 ﻿@model dynamic
+
 <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
     <div class="block2" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; transition: all 0.3s ease;">
 
-        <!-- Image & Hover Button -->
+        <!-- Image & Hover Button (تتوجه إلى تفاصيل المنتج) -->
         <div class="block2-pic hov-img0" style="width: 100%; height: 260px; display: flex; align-items: center; justify-content: center; background-color: #fcfcfc; position: relative; overflow: hidden;">
-            <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
+            <a href="@Url.Action("Details", "Product", new { id = Model.ProductId })" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.5s ease;">
+            </a>
 
-            <a href="@Model.DetailsUrl" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease; text-decoration: none;">
-                @Model.ButtonText
+            <a href="@Url.Action("Details", "Product", new { id = Model.ProductId })" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04" style="position: absolute; bottom: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease; text-decoration: none;">
+                View
             </a>
         </div>
 
         <!-- Info, Wishlist & Add to Cart -->
         <div class="block2-txt flex-w flex-t p-t-16 p-b-20 p-lr-20" style="display: flex; justify-content: space-between; align-items: flex-start; flex-grow: 1;">
             <div class="block2-txt-child1 flex-col-l" style="width: calc(100% - 45px);">
-                <a href="@Model.DetailsUrl" class="stext-104 cl4 hov-cl1 trans-04 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-decoration: none; color: #111;">
+                <!-- اسم المنتج يوجه أيضاً لصفحة تفاصيل المنتج -->
+                <a href="@Url.Action("Details", "Product", new { id = Model.ProductId })" class="stext-104 cl4 hov-cl1 trans-04 p-b-6" style="font-weight: 500; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-decoration: none; color: #111;">
                     @Model.Title
                 </a>
                 <span class="stext-105 cl3" style="font-weight: 600; color: #111; font-size: 14px;">
@@ -24,7 +28,7 @@
 
             <!-- الجانب الأيمن: المفضلة وزر السلة الذهبي -->
             <div class="block2-txt-child2 flex-r" style="padding-top: 5px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                
+
                 <!-- Wishlist Icon for Customer Only -->
                 @if (User.IsInRole("Customer"))
                 {
@@ -97,15 +101,14 @@
     }
 </style>
 
-<!-- سكريبت الـ AJAX مضمن هنا ليعمل تلقائياً مع أي كرت يتم عرضه في أي صفحة -->
 <script>
     if (typeof wishlistScriptInitialized === 'undefined') {
         var wishlistScriptInitialized = true;
-        document.addEventListener("DOMContentLoaded", function () {
-            document.body.addEventListener("click", function (e) {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.body.addEventListener("click", function(e) {
                 const btn = e.target.closest(".btn-toggle-wishlist");
                 if (!btn) return;
-                
+
                 e.preventDefault();
                 const productId = btn.getAttribute("data-product-id");
                 const heart1 = btn.querySelector(".icon-heart1");
@@ -127,9 +130,11 @@
                         if (data.isAdded) {
                             heart1.style.opacity = "0";
                             heart2.style.opacity = "1";
+                            showToast("Added to your Wishlist!", "success");
                         } else {
                             heart1.style.opacity = "1";
                             heart2.style.opacity = "0";
+                            showToast("Removed from your Wishlist!", "warning");
                         }
                     } else if (data.redirect) {
                         window.location.href = data.redirect;
@@ -141,54 +146,61 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-            // Find all buttons with the ajax-cart-btn class
-            const cartButtons = document.querySelectorAll('.ajax-cart-btn');
+        const cartButtons = document.querySelectorAll('.ajax-cart-btn');
 
-            cartButtons.forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault(); // Stop default anchor behavior
-                    
-                    // Grab the ID from the data-product-id attribute
-                    const productId = this.getAttribute('data-product-id');
+        cartButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
 
-                    // Send the POST request to your controller
-                    fetch(`/Cart/AddToCart?productId=${productId}&quantity=1`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                         .then(data => {
-                            if (data.success) {
-        
-                                // Fetch the updated sidebar HTML
-                                fetch('/Cart/RefreshSidebarCart')
-                                    .then(response => response.text())
-                                    .then(html => {
-                                        // 1. Replace the old sidebar with the new one
-                                        document.getElementById('cart-sidebar-container').innerHTML = html;
-                
-                                        // 2. Open the newly injected sidebar
-                                        const panelCart = document.querySelector('.js-panel-cart');
-                                        panelCart.classList.add('show-header-cart');
+                fetch(`/Cart/AddToCart?productId=${productId}&quantity=1`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // إظهار التوست الفاخر
+                        showToast(data.message || "Product added to cart successfully!", "success");
 
-                                        // 3. RE-BIND THE CLOSE EVENTS TO THE NEW HTML
-                                        const hideCartElements = document.querySelectorAll('.js-hide-cart');
-                                        hideCartElements.forEach(el => {
-                                            el.addEventListener('click', function(e) {
-                                                e.preventDefault();
-                                                panelCart.classList.remove('show-header-cart');
-                                            });
-                                        });
+                        // تحديث محتوى السلة الجانبية
+                        fetch('/Cart/RefreshSidebarCart')
+                            .then(response => response.text())
+                            .then(html => {
+                                const sidebarContainer = document.getElementById('cart-sidebar-container');
+                                if (sidebarContainer) {
+                                    sidebarContainer.innerHTML = html;
+                                }
+
+                                const panelCart = document.querySelector('.js-panel-cart');
+                                if (panelCart) {
+                                    panelCart.classList.add('show-header-cart');
+                                }
+
+                                const hideCartElements = document.querySelectorAll('.js-hide-cart');
+                                hideCartElements.forEach(el => {
+                                    el.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        panelCart.classList.remove('show-header-cart');
                                     });
+                                });
+                            });
 
-                            } else {
-                                alert("Error: " + data.message);
-                            }
-                        })
-                    .catch(error => console.error('Error:', error));
-                });
+                        // **تحديث عداد السلة في الهيدر فوراً بدون ريفريش**
+                        const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
+                        cartNotiElements.forEach(el => {
+                            let currentCount = parseInt(el.getAttribute('data-notify')) || 0;
+                            el.setAttribute('data-notify', currentCount + 1);
+                        });
+
+                    } else {
+                        showToast(data.message || "Error adding product to cart", "error");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             });
         });
+    });
 </script>

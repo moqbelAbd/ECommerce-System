@@ -17,7 +17,7 @@
     </div>
 </div>
 
-<!-- Shopping Cart -->
+<!-- Shopping Cart Form (للتحديث فقط) -->
 <form asp-controller="Cart" asp-action="UpdateCart" method="post" class="bg0 p-t-25 p-b-85">
     <div class="container">
         <div class="row">
@@ -32,13 +32,13 @@
                                 <th class="column-3">Price</th>
                                 <th class="column-4">Quantity</th>
                                 <th class="column-5">Total</th>
-                                <th  class="column-6"></th>
+                                <th class="column-6"></th>
                             </tr>
 
                             @if (!Model.Items.Any())
                             {
                                 <tr>
-                                    <td colspan="5" class="text-center p-t-40 p-b-40 stext-111 cl6">
+                                    <td colspan="6" class="text-center p-t-40 p-b-40 stext-111 cl6">
                                         Your cart is currently empty.
                                     </td>
                                 </tr>
@@ -61,9 +61,9 @@
                                                     <i class="fs-16 zmdi zmdi-minus"></i>
                                                 </div>
 
-                                                <input class="mtext-104 cl3 txt-center num-product" 
-                                                       type="number" 
-                                                       name="quantities[@item.ProductId]" 
+                                                <input class="mtext-104 cl3 txt-center num-product"
+                                                       type="number"
+                                                       name="quantities[@item.ProductId]"
                                                        value="@item.Quantity">
 
                                                 <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
@@ -73,15 +73,16 @@
                                         </td>
                                         <td class="column-5">$@item.Total.ToString("0.00")</td>
 
-                                          <td class="column-6" style="vertical-align: middle; text-align: center; padding-right: 20px;">
-                                        <form asp-controller="Cart" asp-action="RemoveFromCart" method="post" style="margin: 0; display: flex; justify-content: center; height: 100%;">
-                                            <input type="hidden" name="productId" value="@item.ProductId" />
-        
-                                            <button type="submit" title="Remove Item" style="background: transparent; border: none; cursor: pointer; padding: 10px; display: inline-flex; align-items: center; justify-content: center; color: #dc3545; transition: transform 0.2s;">
+                                        <td class="column-6" style="vertical-align: middle; text-align: center; padding-right: 20px;">
+                                            <!-- زر الحذف المعتمد على AJAX لإظهار الـ Toast بدلاً من فتح صفحة JSON -->
+                                            <button type="button"
+                                                    class="ajax-remove-btn"
+                                                    data-product-id="@item.ProductId"
+                                                    title="Remove Item"
+                                                    style="background: transparent; border: none; cursor: pointer; padding: 10px; display: inline-flex; align-items: center; justify-content: center; color: #dc3545; transition: transform 0.2s;">
                                                 <i class="fs-22 zmdi zmdi-delete"></i>
                                             </button>
-                                        </form>
-                                    </td>
+                                        </td>
                                     </tr>
                                 }
                             }
@@ -89,7 +90,7 @@
                     </div>
 
                     <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm" style="justify-content: flex-end;">
-                        <button type="submit" asp-controller= "Cart" asp-action="UpdateCart" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
+                        <button type="submit" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
                             Update Cart
                         </button>
                     </div>
@@ -134,3 +135,40 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // تفعيل الـ AJAX عند الضغط على زر الحذف ليعرض الـ Toast ويحدث الصفحة
+            document.body.addEventListener("click", function(e) {
+                const removeBtn = e.target.closest(".ajax-remove-btn");
+                if (!removeBtn) return;
+
+                e.preventDefault();
+                const productId = removeBtn.getAttribute("data-product-id");
+
+                fetch(`/Cart/RemoveFromCart?productId=${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // إظهار التوست بشكل أنيق
+                            showToast(data.message, "warning");
+
+                            // إعادة تحميل الصفحة سريعاً لتحديث بيانات السلة
+                            setTimeout(() => {
+                                location.reload();
+                            }, 500);
+                        } else {
+                            showToast(data.message || "Error removing item", "error");
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+}
