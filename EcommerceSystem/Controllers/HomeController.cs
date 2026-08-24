@@ -23,7 +23,7 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var featuredProducts = await _context.Products
-                .Where(p => !p.IsDeleted)
+                .Where(p => !p.IsDeleted && p.ProductQuantity > 1)
                 .Include(p => p.ProductImages)
                 .OrderBy(p => p.ProductName)
                 .Take(8)
@@ -148,7 +148,7 @@ namespace EcommerceSystem.Controllers
     string? sort)
         {
             var query = _context.Products
-                .Where(p => !p.IsDeleted)
+                .Where(p => !p.IsDeleted && p.ProductQuantity>1)
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductSubCategories)
                     .ThenInclude(psc => psc.SubCategory)
