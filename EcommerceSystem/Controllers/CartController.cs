@@ -29,7 +29,7 @@ namespace EcommerceSystem.Controllers
                 return Json(new { success = false, message = "Product not found." });
             }
 
-            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+            if (User.Identity != null && User.Identity.IsAuthenticated )
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
@@ -107,7 +107,7 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> RemoveFromCart(Guid productId)
         {
             // 1. Customer Logic
-            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+            if (User.Identity != null && User.Identity.IsAuthenticated )
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
@@ -160,7 +160,7 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> UpdateCart(Dictionary<Guid, int> quantities)
         {
             // 1. Customer Logic
-            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+            if (User.Identity != null && User.Identity.IsAuthenticated )
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);

@@ -3,6 +3,7 @@ using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
@@ -243,58 +244,89 @@ namespace EcommerceSystem.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CompleteProfile(
-            string firstName,
-            string lastName,
-            string location)
+        public async Task<IActionResult> CompleteProfile(string firstName, string lastName, string location)
         {
-            var userId =
-                User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
-                return RedirectToPage(
-                    "/Account/Login",
-                    new { area = "Identity" });
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-
-            var existingCustomer = await _context.Customers
-                .FirstOrDefaultAsync(c =>
-                    c.ApplicationUserId == userId);
-
+            var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
             if (existingCustomer != null)
             {
-                return RedirectToAction(
-                    "Index",
-                    "Home");
+                // If they already have a profile, just try merging their guest cart anyway and send them home
+                await MergeSessionCartToDatabaseAsync(existingCustomer.CustomerId);
+                return RedirectToAction("Index", "Home");
             }
 
-
+            // 1. Create the brand new profile
             var customer = new Customer
             {
                 ApplicationUserId = userId,
-
                 FirstName = firstName,
-
                 LastName = lastName,
-
                 Location = location,
-
                 IsDeleted = false
             };
 
-
             _context.Customers.Add(customer);
+            await _context.SaveChangesAsync(); // <-- customer.CustomerId is generated right here!
 
+            // 2. NOW IT IS SAFE TO MERGE THE CART!
+            await MergeSessionCartToDatabaseAsync(customer.CustomerId);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // -----------------------------------------------------------
+        // THE NEW HELPER METHOD (Place this inside the same Controller)
+        // -----------------------------------------------------------
+        private async Task MergeSessionCartToDatabaseAsync(Guid customerId)
+        {
+            // 1. Check if there is anything in the guest cart
+            var sessionCartStr = HttpContext.Session.GetString("GuestCart");
+            if (string.IsNullOrEmpty(sessionCartStr)) return;
+
+            var sessionItems = JsonSerializer.Deserialize<List<SessionCartItem>>(sessionCartStr);
+            if (sessionItems == null || !sessionItems.Any()) return;
+
+            // 2. Find or Create their Database Cart using their new CustomerId
+            var dbCart = await _context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+
+            if (dbCart == null)
+            {
+                dbCart = new Cart { CustomerId = customerId };
+                _context.Carts.Add(dbCart);
+            }
+
+            // 3. Merge the items
+            foreach (var sessionItem in sessionItems)
+            {
+                var existingDbItem = dbCart.CartItems.FirstOrDefault(ci => ci.ProductId == sessionItem.ProductId);
+                if (existingDbItem != null)
+                {
+                    existingDbItem.ItemQuantity += sessionItem.Quantity;
+                }
+                else
+                {
+                    dbCart.CartItems.Add(new CartItem
+                    {
+                        ProductId = sessionItem.ProductId,
+                        ItemQuantity = sessionItem.Quantity
+                    });
+                }
+            }
+
+            // 4. Save changes
             await _context.SaveChangesAsync();
 
-
-            return RedirectToAction(
-                "Index",
-                "Home");
+            // 5. CLEAR THE SESSION CART
+            HttpContext.Session.Remove("GuestCart");
         }
 
         [HttpGet]
@@ -329,7 +361,7 @@ namespace EcommerceSystem.Controllers
                 {
                     ProductId = ci.ProductId,
                     ProductName = ci.Product!.ProductName,
-                    ImageUrl = ci.Product.ProductImages.FirstOrDefault().ProductImagePath,
+                    ImageUrl = ci.Product.ProductImages.Select(img => img.ProductImagePath).FirstOrDefault() ?? "/images/products/default-product",
                     Price = ci.Product.ProductPrice,        
                     Quantity = ci.ItemQuantity
                 }).ToList();
@@ -344,14 +376,17 @@ namespace EcommerceSystem.Controllers
 
                     foreach (var item in sessionItems!)
                     {
-                        var product = await _context.Products.FindAsync(item.ProductId);
+                        var product = await _context.Products
+                            .Include(p => p.ProductImages)
+                            .FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+                        
                         if (product != null)
                         {
                             cartViewModel.Items.Add(new CartItemViewModel
                             {
                                 ProductId = product.ProductId,
                                 ProductName = product.ProductName,
-                                ImageUrl = product.ProductImages.FirstOrDefault().ProductImagePath,
+                                ImageUrl = product.ProductImages?.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
                                 Price = product.ProductPrice,
                                 Quantity = item.Quantity
                             });

@@ -144,63 +144,82 @@
             });
         });
     }
+document.addEventListener('DOMContentLoaded', function () {
+    const cartButtons = document.querySelectorAll('.ajax-cart-btn');
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const cartButtons = document.querySelectorAll('.ajax-cart-btn');
+    cartButtons.forEach(button => {
+        // 1. Prevent duplicate event bindings if this script runs twice
+        if (button.getAttribute('data-bound') === 'true') return;
+        button.setAttribute('data-bound', 'true');
 
-        cartButtons.forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-                const productId = this.getAttribute('data-product-id');
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            // 2. Prevent double-clicks! If it's already loading, do nothing.
+            if (this.style.pointerEvents === 'none') return;
+            
+            // Disable the button temporarily and dim it
+            this.style.pointerEvents = 'none';
+            this.style.opacity = '0.5';
 
-                fetch(`/Cart/AddToCart?productId=${productId}&quantity=1`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // إظهار التوست الفاخر
-                        showToast(data.message || "Product added to cart successfully!", "success");
+            const productId = this.getAttribute('data-product-id');
 
-                        // تحديث محتوى السلة الجانبية
-                        fetch('/Cart/RefreshSidebarCart')
-                            .then(response => response.text())
-                            .then(html => {
-                                const sidebarContainer = document.getElementById('cart-sidebar-container');
-                                if (sidebarContainer) {
-                                    sidebarContainer.innerHTML = html;
-                                }
+            fetch(`/Cart/AddToCart?productId=${productId}&quantity=1`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // إظهار التوست الفاخر
+                    showToast(data.message || "Product added to cart successfully!", "success");
 
-                                const panelCart = document.querySelector('.js-panel-cart');
-                                if (panelCart) {
-                                    panelCart.classList.add('show-header-cart');
-                                }
+                    // تحديث محتوى السلة الجانبية
+                    fetch('/Cart/RefreshSidebarCart')
+                        .then(response => response.text())
+                        .then(html => {
+                            const sidebarContainer = document.getElementById('cart-sidebar-container');
+                            if (sidebarContainer) {
+                                sidebarContainer.innerHTML = html;
+                            }
 
-                                const hideCartElements = document.querySelectorAll('.js-hide-cart');
-                                hideCartElements.forEach(el => {
-                                    el.addEventListener('click', function(e) {
-                                        e.preventDefault();
+                            const panelCart = document.querySelector('.js-panel-cart');
+                            if (panelCart) {
+                                panelCart.classList.add('show-header-cart');
+                            }
+
+                            // إعادة ربط أحداث الإغلاق
+                            const hideCartElements = document.querySelectorAll('.js-hide-cart');
+                            hideCartElements.forEach(el => {
+                                el.addEventListener('click', function(event) {
+                                    event.preventDefault();
+                                    if (panelCart) {
                                         panelCart.classList.remove('show-header-cart');
-                                    });
+                                    }
                                 });
                             });
-
-                        // **تحديث عداد السلة في الهيدر فوراً بدون ريفريش**
-                        const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
-                        cartNotiElements.forEach(el => {
-                            let currentCount = parseInt(el.getAttribute('data-notify')) || 0;
-                            el.setAttribute('data-notify', currentCount + 1);
                         });
 
-                    } else {
-                        showToast(data.message || "Error adding product to cart", "error");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                    // **تحديث عداد السلة في الهيدر فوراً بدون ريفريش**
+                    const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
+                    cartNotiElements.forEach(el => {
+                        let currentCount = parseInt(el.getAttribute('data-notify')) || 0;
+                        el.setAttribute('data-notify', currentCount + 1);
+                    });
+
+                } else {
+                    showToast(data.message || "Error adding product to cart", "error");
+                }
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => {
+                // 3. Re-enable the button once the entire process is finished!
+                this.style.pointerEvents = 'auto';
+                this.style.opacity = '1';
             });
         });
     });
+});
 </script>
