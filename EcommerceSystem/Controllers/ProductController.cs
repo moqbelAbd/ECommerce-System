@@ -130,13 +130,8 @@ namespace EcommerceSystem.Controllers
         }
 
         // =========================================================
-        // PRODUCT DETAILS (Admin & Customer view)
-        // =========================================================
-        // =========================================================
         // PUBLIC PRODUCT DETAILS
-        // Guest + Customer + Admin
         // =========================================================
-
         public async Task<IActionResult> Details(Guid? id, int? ratingFilter, string? customerSearch)
         {
             if (id == null)
@@ -158,8 +153,9 @@ namespace EcommerceSystem.Controllers
             if (product == null)
                 return NotFound();
 
-            // التحقق مما إذا كان المستخدم الحالي قد اشترى هذا المنتج لإنبناء ظهور زر Add Review
             bool hasPurchased = false;
+            bool hasAlreadyReviewed = false;
+
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -170,15 +166,21 @@ namespace EcommerceSystem.Controllers
 
                 if (customer != null)
                 {
+                    // 1. التحقق مما إذا كان العميل قد اشترى المنتج
                     hasPurchased = customer.Orders
                         .SelectMany(o => o.OrderItems)
                         .Any(oi => oi.ProductId == product.ProductId);
+
+                    // 2. التحقق مما إذا كان العميل قد قام بتقييم المنتج مسبقاً
+                    hasAlreadyReviewed = product.ProductReviews
+                        .Any(r => r.CustomerId == customer.CustomerId);
                 }
             }
 
             ViewBag.HasPurchased = hasPurchased;
+            ViewBag.HasAlreadyReviewed = hasAlreadyReviewed;
 
-            // تصفية المراجعات (حسب التقييم أو اسم العميل للأدمن)
+            // تصفية المراجعات
             var reviews = product.ProductReviews.AsEnumerable();
 
             if (ratingFilter.HasValue)
@@ -196,7 +198,6 @@ namespace EcommerceSystem.Controllers
             ViewBag.SelectedRatingFilter = ratingFilter;
             ViewBag.CustomerSearch = customerSearch;
 
-            // حساب متوسط التقييم والعدد الإجمالي
             if (product.ProductReviews.Any())
             {
                 ViewBag.AverageRating = product.ProductReviews.Average(r => r.CustomerProductRating);
@@ -208,8 +209,87 @@ namespace EcommerceSystem.Controllers
                 ViewBag.TotalReviews = 0;
             }
 
+            var userWishlistIds = new List<Guid>();
+            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null)
+                {
+                    userWishlistIds = await _context.WishlistItems
+                        .Where(wi => wi.Wishlist != null && wi.Wishlist.CustomerId == customer.CustomerId)
+                        .Select(wi => wi.ProductId)
+                        .ToListAsync();
+                }
+            }
+            ViewBag.UserWishlistIds = userWishlistIds;
+
             return View(product);
         }
+
+        // =========================================================
+        // ADD PRODUCT REVIEW (POST)
+        // =========================================================
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(Guid productId, int rating, string reviewText)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers
+                .Include(c => c.Orders)
+                    .ThenInclude(o => o.OrderItems)
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (customer == null)
+            {
+                return RedirectToAction("CompleteProfile", "Customer");
+            }
+
+            // التحقق من أن العميل قد اشترى المنتج فعلياً
+            bool hasPurchased = customer.Orders
+                .SelectMany(o => o.OrderItems)
+                .Any(oi => oi.ProductId == productId);
+
+            if (!hasPurchased)
+            {
+                TempData["ErrorMessage"] = "You can only review products you have purchased.";
+                return RedirectToAction("Details", new { id = productId });
+            }
+
+            // التحقق من عدم وجود تقييم سابـق لهذا العميل لنفس المنتج
+            bool existingReview = await _context.ProductReviews
+                .AnyAsync(r => r.ProductId == productId && r.CustomerId == customer.CustomerId);
+
+            if (existingReview)
+            {
+                TempData["ErrorMessage"] = "You have already reviewed this product.";
+                return RedirectToAction("Details", new { id = productId });
+            }
+
+            if (ModelState.IsValid && rating >= 1 && rating <= 5)
+            {
+                var review = new ProductReview
+                {
+                    ProductReviewId = Guid.NewGuid(),
+                    ProductId = productId,
+                    CustomerId = customer.CustomerId,
+                    CustomerProductRating = rating,
+                    CustomerProductReview = reviewText ?? string.Empty,
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.ProductReviews.Add(review);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Review added successfully!";
+            }
+
+            return RedirectToAction("Details", new { id = productId });
+        }
+
         // حذف مراجعة (خاص بالأدمن)
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -225,11 +305,11 @@ namespace EcommerceSystem.Controllers
             }
             return RedirectToAction(nameof(Details), new { id = productId });
         }
+
         // GET: Product/Create
         public async Task<IActionResult> Create()
         {
             await LoadProductDropdowns();
-
             return View();
         }
 
@@ -250,7 +330,6 @@ namespace EcommerceSystem.Controllers
             product.ProductId = Guid.NewGuid();
             product.IsDeleted = false;
 
-            // Add product images
             foreach (var imageFile in imageFiles ?? new List<IFormFile>())
             {
                 if (imageFile.Length == 0)
@@ -268,7 +347,6 @@ namespace EcommerceSystem.Controllers
 
             _context.Products.Add(product);
 
-            // Add Product <-> SubCategory relationship
             if (subCategoryId.HasValue)
             {
                 var productSubCategory = new ProductSubCategory
@@ -282,7 +360,6 @@ namespace EcommerceSystem.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             TempData["Success"] = "Product created successfully.";
 
             return RedirectToAction(nameof(Index));
@@ -342,7 +419,6 @@ namespace EcommerceSystem.Controllers
                 return View(existingProduct);
             }
 
-            // Update product information
             existingProduct.ProductName = product.ProductName;
             existingProduct.ProductDescription = product.ProductDescription;
             existingProduct.ProductPrice = product.ProductPrice;
@@ -350,7 +426,6 @@ namespace EcommerceSystem.Controllers
             existingProduct.ProductBrandId = product.ProductBrandId;
             existingProduct.ProductModelId = product.ProductModelId;
 
-            // 1. Delete ONLY the images explicitly checked by the user
             if (deleteImageIds != null && deleteImageIds.Any())
             {
                 foreach (var imgId in deleteImageIds)
@@ -363,7 +438,6 @@ namespace EcommerceSystem.Controllers
                 }
             }
 
-            // 2. Add newly uploaded images as additions (Keep all old ones unless deleted)
             var uploadedFiles = (imageFiles ?? new List<IFormFile>())
                 .Where(f => f.Length > 0)
                 .ToList();
@@ -380,11 +454,9 @@ namespace EcommerceSystem.Controllers
                 });
             }
 
-            // Remove old Product/SubCategory relationships
             _context.ProductSubCategories.RemoveRange(
                 existingProduct.ProductSubCategories);
 
-            // Add new relationship
             if (subCategoryId.HasValue)
             {
                 _context.ProductSubCategories.Add(
@@ -397,11 +469,11 @@ namespace EcommerceSystem.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             TempData["Success"] = "Product updated successfully.";
 
             return RedirectToAction(nameof(Index));
         }
+
         // GET: Product/Delete/{id}
         public async Task<IActionResult> Delete(Guid? id)
         {
@@ -409,14 +481,11 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             var product = await _context.Products
-
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-
                 .Include(p => p.ProductSubCategories)
                     .ThenInclude(psc => psc.SubCategory)
-
                 .FirstOrDefaultAsync(p =>
                     p.ProductId == id &&
                     !p.IsDeleted);
@@ -441,13 +510,10 @@ namespace EcommerceSystem.Controllers
             if (product == null)
                 return NotFound();
 
-            // Soft Delete
             product.IsDeleted = true;
-
             await _context.SaveChangesAsync();
 
             TempData["Warning"] = "Product deleted successfully.";
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -469,44 +535,6 @@ namespace EcommerceSystem.Controllers
                 .ToListAsync();
 
             ViewBag.SelectedSubCategoryId = selectedSubCategoryId;
-        }
-
-        // =========================================================
-        // ADD PRODUCT REVIEW (POST) - Inside ProductController
-        // =========================================================
-        [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddReview(Guid productId, int rating, string reviewText)
-        {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-
-            if (customer == null)
-            {
-                return RedirectToAction("CompleteProfile", "Customer");
-            }
-
-            if (ModelState.IsValid && rating >= 1 && rating <= 5)
-            {
-                var review = new ProductReview
-                {
-                    ProductReviewId = Guid.NewGuid(),
-                    ProductId = productId,
-                    CustomerId = customer.CustomerId,
-                    CustomerProductRating = rating,
-                    CustomerProductReview = reviewText ?? string.Empty,
-                    CreatedAt = DateTime.Now
-                };
-
-                _context.ProductReviews.Add(review);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "Review added successfully!";
-            }
-
-            return RedirectToAction("Details", new { id = productId });
         }
     }
 }

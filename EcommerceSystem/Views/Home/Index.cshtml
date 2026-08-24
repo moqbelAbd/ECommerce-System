@@ -155,18 +155,18 @@
                         ?? "~/images/product-01.jpg";
 
                     var cardData = new
-{
-    ProductId = product.ProductId,
-    IsInWishlist = userWishlistIds.Contains(product.ProductId), // <--- أضف هذا السطر هنا ليتم تمريرها للـ Partial View
-    ImageUrl = Url.Content(imagePath),
-    Title = product.ProductName,
-    Subtitle = product.ProductPrice.ToString("C"),
-    DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }),
-    ButtonText = "Quick View",
-    ShowAdminActions = User.IsInRole("Admin"),
-    EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
-    DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId })
-};
+                    {
+                        ProductId = product.ProductId,
+                        IsInWishlist = userWishlistIds.Contains(product.ProductId),
+                        ImageUrl = Url.Content(imagePath),
+                        Title = product.ProductName,
+                        Subtitle = product.ProductPrice.ToString("C"),
+                        DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }),
+                        ButtonText = "Quick View",
+                        ShowAdminActions = User.IsInRole("Admin"),
+                        EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
+                        DeleteUrl = Url.Action("Delete", "Product", new { id = product.ProductId })
+                    };
 
                     <partial name="_ProductCardPartial" model="cardData" />
                 }
@@ -189,11 +189,22 @@
                 What Our Customers Say
             </h3>
 
+            @{
+                var hasSubmittedTestimonial = ViewBag.HasSubmittedTestimonial != null && (bool)ViewBag.HasSubmittedTestimonial;
+            }
+
             @if (User.Identity != null && User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
             {
-                <button type="button" id="openTestimonialModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                    <i class="fa fa-pencil m-r-8"></i> Add Review
-                </button>
+                @if (!hasSubmittedTestimonial)
+                {
+                    <button type="button" id="openTestimonialModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                        <i class="fa fa-pencil m-r-8"></i> Add Review
+                    </button>
+                }
+                else
+                {
+                    <span class="text-muted" style="font-size: 13px;">You have already shared your experience.</span>
+                }
             }
         </div>
 
@@ -209,7 +220,7 @@
         }
         else
         {
-            <div class="wrap-slick2">
+            <div class="wrap-slick2 position-relative">
                 <div class="testimonial-slick">
                     @foreach (var t in testimonials)
                     {
@@ -269,7 +280,7 @@
             </p>
         </div>
 
-        <div class="wrap-slick2">
+        <div class="wrap-slick2 position-relative">
             <div class="faq-slick">
                 <div class="item-slick2 p-lr-15">
                     <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
@@ -321,7 +332,10 @@
 
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
+            const slickPrevButton = '<button type="button" class="slick-prev" style="z-index: 2;"><i class="fa fa-angle-left" style="font-size: 22px;"></i></button>';
+            const slickNextButton = '<button type="button" class="slick-next" style="z-index: 2;"><i class="fa fa-angle-right" style="font-size: 22px;"></i></button>';
+
             // Testimonial Slider
             if ($('.testimonial-slick').length > 0) {
                 $('.testimonial-slick').slick({
@@ -332,6 +346,8 @@
                     autoplaySpeed: 4000,
                     arrows: true,
                     dots: false,
+                    prevArrow: slickPrevButton,
+                    nextArrow: slickNextButton,
                     responsive: [
                         { breakpoint: 1200, settings: { slidesToShow: 3 } },
                         { breakpoint: 992, settings: { slidesToShow: 2 } },
@@ -350,6 +366,8 @@
                     autoplaySpeed: 4000,
                     arrows: true,
                     dots: false,
+                    prevArrow: slickPrevButton,
+                    nextArrow: slickNextButton,
                     responsive: [
                         { breakpoint: 1200, settings: { slidesToShow: 3 } },
                         { breakpoint: 992, settings: { slidesToShow: 2 } },
@@ -365,7 +383,7 @@
             if (openBtn && modal) {
                 const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
 
-                openBtn.addEventListener("click", function () {
+                openBtn.addEventListener("click", function() {
                     modal.style.display = "block";
                     modal.classList.add("show");
                     modal.style.backgroundColor = "rgba(0,0,0,0.5)";
@@ -373,7 +391,7 @@
                 });
 
                 closeButtons.forEach(btn => {
-                    btn.addEventListener("click", function () {
+                    btn.addEventListener("click", function() {
                         modal.style.display = "none";
                         modal.classList.remove("show");
                         document.body.classList.remove("modal-open");
@@ -382,7 +400,7 @@
                     });
                 });
 
-                window.addEventListener("click", function (event) {
+                window.addEventListener("click", function(event) {
                     if (event.target === modal) {
                         modal.style.display = "none";
                         modal.classList.remove("show");
@@ -392,42 +410,49 @@
                     }
                 });
             }
-
-            // Wishlist AJAX Toggle Logic (تم نقله هنا ليعمل داخل الـ Scripts بشكل آمن)
-            document.querySelectorAll(".btn-toggle-wishlist").forEach(button => {
-                button.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    const productId = this.getAttribute("data-product-id");
-                    const heart1 = this.querySelector(".icon-heart1");
-                    const heart2 = this.querySelector(".icon-heart2");
-
-                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-
-                    fetch('/Wishlists/ToggleWishlist', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'RequestVerificationToken': token || ''
-                        },
-                        body: `productId=${productId}`
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (data.isAdded) {
-                                heart1.style.opacity = "0";
-                                heart2.style.opacity = "1";
-                            } else {
-                                heart1.style.opacity = "1";
-                                heart2.style.opacity = "0";
-                            }
-                        } else if (data.redirect) {
-                            window.location.href = data.redirect;
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-                });
-            });
         });
     </script>
 }
+
+<style>
+    /* Styling for Slick Slider Custom Side Arrows */
+    .wrap-slick2 {
+        position: relative;
+    }
+
+    .slick-prev, .slick-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid #ddd !important;
+        border-radius: 50% !important;
+        width: 45px !important;
+        height: 45px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .slick-prev {
+        left: -25px !important;
+    }
+
+    .slick-next {
+        right: -25px !important;
+    }
+
+        .slick-prev:hover, .slick-next:hover {
+            background: #c5a059 !important;
+            color: #fff !important;
+            border-color: #c5a059 !important;
+        }
+
+            .slick-prev:hover i, .slick-next:hover i {
+                color: #fff !important;
+            }
+</style>

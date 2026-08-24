@@ -11,6 +11,9 @@
 
     var isAdmin = User.IsInRole("Admin");
     var isCustomer = User.Identity != null && User.Identity.IsAuthenticated && !isAdmin;
+
+    var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
+    bool isInWishlist = userWishlistIds.Contains(Model.ProductId);
 }
 
 <div class="bg0 p-t-80 p-b-100">
@@ -70,9 +73,23 @@
 
             <div class="col-md-6 col-lg-5 p-b-30">
                 <div class="p-r-50 p-t-5 p-lr-0-lg">
-                    <h4 class="mtext-105 cl2 js-name-detail p-b-14" style="font-weight: 700;">
-                        @Model.ProductName
-                    </h4>
+
+                    <!-- Product Title & Wishlist Icon Next to it -->
+                    <div class="d-flex align-items-center justify-content-between p-b-14">
+                        <h4 class="mtext-105 cl2 js-name-detail m-0" style="font-weight: 700;">
+                            @Model.ProductName
+                        </h4>
+
+                        @if (isCustomer)
+                        {
+                            <button type="button" class="btn-toggle-wishlist p-0 border-0 bg-transparent" data-product-id="@Model.ProductId" style="cursor: pointer;" title="Add/Remove Wishlist">
+                                <div class="btn-addwish-b2 dis-block pos-relative" style="width: 25px; height: 25px;">
+                                    <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON" style="@(isInWishlist ? "opacity: 0;" : "opacity: 1;") width: 22px;">
+                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON" style="@(isInWishlist ? "opacity: 1;" : "opacity: 0;") width: 22px;">
+                                </div>
+                            </button>
+                        }
+                    </div>
 
                     <span class="mtext-106 cl2" style="font-size: 24px; color: #c5a059;">
                         @Model.ProductPrice.ToString("C")
@@ -94,7 +111,7 @@
                             }
                         </div>
                         <span class="stext-102 cl3">
-                            <strong>@averageRating.ToString("0.0")</strong> / 5.0 (@totalReviews Reviews)
+                            <strong>@averageRating.ToString("0.0")</strong> / 5.0 (@totalReviews Review(s))
                         </span>
                     </div>
 
@@ -129,17 +146,24 @@
                         Customer Reviews & Ratings
                     </h3>
 
-                    <!-- تم إضافة مسافة ومرونة تفصل بين الفلتر وزر الأداة باستخدام gap-4 -->
                     <div class="d-flex align-items-center gap-4 flex-wrap">
-                        <!-- زر إضافة تقييم يظهر للـ Customer فقط -->
-                        @if (isCustomer)
+                        @{
+                            var hasPurchased = ViewBag.HasPurchased != null && (bool)ViewBag.HasPurchased;
+                            var hasAlreadyReviewed = ViewBag.HasAlreadyReviewed != null && (bool)ViewBag.HasAlreadyReviewed;
+                        }
+
+                        <!-- زر إضافة تقييم يظهر للـ Customer فقط إذا اشترى المنتج ولم يقيمه مسبقاً -->
+                        @if (isCustomer && hasPurchased && !hasAlreadyReviewed)
                         {
                             <button type="button" id="openReviewModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                                 <i class="fa fa-pencil m-r-8"></i> Add Review
                             </button>
                         }
+                        else if (isCustomer && hasPurchased && hasAlreadyReviewed)
+                        {
+                            <span class="text-muted" style="font-size: 13px;">You have already reviewed this product.</span>
+                        }
 
-                        <!-- Admin Filter Controls (الأساسي) -->
                         @if (isAdmin)
                         {
                             <form method="get" asp-action="Details" asp-route-id="@Model.ProductId" class="d-flex align-items-center gap-2 flex-wrap m-0">
@@ -183,7 +207,6 @@
                                     </div>
 
                                     <div class="d-flex align-items-center gap-3">
-                                        <!-- Rating Stars -->
                                         <div style="color: #ffc107;">
                                             @for (int i = 1; i <= 5; i++)
                                             {
@@ -198,7 +221,6 @@
                                             }
                                         </div>
 
-                                        <!-- Admin Delete Review Option -->
                                         @if (isAdmin)
                                         {
                                             <form asp-action="DeleteReview" method="post" onsubmit="return confirm('Are you sure you want to delete this review?');" class="m-0">
@@ -237,7 +259,6 @@
                 <div class="modal-body p-t-20 p-b-20">
                     <input type="hidden" name="productId" value="@Model.ProductId" />
 
-                    <!-- Interactive Star Rating Selection -->
                     <div class="mb-4 text-center">
                         <label class="stext-102 cl3 mb-3 d-block fw-bold" style="font-size: 16px;">Select Rating</label>
 
@@ -253,7 +274,6 @@
                         <span id="rating-text" class="text-muted d-block mt-2 stext-102 fw-bold" style="font-size: 15px;">5 Stars - Excellent</span>
                     </div>
 
-                    <!-- Review Text Box -->
                     <div class="mb-3">
                         <label class="stext-102 cl3 mb-2 d-block fw-bold" style="font-size: 15px;">Your Review</label>
                         <textarea name="reviewText" class="form-control" rows="5" placeholder="Write your experience with this product..." required maxlength="250" style="font-size: 14px; padding: 12px;"></textarea>
@@ -272,13 +292,14 @@
 
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
+            // Modal Logic
             const openBtn = document.getElementById("openReviewModalBtn");
             const modal = document.getElementById("reviewModal");
             if (openBtn && modal) {
                 const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
 
-                openBtn.addEventListener("click", function () {
+                openBtn.addEventListener("click", function() {
                     modal.style.display = "block";
                     modal.classList.add("show");
                     modal.style.backgroundColor = "rgba(0,0,0,0.5)";
@@ -286,7 +307,7 @@
                 });
 
                 closeButtons.forEach(btn => {
-                    btn.addEventListener("click", function () {
+                    btn.addEventListener("click", function() {
                         modal.style.display = "none";
                         modal.classList.remove("show");
                         document.body.classList.remove("modal-open");
@@ -295,7 +316,7 @@
                     });
                 });
 
-                window.addEventListener("click", function (event) {
+                window.addEventListener("click", function(event) {
                     if (event.target === modal) {
                         modal.style.display = "none";
                         modal.classList.remove("show");
@@ -306,6 +327,7 @@
                 });
             }
 
+            // Star Rating Logic
             const stars = document.querySelectorAll(".rating-star");
             const ratingInput = document.getElementById("selectedRating");
             const ratingText = document.getElementById("rating-text");
@@ -321,14 +343,14 @@
             updateStars(5);
 
             stars.forEach(star => {
-                star.addEventListener("click", function () {
+                star.addEventListener("click", function() {
                     const value = this.getAttribute("data-value");
                     ratingInput.value = value;
                     ratingText.textContent = descriptions[value];
                     updateStars(value);
                 });
 
-                star.addEventListener("mouseover", function () {
+                star.addEventListener("mouseover", function() {
                     const value = this.getAttribute("data-value");
                     updateStars(value);
                 });
@@ -336,7 +358,7 @@
 
             const starContainer = document.querySelector(".star-rating");
             if (starContainer) {
-                starContainer.addEventListener("mouseleave", function () {
+                starContainer.addEventListener("mouseleave", function() {
                     updateStars(ratingInput.value);
                 });
             }
@@ -350,6 +372,43 @@
                     }
                 });
             }
+
+            // Wishlist AJAX Toggle Script (Delegation to handle clicks dynamically)
+            document.body.addEventListener("click", function(e) {
+                const btn = e.target.closest(".btn-toggle-wishlist");
+                if (!btn) return;
+
+                e.preventDefault();
+                const productId = btn.getAttribute("data-product-id");
+                const heart1 = btn.querySelector(".icon-heart1");
+                const heart2 = btn.querySelector(".icon-heart2");
+
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+                fetch('/Wishlists/ToggleWishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token || ''
+                    },
+                    body: `productId=${productId}`
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.isAdded) {
+                                if (heart1) heart1.style.opacity = "0";
+                                if (heart2) heart2.style.opacity = "1";
+                            } else {
+                                if (heart1) heart1.style.opacity = "1";
+                                if (heart2) heart2.style.opacity = "0";
+                            }
+                        } else if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
         });
     </script>
 }

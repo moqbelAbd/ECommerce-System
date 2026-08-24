@@ -36,22 +36,46 @@ namespace EcommerceSystem.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            // جلب الـ Testimonials المعتمدة فقط للـ Home
             var approvedTestimonials = await _context.Testimonials
                 .Where(t => t.IsApproved)
                 .Include(t => t.Customer)
                 .OrderByDescending(t => t.TestimonialId)
-                .Take(9) // أقصى حد 9 آراء
+                .Take(9)
                 .ToListAsync();
+
+            var userWishlistIds = new List<Guid>();
+            bool hasSubmittedTestimonial = false;
+
+            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null)
+                {
+                    // جلب معرفات المنتجات في المفضلة لتمييز القلوب
+                    userWishlistIds = await _context.Wishlists
+                        .Where(w => w.CustomerId == customer.CustomerId)
+                        .SelectMany(w => w.WishlistItems)
+                        .Select(wi => wi.ProductId)
+                        .ToListAsync();
+
+                    // التحقق مما إذا كان العميل قد أضاف رأياً للمتجر مسبقاً
+                    hasSubmittedTestimonial = await _context.Testimonials
+                        .AnyAsync(t => t.CustomerId == customer.CustomerId);
+                }
+            }
 
             ViewBag.FeaturedProducts = featuredProducts;
             ViewBag.FeaturedCategories = featuredCategories;
             ViewBag.Testimonials = approvedTestimonials;
+            ViewBag.UserWishlistIds = userWishlistIds;
+            ViewBag.HasSubmittedTestimonial = hasSubmittedTestimonial;
 
             return View(featuredProducts ?? new List<Product>());
         }
 
-        // دالة POST لإضافة رأي جديد من قِبل العميل
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,6 +88,16 @@ namespace EcommerceSystem.Controllers
             if (customer == null)
             {
                 return RedirectToAction("CompleteProfile", "Customer");
+            }
+
+            // التحقق مما إذا كان العميل قد أضاف رأياً (Testimonial) مسبقاً
+            bool existingTestimonial = await _context.Testimonials
+                .AnyAsync(t => t.CustomerId == customer.CustomerId);
+
+            if (existingTestimonial)
+            {
+                TempData["ErrorMessage"] = "You have already submitted a review for our store.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (!string.IsNullOrWhiteSpace(customerTestimonial))
@@ -84,7 +118,7 @@ namespace EcommerceSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Privacy()
+        ActionResult Privacy()
         {
             return View();
         }
@@ -106,12 +140,12 @@ namespace EcommerceSystem.Controllers
         }
 
         public async Task<IActionResult> Shop(
-            Guid? categoryId,
-            Guid? subCategoryId,
-            string? searchTerm,
-            decimal? minPrice,
-            decimal? maxPrice,
-            string? sort)
+    Guid? categoryId,
+    Guid? subCategoryId,
+    string? searchTerm,
+    decimal? minPrice,
+    decimal? maxPrice,
+    string? sort)
         {
             var query = _context.Products
                 .Where(p => !p.IsDeleted)
@@ -170,6 +204,24 @@ namespace EcommerceSystem.Controllers
                 .OrderBy(c => c.CategoryName)
                 .ToListAsync();
 
+            // جلب الـ Wishlist لصفحة المتجر أيضاً
+            var userWishlistIds = new List<Guid>();
+            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null)
+                {
+                    userWishlistIds = await _context.Wishlists
+    .Where(w => w.CustomerId == customer.CustomerId)
+    .SelectMany(w => w.WishlistItems)
+    .Select(wi => wi.ProductId)
+    .ToListAsync();
+                }
+            }
+
             ViewBag.Categories = categories;
             ViewBag.SelectedCategoryId = categoryId;
             ViewBag.SelectedSubCategoryId = subCategoryId;
@@ -177,10 +229,10 @@ namespace EcommerceSystem.Controllers
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
             ViewBag.Sort = sort;
+            ViewBag.UserWishlistIds = userWishlistIds; // تمريرها للـ View
 
             return View(products);
         }
-
         [Authorize]
         public async Task<IActionResult> Profile()
         {
