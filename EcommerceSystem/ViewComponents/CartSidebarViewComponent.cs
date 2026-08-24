@@ -21,7 +21,7 @@ namespace EcommerceSystem.ViewComponents
             var cartViewModel = new CartViewModel();
 
             // SCENARIO A: Logged-in Customer
-            if (UserClaimsPrincipal != null && UserClaimsPrincipal.Identity != null && UserClaimsPrincipal.Identity.IsAuthenticated && UserClaimsPrincipal.IsInRole("Customer"))
+            if (UserClaimsPrincipal != null && UserClaimsPrincipal.Identity != null && UserClaimsPrincipal.Identity.IsAuthenticated)
             {
                 var userId = UserClaimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
