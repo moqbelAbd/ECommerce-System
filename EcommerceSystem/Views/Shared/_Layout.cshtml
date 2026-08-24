@@ -389,10 +389,12 @@
     </aside>
 
     <!-- Cart Sidebar -->
-    @if (!User.IsInRole("Admin"))
-    {
-      @await Component.InvokeAsync("CartSidebar");   //Invokes the sidebar Dynamicilly
-    }
+        <div id="cart-sidebar-container">
+            @if (!User.IsInRole("Admin"))
+            {
+                @await Component.InvokeAsync("CartSidebar")
+            }
+        </div>
 
     <div class="page-content-wrapper">
         @RenderBody()
