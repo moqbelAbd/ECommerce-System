@@ -20,6 +20,7 @@
     <link rel="stylesheet" type="text/css" href="~/vendor/perfect-scrollbar/perfect-scrollbar.css">
     <link rel="stylesheet" type="text/css" href="~/css/util.css">
     <link rel="stylesheet" type="text/css" href="~/css/main.css">
+    <link rel="stylesheet" type="text/css" href="~/css/toast.css">
 
     <!-- Custom Styling -->
     <style>
@@ -121,6 +122,8 @@
     </style>
 </head>
 <body class="animsition">
+
+    <partial name="_ToastPartial" />
 
     <!-- Header -->
     <header class="header-v3">
@@ -472,6 +475,7 @@
             });
     </script>
     <script src="~/js/main.js"></script>
+    <script src="~/js/toast.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

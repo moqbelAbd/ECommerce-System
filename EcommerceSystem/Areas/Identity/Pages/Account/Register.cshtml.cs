@@ -141,6 +141,8 @@ public class RegisterModel : PageModel
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
+                TempData["SuccessMessage"] = "Account created successfully!";
+
                 // 2. Redirect them straight to your new Customer form!
                 return LocalRedirect("~/Customer/CompleteProfile");
             }
