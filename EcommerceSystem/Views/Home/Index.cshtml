@@ -4,7 +4,6 @@
 
     var featuredCategories = ViewBag.FeaturedCategories as List<Category> ?? new List<Category>();
     var featuredProducts = ViewBag.FeaturedProducts as List<Product> ?? new List<Product>();
-
     var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
 }
 
@@ -16,20 +15,21 @@
                 <div class="container h-full">
                     <div class="flex-col-l-m h-full p-t-150 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-                            <span class="ltext-101 cl2 respon2">
+                            <!-- تم تغيير لون النص العلوي إلى الأسود الداكن -->
+                            <span class="ltext-101 respon2" style="color: #1a1d20; font-weight: 700; letter-spacing: 2px;">
                                 Luxury Collection 2026
                             </span>
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                            <h2 class="ltext-201 p-t-19 p-b-43 respon1 fw-bold" style="color: #1a1d20; text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
                                 TIMELESS ELEGANCE
                             </h2>
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                Shop Now
+                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 px-4 py-3 trans-04 shadow-sm" style="border-radius: 30px; background-color: #1a1d20; color: #fff; font-weight: 600;">
+                                Shop Now <i class="fa fa-arrow-right m-l-8" style="color: #c9aa6f;"></i>
                             </a>
                         </div>
                     </div>
@@ -40,20 +40,21 @@
                 <div class="container h-full">
                     <div class="flex-col-l-m h-full p-t-150 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
-                            <span class="ltext-101 cl2 respon2">
+                            <!-- تم تغيير لون النص العلوي إلى الأسود الداكن -->
+                            <span class="ltext-101 respon2" style="color: #1a1d20; font-weight: 700; letter-spacing: 2px;">
                                 Classic & Casual
                             </span>
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
-                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                            <h2 class="ltext-201 p-t-19 p-b-43 respon1 fw-bold" style="color: #1a1d20; text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
                                 WATCHES & STRAPS
                             </h2>
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
-                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                Shop Now
+                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 px-4 py-3 trans-04 shadow-sm" style="border-radius: 30px; background-color: #1a1d20; color: #fff; font-weight: 600;">
+                                Shop Now <i class="fa fa-arrow-right m-l-8" style="color: #c9aa6f;"></i>
                             </a>
                         </div>
                     </div>
@@ -64,20 +65,21 @@
                 <div class="container h-full">
                     <div class="flex-col-l-m h-full p-t-150 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
-                            <span class="ltext-101 cl2 respon2">
+                            <!-- تم تغيير لون النص العلوي إلى الأسود الداكن -->
+                            <span class="ltext-101 respon2" style="color: #1a1d20; font-weight: 700; letter-spacing: 2px;">
                                 Premium Accessories
                             </span>
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
-                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                            <h2 class="ltext-201 p-t-19 p-b-43 respon1 fw-bold" style="color: #1a1d20; text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
                                 NEW ARRIVALS
                             </h2>
                         </div>
 
                         <div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">
-                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                Shop Now
+                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 px-4 py-3 trans-04 shadow-sm" style="border-radius: 30px; background-color: #1a1d20; color: #fff; font-weight: 600;">
+                                Shop Now <i class="fa fa-arrow-right m-l-8" style="color: #c9aa6f;"></i>
                             </a>
                         </div>
                     </div>
@@ -90,24 +92,28 @@
 <!-- Categories Banner -->
 @if (featuredCategories.Any())
 {
-    <div class="sec-banner bg0 p-t-80 p-b-50">
+    <div class="sec-banner bg0 p-t-90 p-b-60">
         <div class="container">
-            <div class="row">
+            <div class="text-center p-b-50">
+                <h3 class="ltext-105 cl5 fw-bold" style="letter-spacing: 1px;">Featured Categories</h3>
+                <p class="text-muted stext-113">Explore our core luxury categories tailored for you</p>
+            </div>
+            <div class="row g-4">
                 @foreach (var category in featuredCategories)
                 {
-                    <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
-                        <div class="block1 wrap-pic-w">
-                            <img src="@Url.Content(category.CategoryImagePath)" alt="@category.CategoryName">
+                    <div class="col-md-6 col-xl-4 m-lr-auto">
+                        <div class="block1 wrap-pic-w shadow-sm" style="border-radius: 16px; overflow: hidden; border: 1px solid #eaeaea;">
+                            <img src="@Url.Content(category.CategoryImagePath)" alt="@category.CategoryName" style="transition: transform 0.5s ease;">
                             <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@category.CategoryId"
-                               class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+                               class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3" style="background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 60%);">
                                 <div class="block1-txt-child1 flex-col-l">
-                                    <span class="block1-name ltext-102 trans-04 p-b-8">
+                                    <span class="block1-name ltext-102 trans-04 p-b-8 text-white fw-bold">
                                         @category.CategoryName
                                     </span>
                                 </div>
                                 <div class="block1-txt-child2 p-b-4 trans-05">
-                                    <div class="block1-link stext-101 cl0 trans-09">
-                                        Shop Now
+                                    <div class="block1-link stext-101 cl0 trans-09 px-3 py-2 d-inline-block" style="border-radius: 20px; background-color: rgba(201, 170, 111, 0.9); color: #1a1d20; font-weight: 600;">
+                                        Shop Now <i class="fa fa-angle-right m-l-5"></i>
                                     </div>
                                 </div>
                             </a>
@@ -120,27 +126,21 @@
 }
 
 <!-- Product Overview -->
-<section class="bg0 p-t-23 p-b-80">
+<section class="bg0 p-t-40 p-b-90">
     <div class="container">
-        <div class="p-b-30">
-            <h3 class="ltext-103 cl5">
+        <div class="p-b-35 d-flex justify-content-between align-items-center flex-wrap">
+            <h3 class="ltext-103 cl5 fw-bold" style="letter-spacing: 1px;">
                 Product Overview
             </h3>
-        </div>
-
-        <div class="flex-w flex-sb-m p-b-52">
-            <div class="flex-w flex-l-m filter-tope-group m-tb-10">
-                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-                    All Products
-                </button>
-            </div>
         </div>
 
         @if (Model == null || !Model.Any())
         {
             <div class="text-center py-5">
-                <div class="alert alert-info d-inline-block px-5 py-3">
-                    No products found.
+                <div class="alert alert-light border shadow-sm d-inline-block px-5 py-4" style="border-radius: 16px;">
+                    <i class="fa fa-box-open fa-3x text-muted mb-2" style="color: #c9aa6f;"></i>
+                    <h5 class="text-dark fw-bold mb-1">No products found</h5>
+                    <p class="text-muted mb-0" style="font-size: 13px;">Check back soon for new arrivals.</p>
                 </div>
             </div>
         }
@@ -173,19 +173,19 @@
             </div>
         }
 
-        <div class="flex-c-m flex-w w-full p-t-45">
-            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-                View All Products
+        <div class="flex-c-m flex-w w-full p-t-60">
+            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl5 size-103 px-5 py-3 shadow-sm trans-04 text-dark fw-bold" style="border-radius: 30px; background-color: #c9aa6f; text-decoration: none;">
+                View All Products <i class="fa fa-arrow-right m-l-8"></i>
             </a>
         </div>
     </div>
 </section>
 
 <!-- Testimonials Section -->
-<section class="sec-testimonials bg6 p-t-80 p-b-80">
+<section class="sec-testimonials p-t-90 p-b-90" style="background-color: #fcfcfc; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea;">
     <div class="container">
-        <div class="p-b-42 d-flex justify-content-between align-items-center flex-wrap">
-            <h3 class="ltext-105 cl5 respon1 m-0">
+        <div class="p-b-45 d-flex justify-content-between align-items-center flex-wrap">
+            <h3 class="ltext-105 cl5 fw-bold m-0" style="letter-spacing: 1px;">
                 What Our Customers Say
             </h3>
 
@@ -197,13 +197,13 @@
             {
                 @if (!hasSubmittedTestimonial)
                 {
-                    <button type="button" id="openTestimonialModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                    <button type="button" id="openTestimonialModalBtn" class="flex-c-m stext-101 cl0 size-101 px-4 py-2 shadow-sm trans-04 text-dark fw-bold" style="border-radius: 25px; background-color: #c9aa6f; border: none;">
                         <i class="fa fa-pencil m-r-8"></i> Add Review
                     </button>
                 }
                 else
                 {
-                    <span class="text-muted" style="font-size: 13px;">You have already shared your experience.</span>
+                    <span class="text-muted fw-semibold" style="font-size: 13px;"><i class="fa fa-check-circle text-success m-r-5"></i> You have already shared your experience.</span>
                 }
             }
         </div>
@@ -214,8 +214,9 @@
 
         @if (!testimonials.Any())
         {
-            <div class="text-center py-4 text-muted">
-                <p>No customer reviews yet. Be the first to share your experience!</p>
+            <div class="text-center py-5 text-muted">
+                <i class="fa fa-comments fa-2x mb-2" style="color: #c9aa6f;"></i>
+                <p class="mb-0">No customer reviews yet. Be the first to share your experience!</p>
             </div>
         }
         else
@@ -224,14 +225,19 @@
                 <div class="testimonial-slick">
                     @foreach (var t in testimonials)
                     {
-                        <div class="item-slick2 p-lr-15">
-                            <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04" style="min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px;">
-                                <p class="stext-114 cl6 p-b-26">
+                        <div class="item-slick2 p-lr-15 p-tb-10">
+                            <div class="p-all-35 bg0 shadow-sm trans-04 h-100" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: 16px; border: 1px solid #eaeaea;">
+                                <p class="stext-114 cl6 p-b-25 fst-italic text-secondary">
                                     "@t.CustomerTestimonial"
                                 </p>
-                                <span class="mtext-107 cl2 font-weight-bold">
-                                    - @(t.Customer != null ? $"{t.Customer.FirstName} {t.Customer.LastName}" : "Valued Customer")
-                                </span>
+                                <div class="d-flex align-items-center pt-3 border-top">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-dark fw-bold me-3" style="width: 40px; height: 40px; background-color: rgba(201, 170, 111, 0.2); color: #c9aa6f !important;">
+                                        @(t.Customer != null && !string.IsNullOrEmpty(t.Customer.FirstName) ? t.Customer.FirstName.Substring(0, 1).ToUpper() : "C")
+                                    </div>
+                                    <span class="mtext-107 cl2 fw-bold text-dark">
+                                        @(t.Customer != null ? $"{t.Customer.FirstName} {t.Customer.LastName}" : "Valued Customer")
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     }
@@ -244,24 +250,24 @@
 <!-- Testimonial Modal (Popup) -->
 <div class="modal fade" id="testimonialModal" tabindex="-1" aria-labelledby="testimonialModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" style="margin-top: 80px; max-width: 650px;">
-        <div class="modal-content bor10 p-all-30 bg-white shadow-lg rounded-4">
+        <div class="modal-content bor10 p-all-35 bg-white shadow-lg" style="border-radius: 20px; border: none;">
             <div class="modal-header border-0 pb-0">
-                <h4 class="modal-title mtext-105 cl2 fw-bold" id="testimonialModalLabel">Share Your Experience</h4>
+                <h4 class="modal-title mtext-105 cl2 fw-bold" style="color: #1a1d20;">Share Your Experience</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <form asp-controller="Home" asp-action="AddTestimonial" method="post">
-                <div class="modal-body p-t-20 p-b-20">
+                <div class="modal-body p-t-25 p-b-20">
                     <div class="mb-3">
                         <label class="stext-102 cl3 mb-2 d-block fw-bold" style="font-size: 15px;">Your Review</label>
-                        <textarea name="customerTestimonial" class="form-control" rows="5" placeholder="Write your experience with our store..." required maxlength="250" style="font-size: 14px; padding: 12px;"></textarea>
-                        <small class="text-muted">Maximum 250 characters. Will be reviewed before publishing.</small>
+                        <textarea name="customerTestimonial" class="form-control shadow-none" rows="5" placeholder="Write your experience with our store..." required maxlength="250" style="font-size: 14px; padding: 15px; border-radius: 12px; border: 1px solid #ddd;"></textarea>
+                        <small class="text-muted mt-2 d-block">Maximum 250 characters. Will be reviewed before publishing.</small>
                     </div>
                 </div>
 
                 <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="font-size: 14px;">Cancel</button>
-                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 trans-04" style="width: auto; height: 42px; font-size: 14px;">Submit Review</button>
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="font-size: 14px; border-radius: 20px;">Cancel</button>
+                    <button type="submit" class="btn px-4 py-2 text-dark fw-bold shadow-sm" style="font-size: 14px; border-radius: 20px; background-color: #c9aa6f; border: none;">Submit Review</button>
                 </div>
             </form>
         </div>
@@ -269,58 +275,58 @@
 </div>
 
 <!-- FAQ -->
-<section class="sec-faq bg0 p-t-80 p-b-90">
+<section class="sec-faq bg0 p-t-90 p-b-100">
     <div class="container">
-        <div class="p-b-45">
-            <h3 class="ltext-105 cl5 txt-center respon1">
+        <div class="p-b-50 text-center">
+            <h3 class="ltext-105 cl5 fw-bold" style="letter-spacing: 1px;">
                 Frequently Asked Questions
             </h3>
-            <p class="stext-113 cl6 txt-center p-t-10">
-                Swipe through to find answers about our luxury collections and services.
+            <p class="stext-113 cl6 p-t-10 text-muted">
+                Find answers about our luxury collections, shipping, and guarantees.
             </p>
         </div>
 
         <div class="wrap-slick2 position-relative">
             <div class="faq-slick">
-                <div class="item-slick2 p-lr-15">
-                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
-                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
-                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> Are all watches authentic?
+                <div class="item-slick2 p-lr-15 p-tb-10">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
+                            <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> Are all watches authentic?
                         </h5>
-                        <p class="stext-111 cl6">
-                            Yes, all our timepieces and gift sets (such as Timberland and Bigotti) are 100% original with official warranties.
+                        <p class="stext-111 cl6 text-muted mb-0">
+                            Yes, all our timepieces and gift sets are 100% original with official manufacturer warranties.
                         </p>
                     </div>
                 </div>
 
-                <div class="item-slick2 p-lr-15">
-                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
-                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
-                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> What are delivery options?
+                <div class="item-slick2 p-lr-15 p-tb-10">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
+                            <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> What are delivery options?
                         </h5>
-                        <p class="stext-111 cl6">
-                            We provide fast shipping across Amman and all governorates in Jordan within 1 to 3 business days.
+                        <p class="stext-111 cl6 text-muted mb-0">
+                            We provide fast secure shipping across Amman and all governorates in Jordan within 1 to 3 business days.
                         </p>
                     </div>
                 </div>
 
-                <div class="item-slick2 p-lr-15">
-                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
-                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
-                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> Can I return a product?
+                <div class="item-slick2 p-lr-15 p-tb-10">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
+                            <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> Can I return a product?
                         </h5>
-                        <p class="stext-111 cl6">
-                            Yes, we offer a hassle-free 14-day return and exchange policy for unused items in original packaging.
+                        <p class="stext-111 cl6 text-muted mb-0">
+                            Yes, we offer a hassle-free 14-day return and exchange policy for unused items in their original packaging.
                         </p>
                     </div>
                 </div>
 
-                <div class="item-slick2 p-lr-15">
-                    <div class="p-all-30 bg-light bor10 hov-shadow1 trans-04" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 12px; border: 1px solid #eaeaea;">
-                        <h5 class="stext-110 cl2 p-b-12" style="font-weight: 600;">
-                            <i class="zmdi zmdi-help-outline m-r-6" style="color: #717fe0;"></i> Do you offer gift wrapping?
+                <div class="item-slick2 p-lr-15 p-tb-10">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                        <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
+                            <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> Do you offer gift wrapping?
                         </h5>
-                        <p class="stext-111 cl6">
+                        <p class="stext-111 cl6 text-muted mb-0">
                             Absolutely! Every order can be packed in our signature luxury gift boxes with custom greeting cards.
                         </p>
                     </div>
@@ -336,7 +342,6 @@
             const slickPrevButton = '<button type="button" class="slick-prev" style="z-index: 2;"><i class="fa fa-angle-left" style="font-size: 22px;"></i></button>';
             const slickNextButton = '<button type="button" class="slick-next" style="z-index: 2;"><i class="fa fa-angle-right" style="font-size: 22px;"></i></button>';
 
-            // Testimonial Slider
             if ($('.testimonial-slick').length > 0) {
                 $('.testimonial-slick').slick({
                     slidesToShow: 3,
@@ -356,7 +361,6 @@
                 });
             }
 
-            // FAQ Slider
             if ($('.faq-slick').length > 0) {
                 $('.faq-slick').slick({
                     slidesToShow: 3,
@@ -376,7 +380,6 @@
                 });
             }
 
-            // Testimonial Modal Logic
             const openBtn = document.getElementById("openTestimonialModalBtn");
             const modal = document.getElementById("testimonialModal");
 
@@ -415,7 +418,6 @@
 }
 
 <style>
-    /* Styling for Slick Slider Custom Side Arrows */
     .wrap-slick2 {
         position: relative;
     }
@@ -424,7 +426,7 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.9) !important;
+        background: #fff !important;
         border: 1px solid #ddd !important;
         border-radius: 50% !important;
         width: 45px !important;
@@ -432,10 +434,11 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         transition: all 0.3s ease;
         cursor: pointer;
         z-index: 10;
+        color: #333;
     }
 
     .slick-prev {
@@ -447,12 +450,16 @@
     }
 
         .slick-prev:hover, .slick-next:hover {
-            background: #c5a059 !important;
-            color: #fff !important;
-            border-color: #c5a059 !important;
+            background: #c9aa6f !important;
+            color: #1a1d20 !important;
+            border-color: #c9aa6f !important;
         }
 
             .slick-prev:hover i, .slick-next:hover i {
-                color: #fff !important;
+                color: #1a1d20 !important;
             }
+
+    .block1:hover img {
+        transform: scale(1.05);
+    }
 </style>
