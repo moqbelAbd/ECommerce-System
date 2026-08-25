@@ -130,13 +130,13 @@
         <button type="button" class="dash-tab-btn @(activeTab == "customers" ? "active" : "")" data-tab="customers">
             <i class="fa fa-users m-r-5"></i> Manage Customers
         </button>
-        <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
+        @* <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
             <i class="fa fa-dashboard m-r-5"></i> Overview
-        </button>
+        </button> *@
     </div>
 
     <!-- ===================== OVERVIEW PANEL ===================== -->
-    <div class="dash-panel" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none");">
+    @* <div class="dash-panel" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none");">
         <h4 class="mtext-103 cl2 p-b-20">Recent Watch Orders</h4>
         <div class="wrap-table-shopping-cart">
             <table class="table-shopping-cart">
@@ -161,7 +161,7 @@
                         <tr class="table_row">
                             <td class="column-1">@order.OrderId</td>
                             <td class="column-2">
-                                @(order.Customer == null
+                                @(order.Customer == null )
                                     ? "-"
                                     : $"{order.Customer.FirstName} {order.Customer.LastName}")
                             </td>
@@ -179,7 +179,7 @@
                 }
             </table>
         </div>
-    </div>
+    </div> *@
 
     <!-- ===================== CUSTOMERS PANEL ===================== -->
     <div class="dash-panel card border-0 shadow-sm p-4" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">

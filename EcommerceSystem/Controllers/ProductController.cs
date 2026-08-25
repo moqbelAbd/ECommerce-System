@@ -307,12 +307,13 @@ namespace EcommerceSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             Product product,
-            Guid? subCategoryId,
+            List<Guid>? subCategoryIds,
             List<IFormFile>? imageFiles)
         {
             if (!ModelState.IsValid)
             {
-                await LoadProductDropdowns(subCategoryId);
+                await LoadProductDropdowns();
+                ViewBag.SelectedSubCategoryIds = subCategoryIds ?? new List<Guid>();
                 return View(product);
             }
 
@@ -336,16 +337,17 @@ namespace EcommerceSystem.Controllers
 
             _context.Products.Add(product);
 
-            if (subCategoryId.HasValue)
+            if (subCategoryIds != null && subCategoryIds.Any())
             {
-                var productSubCategory = new ProductSubCategory
+                foreach (var subId in subCategoryIds.Take(3))
                 {
-                    ProductSubCategoryId = Guid.NewGuid(),
-                    ProductId = product.ProductId,
-                    SubCategoryId = subCategoryId.Value
-                };
-
-                _context.ProductSubCategories.Add(productSubCategory);
+                    _context.ProductSubCategories.Add(new ProductSubCategory
+                    {
+                        ProductSubCategoryId = Guid.NewGuid(),
+                        ProductId = product.ProductId,
+                        SubCategoryId = subId
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -370,11 +372,12 @@ namespace EcommerceSystem.Controllers
             if (product == null)
                 return NotFound();
 
-            var selectedSubCategoryId = product.ProductSubCategories
-                .Select(psc => (Guid?)psc.SubCategoryId)
-                .FirstOrDefault();
+            var selectedSubCategoryIds = product.ProductSubCategories
+                        .Select(psc => psc.SubCategoryId)
+                        .ToList();
 
-            await LoadProductDropdowns(selectedSubCategoryId);
+            await LoadProductDropdowns();
+            ViewBag.SelectedSubCategoryIds = selectedSubCategoryIds;
 
             return View(product);
         }
@@ -385,7 +388,7 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> Edit(
             Guid id,
             Product product,
-            Guid? subCategoryId,
+            List<Guid>? subCategoryIds,
             List<IFormFile>? imageFiles,
             List<Guid>? deleteImageIds)
         {
@@ -404,7 +407,8 @@ namespace EcommerceSystem.Controllers
 
             if (!ModelState.IsValid)
             {
-                await LoadProductDropdowns(subCategoryId);
+                await LoadProductDropdowns();
+                ViewBag.SelectedSubCategoryIds = subCategoryIds ?? new List<Guid>();
                 return View(existingProduct);
             }
 
@@ -446,15 +450,17 @@ namespace EcommerceSystem.Controllers
             _context.ProductSubCategories.RemoveRange(
                 existingProduct.ProductSubCategories);
 
-            if (subCategoryId.HasValue)
+            if (subCategoryIds != null && subCategoryIds.Any())
             {
-                _context.ProductSubCategories.Add(
-                    new ProductSubCategory
+                foreach (var subId in subCategoryIds.Take(3))
+                {
+                    _context.ProductSubCategories.Add(new ProductSubCategory
                     {
                         ProductSubCategoryId = Guid.NewGuid(),
                         ProductId = existingProduct.ProductId,
-                        SubCategoryId = subCategoryId.Value
+                        SubCategoryId = subId
                     });
+                }
             }
 
             await _context.SaveChangesAsync();
