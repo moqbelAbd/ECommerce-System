@@ -65,7 +65,9 @@
                     ButtonText = "َView",
                     ShowAdminActions = User.IsInRole("Admin"),
                     EditUrl = Url.Action("Edit", "Category", new { id = category.CategoryId }),
-                    DeleteUrl = Url.Action("Delete", "Category", new { id = category.CategoryId })
+                    IsDeleted = category.IsDeleted,
+                    DeleteUrl = Url.Action("Delete", "Category", new { id = category.CategoryId }),
+                    UnDeleteUrl = Url.Action("UnDelete", "Category", new { id = category.CategoryId })
                 };
 
                 <partial name="_CategoryCardPartial" model="cardData" />
