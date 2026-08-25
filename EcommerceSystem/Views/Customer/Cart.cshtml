@@ -49,11 +49,17 @@
                                 {
                                     <tr class="table_row">
                                         <td class="column-1">
-                                            <div class="how-itemcart1" style="width: 60px; height: 80px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff;">
-                                                <img src="@item.ImageUrl" alt="@item.ProductName" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                                            </div>
+                                            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" style="display: block;">
+                                                <div class="how-itemcart1" style="width: 60px; height: 80px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff; cursor: pointer;">
+                                                    <img src="@item.ImageUrl" alt="@item.ProductName" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                                </div>
+                                            </a>
                                         </td>
-                                        <td class="column-2" style="font-weight: 500;">@item.ProductName</td>
+                                        <td class="column-2" style="font-weight: 500;">
+                                            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" style="color: #555; text-decoration: none; transition: color 0.3s ease;" class="hov-cl1">
+                                                @item.ProductName
+                                            </a>
+                                        </td>   
                                         <td class="column-3">$@item.Price.ToString("0.00")</td>
                                         <td class="column-4">
                                             <div class="wrap-num-product flex-w m-l-auto m-r-0">

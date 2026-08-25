@@ -38,10 +38,22 @@
                 <div class="header-cart-total w-full p-tb-40" style="color: #fff; font-size: 18px; border-top: 1px solid rgba(255,255,255,0.1);">
                     Total: $@Model.CartTotal.ToString("0.00")
                 </div>
+
+                    @if (Model.Items.Count >= 1 ){
+
                 <div class="header-cart-buttons flex-w w-full">
                     <a asp-controller="Customer" asp-action="Cart" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-r-8 m-b-10">View Cart</a>
                     <a asp-controller="Customer" asp-action="Checkout" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-b-10">Check Out</a>
-                </div>
+                </div>               
+                    }
+
+                    @* else {
+                    <div class="header-cart-buttons  w-full">
+                    <a asp-controller="Customer" asp-action="Cart" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-r-8 m-b-10">View Cart</a>
+                    </div>
+                    } *@
+
+               </div>
             </div>
         </div>
     </div>
