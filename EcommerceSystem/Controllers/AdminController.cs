@@ -31,6 +31,7 @@ namespace EcommerceSystem.Controllers
             ViewBag.TotalUsers = await _context.Users.CountAsync();
             ViewBag.TotalProducts = await _context.Products.CountAsync(p => !p.IsDeleted);
             ViewBag.TotalCategories = await _context.Categories.CountAsync(c => !c.IsDeleted);
+            ViewBag.TotalSubCategories = await _context.SubCategories.CountAsync(sc => !sc.IsDeleted);
 
             ViewBag.TotalSubCategories = await _context.SubCategories.CountAsync(sc => !sc.IsDeleted);
 
