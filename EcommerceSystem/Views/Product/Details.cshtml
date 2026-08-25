@@ -491,7 +491,7 @@
                     .catch(error => console.error('Error:', error));
             });
 
-            // 4. AJAX Add To Cart Script (بدون ريفريش، مع تحديث العداد والسلة والتوست)
+            // 4. AJAX Add To Cart Script 
             const cartForm = document.getElementById("details-cart-form");
             if (cartForm) {
                 cartForm.addEventListener("submit", function(e) {
@@ -510,10 +510,10 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // إظهار التوست باللون الذهبي الراقي
+
                                 showToast(data.message || "Product added to cart successfully!", "success");
 
-                                // تحديث محتوى السلة الجانبية
+
                                 fetch('/Cart/RefreshSidebarCart')
                                     .then(response => response.text())
                                     .then(html => {
@@ -536,7 +536,6 @@
                                         });
                                     });
 
-                                // تحديث عداد السلة في الهيدر فوراً بالكمية المضافة بدون ريفريش
                                 const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
                                 cartNotiElements.forEach(el => {
                                     let currentCount = parseInt(el.getAttribute('data-notify')) || 0;

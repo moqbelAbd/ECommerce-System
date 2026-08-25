@@ -7,7 +7,7 @@
     var brands = ViewBag.Brands as List<ProductBrand> ?? new List<ProductBrand>();
     var models = ViewBag.Models as List<ProductModel> ?? new List<ProductModel>();
     var subCategories = ViewBag.SubCategories as List<SubCategory> ?? new List<SubCategory>();
-    Guid? selectedSubCategoryId = ViewBag.SelectedSubCategoryId is Guid id ? id : null;
+    var selectedSubCategoryIds = ViewBag.SelectedSubCategoryIds as List<Guid> ?? new List<Guid>();
     var existingImages = Model.ProductImages?.ToList() ?? new List<ProductImage>();
 }
 
@@ -69,22 +69,26 @@
                     </div>
 
                     <div class="col-md-4 m-b-20">
-                        <label for="subCategoryId" class="form-label">Subcategory</label>
-                        <select id="subCategoryId" name="subCategoryId" class="form-control">
-                            <option value="">Select a subcategory</option>
+                        <label class="form-label">Subcategories (Max 3)</label>
+                        <div class="subcategories-container" style="max-height: 120px; overflow-y: auto; border: 1px solid #e6e6e6; padding: 10px; border-radius: 6px; background-color: #fff;">
                             @foreach (var subCategory in subCategories)
                             {
-                                if (selectedSubCategoryId == subCategory.SubCategoryId)
-                                {
-                                    <option value="@subCategory.SubCategoryId" selected>@subCategory.SubCategoryName</option>
-                                }
-                                else
-                                {
-                                    <option value="@subCategory.SubCategoryId">@subCategory.SubCategoryName</option>
-                                }
+                                var isChecked = selectedSubCategoryIds.Contains(subCategory.SubCategoryId);
+                                <div class="form-check m-b-5" style="padding-left: 25px;">
+                                    <input class="form-check-input subcategory-checkbox"
+                                           type="checkbox"
+                                           name="subCategoryIds"
+                                           value="@subCategory.SubCategoryId"
+                                           id="sub_@subCategory.SubCategoryId"
+                                    @(isChecked ? "checked" : "")>
+                                    <label class="form-check-label stext-111 cl6" for="sub_@subCategory.SubCategoryId" style="cursor: pointer;">
+                                        @subCategory.SubCategoryName
+                                    </label>
+                                </div>
                             }
-                        </select>
+                        </div>
                     </div>
+
                 </div>
 
                 <div class="row">
@@ -190,7 +194,7 @@
                 filterModels();
             }
 
-            // كود إضافة حقول رفع الصور ديناميكياً
+
             var container = document.getElementById('image-inputs-container');
             var addBtn = document.getElementById('add-image-input-btn');
 
@@ -226,5 +230,23 @@
                 }
             }
         })();
+
+        // Limit Subcategory Checkboxes to Max 3
+        var limit = 3;
+        var subCheckboxes = document.querySelectorAll('.subcategory-checkbox');
+
+        subCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                var checkedCount = document.querySelectorAll('.subcategory-checkbox:checked').length;
+                if (checkedCount > limit) {
+                    this.checked = false; // Uncheck the box immediately
+                    if (typeof showToast === 'function') {
+                        showToast("You can only select a maximum of 3 subcategories.", "warning");
+                    } else {
+                        alert("You can only select a maximum of 3 subcategories.");
+                    }
+                }
+            });
+        });
     </script>
 }
