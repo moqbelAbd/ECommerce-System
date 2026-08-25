@@ -223,7 +223,9 @@
 
                                 <!-- Order ID -->
                                 <td class="column-1">
-                                    @order.OrderId
+                                    <span style="font-size: 12px; font-weight: 400; color: #999;">
+                                        @order.OrderId
+                                    </span>
                                 </td>
 
 
@@ -255,7 +257,36 @@
 
                                 <!-- Payment Status -->
                                 <td class="column-6">
-                                    @order.PaymentStatusName
+
+                                    <form asp-controller="Order"
+                                          asp-action="UpdatePaymentStatus"
+                                          method="post">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="orderId"
+                                               value="@order.OrderId" />
+
+                                        <select name="paymentStatusId"
+                                                class="form-control form-select form-select-sm"
+                                                style="font-size: 12px; padding: 4px 28px 4px 10px; min-width: 120px;"
+                                                onchange="this.form.submit()">
+
+                                            @foreach (var status in paymentStatuses)
+                                            {
+                                                <option value="@status.PaymentStatusId"
+                                                        selected="@(status.PaymentStatusId == order.PaymentStatusId)">
+
+                                                    @status.PaymentStatusName
+
+                                                </option>
+                                            }
+
+                                        </select>
+
+                                    </form>
+
                                 </td>
 
 
@@ -273,7 +304,8 @@
                                                value="@order.OrderId" />
 
                                         <select name="orderStatusId"
-                                                class="form-control form-select"
+                                                class="form-control form-select form-select-sm"
+                                                style="font-size: 12px; padding: 4px 28px 4px 10px; min-width: 120px;"
                                                 onchange="this.form.submit()">
 
                                             @foreach (var status in orderStatuses)

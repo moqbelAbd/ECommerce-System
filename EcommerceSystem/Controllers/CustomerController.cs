@@ -109,7 +109,7 @@ namespace EcommerceSystem.Controllers
         // CUSTOMER ONLY - ORDER HISTORY
         // =========================================================
         [Authorize]
-        public async Task<IActionResult> OrderHistory()
+        public async Task<IActionResult> OrderHistory(int? statusId)
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
@@ -117,9 +117,16 @@ namespace EcommerceSystem.Controllers
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
             if (customer == null) return RedirectToAction("CompleteProfile");
 
-            var orders = await _context.Orders
+            var query = _context.Orders
                 .Include(o => o.OrderStatus)
-                .Where(o => o.CustomerId == customer.CustomerId)
+                .Where(o => o.CustomerId == customer.CustomerId);
+
+            if (statusId.HasValue)
+            {
+                query = query.Where(o => o.OrderStatusId == statusId.Value);
+            }
+
+            var orders = await query
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
 

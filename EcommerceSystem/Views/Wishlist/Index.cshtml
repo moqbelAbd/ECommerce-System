@@ -97,7 +97,7 @@
                                                 </a>
                                                 
                                                 <!-- Heart Icon Button (Remove from Wishlist) -->
-                                                <form asp-controller="Wishlists" asp-action="ToggleWishlist" method="post" class="m-0 d-inline-block">
+                                                <form asp-controller="Wishlists" asp-action="ToggleWishlist" method="post" class="m-0 d-inline-block js-wishlist-remove-form">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="productId" value="@product?.ProductId" />
                                                     <button type="submit" class="btn p-0 border-0 bg-transparent d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; border-radius: 50%; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.08); transition: transform 0.2s;" title="Remove from Wishlist">
@@ -123,7 +123,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // التعامل مع أزرار الإزالة في صفحة المفضلة عبر AJAX
-            document.querySelectorAll("form[asp-action='ToggleWishlist']").forEach(form => {
+            document.querySelectorAll("form.js-wishlist-remove-form").forEach(form => {
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
                     const formData = new FormData(this);
