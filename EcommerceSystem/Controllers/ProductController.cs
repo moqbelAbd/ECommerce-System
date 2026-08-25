@@ -129,9 +129,6 @@ namespace EcommerceSystem.Controllers
             return View(products);
         }
 
-        // =========================================================
-        // PUBLIC PRODUCT DETAILS
-        // =========================================================
         public async Task<IActionResult> Details(Guid? id, int? ratingFilter, string? customerSearch)
         {
             if (id == null)
@@ -166,12 +163,10 @@ namespace EcommerceSystem.Controllers
 
                 if (customer != null)
                 {
-                    // 1. التحقق مما إذا كان العميل قد اشترى المنتج
                     hasPurchased = customer.Orders
                         .SelectMany(o => o.OrderItems)
                         .Any(oi => oi.ProductId == product.ProductId);
 
-                    // 2. التحقق مما إذا كان العميل قد قام بتقييم المنتج مسبقاً
                     hasAlreadyReviewed = product.ProductReviews
                         .Any(r => r.CustomerId == customer.CustomerId);
                 }
@@ -229,9 +224,6 @@ namespace EcommerceSystem.Controllers
             return View(product);
         }
 
-        // =========================================================
-        // ADD PRODUCT REVIEW (POST)
-        // =========================================================
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -248,7 +240,6 @@ namespace EcommerceSystem.Controllers
                 return RedirectToAction("CompleteProfile", "Customer");
             }
 
-            // التحقق من أن العميل قد اشترى المنتج فعلياً
             bool hasPurchased = customer.Orders
                 .SelectMany(o => o.OrderItems)
                 .Any(oi => oi.ProductId == productId);
@@ -259,7 +250,6 @@ namespace EcommerceSystem.Controllers
                 return RedirectToAction("Details", new { id = productId });
             }
 
-            // التحقق من عدم وجود تقييم سابـق لهذا العميل لنفس المنتج
             bool existingReview = await _context.ProductReviews
                 .AnyAsync(r => r.ProductId == productId && r.CustomerId == customer.CustomerId);
 
@@ -290,7 +280,6 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction("Details", new { id = productId });
         }
 
-        // حذف مراجعة (خاص بالأدمن)
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -517,7 +506,6 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Load dropdown data
         private async Task LoadProductDropdowns(
             Guid? selectedSubCategoryId = null)
         {

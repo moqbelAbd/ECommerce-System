@@ -140,12 +140,10 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // إزالة الصف بسلاسة من الجدول عند حذفه
                             row.style.transition = "opacity 0.4s ease";
                             row.style.opacity = "0";
                             setTimeout(() => {
                                 row.remove();
-                                // إذا أصبحت القائمة فارغة، قم بتحديث الصفحة لإظهار رسالة "Wishlist is empty"
                                 const remainingRows = document.querySelectorAll(".table_row");
                                 if (remainingRows.length === 0) {
                                     location.reload();

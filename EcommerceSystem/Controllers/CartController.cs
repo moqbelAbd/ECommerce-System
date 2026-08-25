@@ -29,6 +29,7 @@ namespace EcommerceSystem.Controllers
                 return Json(new { success = false, message = "Product not found." });
             }
 
+            if (User.Identity != null && User.Identity.IsAuthenticated )
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
@@ -98,7 +99,6 @@ namespace EcommerceSystem.Controllers
         [HttpGet]
         public IActionResult RefreshSidebarCart()
         {
-            // This  re-runs CartSidebarViewComponent and returns just the HTML!
             return ViewComponent("CartSidebar");
         }
 
@@ -106,9 +106,15 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> RemoveFromCart(Guid productId)
         {
             // 1. Customer Logic
+            if (User.Identity != null && User.Identity.IsAuthenticated )
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+                if (customer != null)
+                {
+                    var cart = await _context.Carts
+                        .Include(c => c.CartItems)
+                        .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
 
                     if (cart != null)
                     {
@@ -122,7 +128,6 @@ namespace EcommerceSystem.Controllers
                             }
                             catch (DbUpdateConcurrencyException)
                             {
-                                // تجاهل الخطأ في حال كانت العنصر محذوف مسبقاً لتجنب توقف البرنامج
                                 _context.Entry(itemToRemove).State = EntityState.Detached;
                             }
                         }
@@ -145,13 +150,14 @@ namespace EcommerceSystem.Controllers
                 }
             }
 
+            return Json(new { success = true, message = "Product removed from cart successfully!" });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateCart(Dictionary<Guid, int> quantities)
         {
             // 1. Customer Logic
+            if (User.Identity != null && User.Identity.IsAuthenticated )
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
@@ -163,8 +169,7 @@ namespace EcommerceSystem.Controllers
                     {
                         var item = cart.CartItems.FirstOrDefault(ci => ci.ProductId == kvp.Key);
                         if (item != null)
-                        {
-                            // Optional: You can check product stock limits again right here!
+                        {]
                             item.ItemQuantity = kvp.Value > 0 ? kvp.Value : 1;
                         }
                     }

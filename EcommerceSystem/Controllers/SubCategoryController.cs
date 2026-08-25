@@ -182,7 +182,6 @@ namespace EcommerceSystem.Controllers
             if (subCategory == null)
                 return NotFound();
 
-            // Soft Delete
             subCategory.IsDeleted = true;
 
             await _context.SaveChangesAsync();

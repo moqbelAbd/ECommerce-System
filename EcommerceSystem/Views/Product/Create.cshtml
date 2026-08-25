@@ -95,7 +95,6 @@
                     <div class="col-md-8 m-b-20">
                         <label class="form-label fw-bold">Product Images</label>
                         
-                        <!-- الحاوية التي ستستقبل حقول الرفع الديناميكية -->
                         <div id="image-inputs-container">
                             <div class="input-group m-b-10">
                                 <input type="file" name="imageFiles" accept="image/*" class="form-control" />
@@ -103,7 +102,6 @@
                             </div>
                         </div>
 
-                        <!-- زر إضافة حقل جديد -->
                         <button type="button" id="add-image-input-btn" class="btn btn-sm btn-outline-secondary mt-1">
                             <i class="fa fa-plus m-r-4"></i> Add Another Image
                         </button>
@@ -133,7 +131,6 @@
 
     <script>
         (function () {
-            // كود الفلترة للـ Brand و Model
             var brandSelect = document.getElementById('brandSelect');
             var modelSelect = document.getElementById('modelSelect');
             var modelOptions = Array.prototype.slice.call(modelSelect.querySelectorAll('option[data-brand-id]'));
@@ -163,7 +160,6 @@
                 filterModels();
             }
 
-            // كود إضافة حقول رفع الصور ديناميكياً
             var container = document.getElementById('image-inputs-container');
             var addBtn = document.getElementById('add-image-input-btn');
 

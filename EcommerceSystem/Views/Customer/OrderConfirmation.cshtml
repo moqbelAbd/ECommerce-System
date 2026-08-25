@@ -1,109 +1,165 @@
 ﻿@model EcommerceSystem.Models.Order
 
 @{
-    ViewData["Title"] = "Order Confirmation";
+    ViewData["Title"] = "Order Invoice - Rolexyal";
     string shortOrderId = Model.OrderId.ToString().Substring(0, 8).ToUpper();
     string paymentName = Model.PaymentTypeId == 2 ? "Visa / Credit Card" : "Cash on Delivery";
 }
 
-<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
-    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
-        ORDER CONFIRMATION
+<!-- Title Banner -->
+<section class="bg-img1 txt-center p-lr-15 p-tb-75" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
+    <h2 class="ltext-105 cl0 txt-center fw-bold" style="letter-spacing: 2px; color: #1a1d20;">
+        ORDER INVOICE
     </h2>
 </section>
 
-<div class="bg0 m-t-60 p-b-140">
+<div class="bg0 m-t-40 p-b-100">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-9">
 
-                <div class="bor10 p-lr-40 p-tb-50" style="border-radius: 16px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.06);">
-
-                    <!-- Success Icon -->
-                    <div class="text-center m-b-20">
-                        <div style="width: 70px; height: 70px; background-color: #e2f0d9; color: #385723; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 32px;">
-                            <i class="zmdi zmdi-check"></i>
-                        </div>
-                        <h3 class="mtext-111 cl2 p-t-15" style="font-weight: 600;">
-                            Thank You For Your Order!
-                        </h3>
-                        <p class="stext-113 cl6 p-t-5">
-                            Your order has been successfully placed and is now being processed.
-                        </p>
+                <!-- Success Alert Notice -->
+                <div class="alert alert-success d-flex align-items-center mb-4 shadow-sm" role="alert" style="border-radius: 12px; background-color: #e8f5e9; border: none; color: #2e7d32;">
+                    <i class="zmdi zmdi-check-circle fs-24 m-r-10"></i>
+                    <div>
+                        <strong>Success!</strong> Your order has been successfully placed and generated.
                     </div>
+                </div>
 
-                    <!-- Order Meta Info Box -->
-                    <div class="p-tb-15 p-lr-20 bg-light m-b-30" style="border-radius: 8px; border: 1px dashed #d9d9d9;">
-                        <div class="row text-center">
-                            <div class="col-md-4 p-b-5">
-                                <span class="stext-102 cl6 block">Order Number:</span>
-                                <span class="mtext-102 cl2" style="font-weight: 600;">#RX-@shortOrderId</span>
-                            </div>
-                            <div class="col-md-4 p-b-5">
-                                <span class="stext-102 cl6 block">Date:</span>
-                                <span class="mtext-102 cl2" style="font-weight: 600;">@Model.CreatedAt.ToString("MMMM dd, yyyy")</span>
-                            </div>
-                            <div class="col-md-4">
-                                <span class="stext-102 cl6 block">Payment Method:</span>
-                                <span class="mtext-102 cl2" style="font-weight: 600;">@paymentName</span>
-                            </div>
+                <!-- Invoice Card Box -->
+                <div class="card border-0 shadow-lg p-4 p-md-5" id="printableInvoice" style="border-radius: 20px; background: #fff; border: 1px solid #eaeaea !important;">
+
+                    <!-- Invoice Header -->
+                    <div class="d-flex justify-content-between align-items-start flex-wrap pb-4 mb-4 border-bottom">
+                        <div>
+                            <h2 class="fw-bold text-dark mb-1" style="letter-spacing: 1px;">ROLEXYAL</h2>
+                            <p class="text-muted mb-0" style="font-size: 13px;">Luxury Watches & Accessories</p>
+                            <p class="text-muted mb-0" style="font-size: 13px;">Mecca Street, Amman, Jordan</p>
+                        </div>
+                        <div class="text-md-end mt-3 mt-md-0">
+                            <h4 class="fw-bold text-dark mb-1">INVOICE</h4>
+                            <span class="badge bg-dark text-warning px-3 py-2" style="font-size: 13px; border-radius: 20px;">#RX-@shortOrderId</span>
+                            <p class="text-muted mt-2 mb-0" style="font-size: 13px;"><strong>Date:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
                         </div>
                     </div>
 
-                    <!-- Invoice Table / Summary -->
-                    <div class="m-b-30">
-                        <h5 class="mtext-102 cl2 p-b-15" style="font-weight: 600; border-bottom: 1px solid #f1f1f1;">
-                            Order Summary (Invoice)
-                        </h5>
+                    <!-- Client & Payment Info Grid -->
+                    <div class="row g-4 mb-4 pb-4 border-bottom">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-secondary text-uppercase mb-2" style="font-size: 12px; letter-spacing: 0.5px;">Billed To / Delivery Address:</h6>
+                            <p class="text-dark mb-1 fw-semibold">@Model.Customer?.FirstName @Model.Customer?.LastName</p>
+                            <p class="text-muted mb-0" style="font-size: 14px;"><i class="fa fa-map-marker-alt text-danger m-r-5"></i> @Model.Location</p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <h6 class="fw-bold text-secondary text-uppercase mb-2" style="font-size: 12px; letter-spacing: 0.5px;">Payment Details:</h6>
+                            <p class="text-dark mb-1"><strong>Method:</strong> @paymentName</p>
+                            <p class="text-muted mb-0" style="font-size: 14px;"><strong>Status:</strong> <span class="badge bg-light text-dark border">Paid / Confirmed</span></p>
+                        </div>
+                    </div>
 
-                        <div class="wrap-table-shopping-cart" style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                                <tr style="border-bottom: 2px solid #eee; text-align: left;">
-                                    <th style="padding: 10px; font-size: 13px; color: #555;">Product</th>
-                                    <th style="padding: 10px; text-align: center; font-size: 13px; color: #555;">Price</th>
-                                    <th style="padding: 10px; text-align: center; font-size: 13px; color: #555;">Qty</th>
-                                    <th style="padding: 10px; text-align: right; font-size: 13px; color: #555;">Total</th>
-                                </tr>
-
-                                @foreach (var item in Model.OrderItems)
-                                {
-                                    var unitPrice = item.ItemQuantity > 0 ? (item.ItemTotalPrice / item.ItemQuantity) : 0;
-                                    <tr style="border-bottom: 1px solid #f8f9fa;">
-                                        <td style="padding: 12px 10px; font-weight: 500; color: #333;">@item.Product?.ProductName</td>
-                                        <td style="padding: 12px 10px; text-align: center; color: #555;">$@unitPrice.ToString("0.00")</td>
-                                        <td style="padding: 12px 10px; text-align: center; color: #555;">@item.ItemQuantity</td>
-                                        <td style="padding: 12px 10px; text-align: right; font-weight: 600; color: #111;">$@item.ItemTotalPrice.ToString("0.00")</td>
+                    <!-- Invoice Items Table -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-secondary text-uppercase mb-3" style="font-size: 12px; letter-spacing: 0.5px;">Order Items:</h6>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead style="background-color: #1a1d20; color: #fff;">
+                                    <tr>
+                                        <th class="py-3 px-3 text-white" style="font-size: 13px;">Item Description</th>
+                                        <th class="py-3 px-3 text-center text-white" style="font-size: 13px;">Unit Price</th>
+                                        <th class="py-3 px-3 text-center text-white" style="font-size: 13px;">Quantity</th>
+                                        <th class="py-3 px-3 text-end text-white" style="font-size: 13px;">Amount</th>
                                     </tr>
-                                }
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        var unitPrice = item.ItemQuantity > 0 ? (item.ItemTotalPrice / item.ItemQuantity) : 0;
+                                        <tr style="border-bottom: 1px solid #f2f2f2;">
+                                            <td class="py-3 px-3 fw-semibold text-dark">
+                                                @item.Product?.ProductName
+                                            </td>
+                                            <td class="py-3 px-3 text-center text-secondary">$@unitPrice.ToString("0.00")</td>
+                                            <td class="py-3 px-3 text-center">@item.ItemQuantity</td>
+                                            <td class="py-3 px-3 text-end fw-bold text-dark">$@item.ItemTotalPrice.ToString("0.00")</td>
+                                        </tr>
+                                    }
+                                </tbody>
                             </table>
                         </div>
+                    </div>
 
-                        <!-- Final Total -->
-                        <div class="d-flex justify-content-between align-items-center p-t-20 m-t-10" style="border-top: 2px solid #eee;">
-                            <span class="mtext-101 cl2">Total Amount Paid:</span>
-                            <span class="mtext-108 cl1" style="font-weight: 700; color: #111; font-size: 20px;">$@Model.TotalPrice.ToString("0.00")</span>
+                    <!-- Invoice Totals Summary -->
+                    <div class="row justify-content-end mb-4">
+                        <div class="col-md-5">
+                            <div class="p-3 bg-light" style="border-radius: 12px; border: 1px solid #eaeaea;">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted" style="font-size: 14px;">Subtotal:</span>
+                                    <span class="fw-semibold text-dark">$@Model.TotalPrice.ToString("0.00")</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted" style="font-size: 14px;">Shipping:</span>
+                                    <span class="fw-semibold text-success">Free</span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark" style="font-size: 16px;">Total Paid:</span>
+                                    <span class="fw-bold" style="color: #c9aa6f; font-size: 20px;">$@Model.TotalPrice.ToString("0.00")</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Shipping Address Info -->
-                    <div class="p-tb-15 p-lr-20 bg-light m-b-35" style="border-radius: 8px;">
-                        <span class="stext-102 cl6 block" style="font-weight: 600;">Delivery Address:</span>
-                        <span class="stext-111 cl2">@Model.Location</span>
+                    <!-- Invoice Footer Note -->
+                    <div class="text-center pt-3 border-top text-muted" style="font-size: 12px;">
+                        <p class="mb-1">Thank you for shopping with Rolexyal! For any inquiries, contact support@rolexyal.com</p>
+                        <p class="mb-0">This is a computer-generated invoice and requires no signature.</p>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex-w flex-c-m w-full" style="gap: 15px;">
-                        <a asp-controller="Home" asp-action="Index" class="flex-c-m stext-101 cl0 size-119 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none;">
-                            Back To Home
-                        </a>
-                        <a asp-controller="Customer" asp-action="OrderHistory" class="flex-c-m stext-101 cl2 size-119 bg2 bor13 hov-btn3 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none;">
-                            View All Orders
+                </div>
+
+                <!-- Action Buttons (Hidden when printing) -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4 print-hide">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                        <i class="fa fa-arrow-left m-r-5"></i> Back To Home
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button onclick="window.print();" class="btn btn-outline-dark px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                            <i class="fa fa-print m-r-5"></i> Print Invoice
+                        </button>
+                        <a asp-controller="Customer" asp-action="OrderHistory" class="btn px-4 py-2 text-dark fw-bold shadow-sm" style="border-radius: 20px; background-color: #c9aa6f; border: none;">
+                            View All Orders <i class="fa fa-list m-l-5"></i>
                         </a>
                     </div>
-
                 </div>
 
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <style>
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printableInvoice, #printableInvoice * {
+                visibility: visible;
+            }
+
+            #printableInvoice {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            .print-hide {
+                display: none !important;
+            }
+        }
+    </style>
+}

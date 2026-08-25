@@ -19,22 +19,22 @@
     string? selectedSubCategoryName = selectedSubCategoryId.HasValue
         ? categories.SelectMany(c => c.SubCategories).FirstOrDefault(sc => sc.SubCategoryId == selectedSubCategoryId.Value)?.SubCategoryName
         : null;
-    // جلب معرفات المنتجات المفضلة للعميل الحالي لتمييز الأيقونة
-    var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
 
+    var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
 }
 
+<!-- Title Banner -->
 <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('/images/bg-01.jpg');">
-    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
-        OUR SHOP
+    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 3px; color: #222;">
+        OUR COLLECTION
     </h2>
 </section>
 
-<div class="bg0 m-t-60 p-b-140">
+<div class="bg0 m-t-40 p-b-140">
     <div class="container">
 
-        <!-- Category / SubCategory Nav (hover to reveal subcategories) -->
-        <div class="shop-cat-nav p-b-30">
+        <!-- Category / SubCategory Nav -->
+        <div class="shop-cat-nav p-b-25 mb-4 border-bottom">
             <ul class="shop-cat-nav-list">
                 <li class="@(selectedCategoryId == null ? "active" : "")">
                     <a asp-controller="Home" asp-action="Shop">All Products</a>
@@ -51,14 +51,14 @@
 
                         @if (subCategories.Any())
                         {
-                            <ul class="shop-subcat-dropdown">
+                            <ul class="shop-subcat-dropdown shadow-lg">
                                 @foreach (var subCategory in subCategories)
                                 {
                                     <li class="@(selectedSubCategoryId == subCategory.SubCategoryId ? "active" : "")">
                                         <a asp-controller="Home" asp-action="Shop"
                                            asp-route-categoryId="@category.CategoryId"
                                            asp-route-subCategoryId="@subCategory.SubCategoryId">
-                                            @subCategory.SubCategoryName
+                                            <i class="fa fa-angle-right m-r-5 text-muted"></i> @subCategory.SubCategoryName
                                         </a>
                                     </li>
                                 }
@@ -69,73 +69,74 @@
             </ul>
         </div>
 
-        <div class="flex-w flex-sb-m p-b-30">
+        <!-- Controls & Active Filters Bar -->
+        <div class="flex-w flex-sb-m p-b-35">
 
             <!-- Active filter summary -->
-            <div class="stext-102 cl6">
+            <div class="stext-102 cl6 d-flex align-items-center flex-wrap gap-2">
                 @if (selectedCategoryName != null || selectedSubCategoryName != null || !string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    <span>Showing:</span>
+                    <span class="fw-semibold text-dark">Showing:</span>
                     @if (selectedCategoryName != null)
                     {
-                        <span class="badge bg-secondary m-l-8">@selectedCategoryName</span>
+                        <span class="badge bg-dark text-warning px-3 py-2" style="border-radius: 20px;">@selectedCategoryName</span>
                     }
                     @if (selectedSubCategoryName != null)
                     {
-                        <span class="badge bg-secondary m-l-8">@selectedSubCategoryName</span>
+                        <span class="badge bg-secondary text-white px-3 py-2" style="border-radius: 20px;">@selectedSubCategoryName</span>
                     }
                     @if (!string.IsNullOrWhiteSpace(searchTerm))
                     {
-                        <span class="badge bg-secondary m-l-8">"@searchTerm"</span>
+                        <span class="badge bg-light text-dark border px-3 py-2" style="border-radius: 20px;">"@searchTerm"</span>
                     }
                 }
                 else
                 {
-                    <span>Showing all products</span>
+                    <span class="text-muted" style="font-size: 14px;">Showing all exquisite products</span>
                 }
             </div>
 
-            <div class="flex-w flex-c-m m-tb-10">
-                <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
+            <!-- Filter & Search Trigger Buttons -->
+            <div class="flex-w flex-c-m m-tb-10 gap-2">
+                <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-filter px-4" style="border-radius: 25px;">
                     <i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
                     <i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
                     Filter
                 </div>
 
-                <div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
+                <div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search px-4" style="border-radius: 25px;">
                     <i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
                     <i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
                     Search
                 </div>
             </div>
 
-            <!-- Search product -->
-            <div class="dis-none panel-search w-full p-t-10 p-b-15">
-                <form asp-controller="Home" asp-action="Shop" method="get" class="bor8 dis-flex p-l-15">
+            <!-- Search product Panel -->
+            <div class="dis-none panel-search w-full p-t-15 p-b-15">
+                <form asp-controller="Home" asp-action="Shop" method="get" class="bor8 dis-flex p-l-15 bg-light" style="border-radius: 30px; overflow: hidden;">
                     <input type="hidden" name="categoryId" value="@selectedCategoryId" />
                     <input type="hidden" name="subCategoryId" value="@selectedSubCategoryId" />
 
-                    <button type="submit" class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
+                    <button type="submit" class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04 border-0 bg-transparent">
                         <i class="zmdi zmdi-search"></i>
                     </button>
 
-                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="searchTerm" value="@searchTerm" placeholder="Search products...">
+                    <input class="mtext-107 cl2 size-114 plh2 p-r-15 border-0 bg-transparent" type="text" name="searchTerm" value="@searchTerm" placeholder="Search luxury items...">
                 </form>
             </div>
 
             <!-- Filter Panel -->
-            <div class="dis-none panel-filter w-full p-t-10">
-                <form asp-controller="Home" asp-action="Shop" method="get" class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-b-27 p-lr-15-sm">
+            <div class="dis-none panel-filter w-full p-t-15">
+                <form asp-controller="Home" asp-action="Shop" method="get" class="wrap-filter flex-w bg-light w-full p-lr-40 p-t-30 p-b-30 p-lr-15-sm shadow-sm" style="border-radius: 16px; border: 1px solid #eaeaea;">
                     <input type="hidden" name="categoryId" value="@selectedCategoryId" />
                     <input type="hidden" name="subCategoryId" value="@selectedSubCategoryId" />
                     <input type="hidden" name="searchTerm" value="@searchTerm" />
 
                     <div class="filter-col1 p-r-40 p-b-15">
-                        <div class="mtext-102 cl2 p-b-15">
+                        <div class="mtext-102 cl2 p-b-10 fw-bold">
                             Sort By
                         </div>
-
-                        <select name="sort" class="form-control" style="min-width: 200px;">
+                        <select name="sort" class="form-select bg-white shadow-none" style="min-width: 220px; border-radius: 8px; padding: 10px;">
                             <option value="" selected="@(string.IsNullOrEmpty(sort))">Name: A to Z</option>
                             <option value="name_desc" selected="@(sort == "name_desc")">Name: Z to A</option>
                             <option value="price_asc" selected="@(sort == "price_asc")">Price: Low to High</option>
@@ -144,27 +145,25 @@
                     </div>
 
                     <div class="filter-col2 p-r-40 p-b-15">
-                        <div class="mtext-102 cl2 p-b-15">
-                            Price
+                        <div class="mtext-102 cl2 p-b-10 fw-bold">
+                            Price Range ($)
                         </div>
-
                         <div class="d-flex align-items-center gap-2">
-                            <input type="number" min="0" step="0.01" name="minPrice" value="@minPrice" class="form-control" placeholder="Min" style="width: 110px;" />
-                            <span>&ndash;</span>
-                            <input type="number" min="0" step="0.01" name="maxPrice" value="@maxPrice" class="form-control" placeholder="Max" style="width: 110px;" />
+                            <input type="number" min="0" step="0.01" name="minPrice" value="@minPrice" class="form-control bg-white shadow-none" placeholder="Min" style="width: 120px; border-radius: 8px;" />
+                            <span class="text-muted fw-bold">&ndash;</span>
+                            <input type="number" min="0" step="0.01" name="maxPrice" value="@maxPrice" class="form-control bg-white shadow-none" placeholder="Max" style="width: 120px; border-radius: 8px;" />
                         </div>
                     </div>
 
                     <div class="filter-col3 p-b-15 d-flex align-items-end gap-2">
-                        <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 trans-04">
-                            <i class="fa fa-filter m-r-8"></i>
-                            Apply
+                        <button type="submit" class="btn btn-dark px-4 py-2" style="border-radius: 20px; font-weight: 500; background-color: #1a1d20;">
+                            <i class="fa fa-filter m-r-5"></i> Apply Filter
                         </button>
 
                         <a asp-controller="Home" asp-action="Shop"
                            asp-route-categoryId="@selectedCategoryId"
                            asp-route-subCategoryId="@selectedSubCategoryId"
-                           class="flex-c-m stext-101 cl2 size-101 bg3 bor1 hov-btn1 p-lr-20">
+                           class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
                             Reset
                         </a>
                     </div>
@@ -172,12 +171,14 @@
             </div>
         </div>
 
-        <!-- Products Grid (Using _ProductCardPartial) -->
+        <!-- Products Grid -->
         @if (!Model.Any())
         {
             <div class="text-center py-5">
-                <div class="alert alert-info d-inline-block px-5 py-3">
-                    No products found.
+                <div class="alert alert-light border shadow-sm d-inline-block px-5 py-4" style="border-radius: 16px;">
+                    <i class="fa fa-box-open fa-2x text-muted mb-2"></i>
+                    <h5 class="text-dark fw-bold mb-1">No products found</h5>
+                    <p class="text-muted mb-0" style="font-size: 13px;">Try checking your filters or search terms.</p>
                 </div>
             </div>
         }
@@ -193,12 +194,12 @@
 
                     var cardData = new
                     {
-                        ProductId = product.ProductId,                          // <--- مهم جداً للـ AJAX
-                        IsInWishlist = userWishlistIds.Contains(product.ProductId), // <--- لتلوين القلب إذا كان مضافاً
+                        ProductId = product.ProductId,
+                        IsInWishlist = userWishlistIds.Contains(product.ProductId),
                         ImageUrl = Url.Content(imagePath),
                         Title = product.ProductName,
                         Subtitle = product.ProductPrice.ToString("C"),
-                        DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }), // <--- تم التعديل هنا ليطوجه إلى Product/Details
+                        DetailsUrl = Url.Action("Details", "Product", new { id = product.ProductId }),
                         ButtonText = "Quick View",
                         ShowAdminActions = User.IsInRole("Admin"),
                         EditUrl = Url.Action("Edit", "Product", new { id = product.ProductId }),
@@ -219,28 +220,28 @@
         list-style: none;
         margin: 0;
         padding: 0;
-        border-bottom: 1px solid #eee;
+        gap: 25px;
     }
 
         .shop-cat-nav-list > li {
             position: relative;
-            margin-right: 30px;
         }
 
             .shop-cat-nav-list > li > a {
                 display: inline-block;
-                padding: 12px 0;
+                padding: 8px 0;
                 font-size: 15px;
-                color: #333;
+                font-weight: 500;
+                color: #555;
                 text-decoration: none;
                 border-bottom: 2px solid transparent;
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
             }
 
             .shop-cat-nav-list > li:hover > a,
             .shop-cat-nav-list > li.active > a {
-                color: #c4a76b;
-                border-bottom-color: #c4a76b;
+                color: #c9aa6f;
+                border-bottom-color: #c9aa6f;
             }
 
     .shop-subcat-dropdown {
@@ -248,34 +249,48 @@
         position: absolute;
         top: 100%;
         left: 0;
-        min-width: 200px;
+        min-width: 220px;
         background: #fff;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        border-radius: 6px;
+        border: 1px solid #eaeaea;
+        border-radius: 12px;
         list-style: none;
-        margin: 0;
-        padding: 8px 0;
-        z-index: 50;
+        margin: 5px 0 0 0;
+        padding: 10px 0;
+        z-index: 100;
     }
 
     .shop-cat-item:hover .shop-subcat-dropdown {
         display: block;
+        animation: fadeIn 0.2s ease-in-out;
     }
 
     .shop-subcat-dropdown li a {
         display: block;
-        padding: 8px 18px;
+        padding: 8px 20px;
         font-size: 14px;
-        color: #555;
+        color: #666;
         text-decoration: none;
-        white-space: nowrap;
+        transition: all 0.2s ease;
     }
 
         .shop-subcat-dropdown li a:hover,
         .shop-subcat-dropdown li.active a {
-            background: #f8f5ee;
-            color: #c4a76b;
+            background: rgba(201, 170, 111, 0.08);
+            color: #c9aa6f;
+            padding-left: 24px;
         }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
     .block2-pic:hover .block2-btn {
         opacity: 1 !important;
