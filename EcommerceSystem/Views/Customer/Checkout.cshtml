@@ -5,7 +5,7 @@
 
 <div class="container m-t-60 p-b-140">
 <form id="checkoutForm" class="row">
-   <!-- Left Side: Order Items Review -->
+    <!-- Left Side: Order Items Review -->
     <div class="col-lg-7 m-b-50">
 
         <div class="bor10 p-lr-40 p-t-35 p-b-40" style="border-radius: 12px; background: #fff; border: 1px solid #e6e6e6;">
@@ -14,7 +14,6 @@
             <div class="table-responsive p-b-20">
                 <table style="width: 100%; border-collapse: collapse; min-width: 450px;">
                     <tr style="border-bottom: 2px solid #f2f2f2;">
-
                         <th style="padding: 15px; text-align: left; font-size: 13px; color: #555; width: 55%;">Product</th>
                         <th style="padding: 15px; text-align: center; font-size: 13px; color: #555; width: 20%;">Price</th>
                         <th style="padding: 15px; text-align: center; font-size: 13px; color: #555; width: 15%;">Qty</th>
@@ -133,12 +132,6 @@
                         <input class="stext-111 cl8 plh3 size-111 p-lr-15 bg0" style="border: 1px solid #e6e6e6; border-radius: 6px;" type="password" name="dummyCVV" placeholder="CVV" maxlength="4">
                     </div>
                 </div>
-                <div class="form-check m-t-10" style="padding-left: 25px;">
-                    <input class="form-check-input" type="checkbox" name="saveNewCard" id="saveNewCardCheck" value="true">
-                    <label class="form-check-label stext-111 cl6" for="saveNewCardCheck" style="cursor: pointer; font-size: 13px;">
-                        Save this card for future purchases
-                    </label>
-                </div>
             </div>
 
             <button type="submit" id="placeOrderBtn" class="flex-c-m stext-101 cl0 size-116 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="background-color: #c9aa6f; border-radius: 8px; font-weight: 700;">
@@ -148,7 +141,6 @@
     </div>
 </form>
 </div>
-
 
 @section Scripts {
  <script>
@@ -181,24 +173,19 @@
                     liveQuantities[id] = parseInt(input.value);
                 });
 
-                // THIS IS THE LINE THAT WAS MISSING!
                 const formData = new FormData(checkoutForm);
-
-                // Grab the raw values safely now that formData exists
                 const expireDate = formData.get("newCardExpire");
                 const cardId = formData.get("selectedCardId");
 
                 const payload = {
                     Location: formData.get("location"),
                     PaymentMethod: formData.get("paymentMethod"),
-                    // If empty string, send null so C# doesn't crash!
                     SelectedCardId: cardId ? cardId : null, 
                     NewCardHolderName: formData.get("newCardHolderName"),
                     NewCardNumber: formData.get("newCardNumber"),
-                    // If empty string, send null so C# doesn't crash!
                     NewCardExpire: expireDate ? expireDate : null, 
                     DummyCVV: formData.get("dummyCVV"),
-                    SaveNewCard: formData.get("saveNewCard") === "true",
+                    SaveNewCard: true, // حفظ البطاقة الجديدة تلقائياً
                     Quantities: liveQuantities 
                 };
 
@@ -211,7 +198,7 @@
                 .then(data => {
                     if (data.success) {
                         if (typeof showToast === 'function') showToast(data.message, "success");
-                        setTimeout(() => { window.location.href = '/Home/Index'; }, 2500); 
+                        setTimeout(() => { window.location.href = `/Customer/OrderConfirmation?id=${data.orderId}`; }, 1200);
                     } else {
                         if (typeof showToast === 'function') showToast(data.message, "error");
                         if (data.errors && data.errors.length > 0) {

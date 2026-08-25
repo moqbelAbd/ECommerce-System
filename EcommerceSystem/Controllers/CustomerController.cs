@@ -4,7 +4,6 @@ using EcommerceSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
@@ -34,22 +33,12 @@ namespace EcommerceSystem.Controllers
         {
             var query = _context.Products
                 .Where(p => !p.IsDeleted)
-
                 .Include(p => p.ProductBrand)
-
                 .Include(p => p.ProductModel)
-
                 .Include(p => p.ProductImages)
-
                 .Include(p => p.ProductSubCategories)
                     .ThenInclude(psc => psc.SubCategory)
-
                 .AsQueryable();
-
-
-            // =====================================================
-            // Category Filter
-            // =====================================================
 
             if (categoryId.HasValue)
             {
@@ -59,11 +48,6 @@ namespace EcommerceSystem.Controllers
                         psc.SubCategory.CategoryId == categoryId.Value));
             }
 
-
-            // =====================================================
-            // SubCategory Filter
-            // =====================================================
-
             if (subCategoryId.HasValue)
             {
                 query = query.Where(p =>
@@ -71,120 +55,60 @@ namespace EcommerceSystem.Controllers
                         psc.SubCategoryId == subCategoryId.Value));
             }
 
-
-            // =====================================================
-            // Search
-            // =====================================================
-
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 searchTerm = searchTerm.Trim();
-
                 query = query.Where(p =>
-                    p.ProductName.Contains(searchTerm)
-
-                    ||
-
-                    (p.ProductDescription != null &&
-                     p.ProductDescription.Contains(searchTerm))
-
-                    ||
-
-                    (p.ProductBrand != null &&
-                     p.ProductBrand.BrandName.Contains(searchTerm))
-
-                    ||
-
-                    (p.ProductModel != null &&
-                     p.ProductModel.ModelName.Contains(searchTerm))
-
-                    ||
-
-                    p.ProductSubCategories.Any(psc =>
-                        psc.SubCategory != null &&
-                        psc.SubCategory.SubCategoryName.Contains(searchTerm))
+                    p.ProductName.Contains(searchTerm) ||
+                    (p.ProductDescription != null && p.ProductDescription.Contains(searchTerm)) ||
+                    (p.ProductBrand != null && p.ProductBrand.BrandName.Contains(searchTerm)) ||
+                    (p.ProductModel != null && p.ProductModel.ModelName.Contains(searchTerm)) ||
+                    p.ProductSubCategories.Any(psc => psc.SubCategory != null && psc.SubCategory.SubCategoryName.Contains(searchTerm))
                 );
             }
 
-
-            // =====================================================
-            // Get Products
-            // =====================================================
-
-            var products = await query
-                .OrderBy(p => p.ProductName)
-                .ToListAsync();
-
-
-            // =====================================================
-            // Get Categories + SubCategories
-            // =====================================================
+            var products = await query.OrderBy(p => p.ProductName).ToListAsync();
 
             var categories = await _context.Categories
                 .Where(c => !c.IsDeleted)
                 .Include(c => c.SubCategories)
                 .ToListAsync();
 
-
-            // =====================================================
-            // ViewBag
-            // =====================================================
-
             ViewBag.Categories = categories;
-
             ViewBag.SelectedCategoryId = categoryId;
-
             ViewBag.SelectedSubCategoryId = subCategoryId;
-
             ViewBag.SearchTerm = searchTerm;
-
 
             return View(products);
         }
 
-
         // =========================================================
         // PUBLIC PRODUCT DETAILS
-        // Guest + Customer
         // =========================================================
-
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-                return NotFound();
-
+            if (id == null) return NotFound();
 
             var product = await _context.Products
                 .Where(p => !p.IsDeleted)
-
                 .Include(p => p.ProductBrand)
-
                 .Include(p => p.ProductModel)
-
                 .Include(p => p.ProductImages)
-
                 .Include(p => p.ProductReviews)
                     .ThenInclude(r => r.Customer)
-
                 .Include(p => p.ProductSubCategories)
                     .ThenInclude(psc => psc.SubCategory)
+                .FirstOrDefaultAsync(p => p.ProductId == id.Value);
 
-                .FirstOrDefaultAsync(p =>
-                    p.ProductId == id.Value);
-
-
-            if (product == null)
-                return NotFound();
-
+            if (product == null) return NotFound();
 
             return View(product);
         }
 
         // =========================================================
-        // ORDER HISTORY
+        // CUSTOMER ONLY - ORDER HISTORY
         // =========================================================
         [Authorize]
-        [HttpGet]
         public async Task<IActionResult> OrderHistory()
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -193,7 +117,6 @@ namespace EcommerceSystem.Controllers
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
             if (customer == null) return RedirectToAction("CompleteProfile");
 
-            // Fetch all orders for this customer, ordered by newest first
             var orders = await _context.Orders
                 .Include(o => o.OrderStatus)
                 .Where(o => o.CustomerId == customer.CustomerId)
@@ -216,7 +139,6 @@ namespace EcommerceSystem.Controllers
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
             if (customer == null) return RedirectToAction("CompleteProfile");
 
-            // Fetch the specific order, including its items, products, and images
             var order = await _context.Orders
                 .Include(o => o.OrderStatus)
                 .Include(o => o.Customer)
@@ -226,17 +148,41 @@ namespace EcommerceSystem.Controllers
                         .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(o => o.OrderId == id && o.CustomerId == customer.CustomerId);
 
-            // Ensure the order exists and belongs to the user
             if (order == null) return NotFound();
 
             return View(order);
         }
 
+        // =========================================================
+        // ORDER CONFIRMATION (Invoice)
+        // =========================================================
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> OrderConfirmation(Guid id)
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+            if (customer == null) return RedirectToAction("CompleteProfile");
+
+            var order = await _context.Orders
+                .Include(o => o.OrderStatus)
+                .Include(o => o.PaymentType)
+                .Include(o => o.Customer)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p.ProductImages)
+                .FirstOrDefaultAsync(o => o.OrderId == id && o.CustomerId == customer.CustomerId);
+
+            if (order == null) return NotFound();
+
+            return View(order);
+        }
 
         // =========================================================
         // COMPLETE PROFILE
         // =========================================================
-
         [Authorize]
         [HttpGet]
         public IActionResult CompleteProfile()
@@ -244,33 +190,21 @@ namespace EcommerceSystem.Controllers
             return View();
         }
 
-
-        // =========================================================
-        // COMPLETE PROFILE POST
-        // =========================================================
-
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompleteProfile(string firstName, string lastName, string location)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (userId == null)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            if (userId == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-
             if (existingCustomer != null)
             {
-                // If they already have a profile, just try merging their guest cart anyway and send them home
                 await MergeSessionCartToDatabaseAsync(existingCustomer.CustomerId);
                 return RedirectToAction("Index", "Home");
             }
 
-            // 1. Create the new profile
             var customer = new Customer
             {
                 ApplicationUserId = userId,
@@ -283,7 +217,6 @@ namespace EcommerceSystem.Controllers
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            // 2. NOW IT IS SAFE TO MERGE THE CART
             await MergeSessionCartToDatabaseAsync(customer.CustomerId);
 
             return RedirectToAction("Index", "Home");
@@ -291,14 +224,12 @@ namespace EcommerceSystem.Controllers
 
         private async Task MergeSessionCartToDatabaseAsync(Guid customerId)
         {
-            // 1. Check if there is anything in the guest cart
             var sessionCartStr = HttpContext.Session.GetString("GuestCart");
             if (string.IsNullOrEmpty(sessionCartStr)) return;
 
             var sessionItems = JsonSerializer.Deserialize<List<SessionCartItem>>(sessionCartStr);
             if (sessionItems == null || !sessionItems.Any()) return;
 
-            // 2. Find or Create their Database Cart using their new CustomerId
             var dbCart = await _context.Carts
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.CustomerId == customerId);
@@ -309,7 +240,6 @@ namespace EcommerceSystem.Controllers
                 _context.Carts.Add(dbCart);
             }
 
-            // 3. Merge the items
             foreach (var sessionItem in sessionItems)
             {
                 var existingDbItem = dbCart.CartItems.FirstOrDefault(ci => ci.ProductId == sessionItem.ProductId);
@@ -327,42 +257,25 @@ namespace EcommerceSystem.Controllers
                 }
             }
 
-            // 4. Save changes
             await _context.SaveChangesAsync();
-
-            // 5. CLEAR THE SESSION CART
             HttpContext.Session.Remove("GuestCart");
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Cart()
         {
             var cartViewModel = new CartViewModel();
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //if (userId == null)
-            //{
-            //    return RedirectToPage("/Account/Login", new { area = "Identity" });
-            //}
+            if (userId == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+            if (customer == null) return RedirectToAction("CompleteProfile");
 
-            //if (customer == null)
-            //{
-            //    return RedirectToAction("CompleteProfile");
-            //}
-
-            if (customer != null)
-            {
-
-                var cart = await _context.Carts
+            var cart = await _context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(ci => ci.Product)
                     .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
-            
 
             if (cart != null)
             {
@@ -370,11 +283,10 @@ namespace EcommerceSystem.Controllers
                 {
                     ProductId = ci.ProductId,
                     ProductName = ci.Product!.ProductName,
-                    ImageUrl = ci.Product.ProductImages.Select(img => img.ProductImagePath).FirstOrDefault() ?? "/images/products/default-product",
-                    Price = ci.Product.ProductPrice,        
+                    ImageUrl = ci.Product.ProductImages.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
+                    Price = ci.Product.ProductPrice,
                     Quantity = ci.ItemQuantity
                 }).ToList();
-            }
             }
             else
             {
@@ -382,20 +294,16 @@ namespace EcommerceSystem.Controllers
                 if (!string.IsNullOrEmpty(sessionCartStr))
                 {
                     var sessionItems = JsonSerializer.Deserialize<List<SessionCartItem>>(sessionCartStr);
-
                     foreach (var item in sessionItems!)
                     {
-                        var product = await _context.Products
-                            .Include(p => p.ProductImages)
-                            .FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
-                        
+                        var product = await _context.Products.Include(p => p.ProductImages).FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
                         if (product != null)
                         {
                             cartViewModel.Items.Add(new CartItemViewModel
                             {
                                 ProductId = product.ProductId,
                                 ProductName = product.ProductName,
-                                ImageUrl = product.ProductImages?.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
+                                ImageUrl = product.ProductImages.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
                                 Price = product.ProductPrice,
                                 Quantity = item.Quantity
                             });
@@ -407,7 +315,9 @@ namespace EcommerceSystem.Controllers
             return View(cartViewModel);
         }
 
-
+        // =========================================================
+        // CHECKOUT GET
+        // =========================================================
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Checkout()
@@ -415,21 +325,18 @@ namespace EcommerceSystem.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            // 1. Get Customer Data & Saved Cards
             var customer = await _context.Customers
                 .Include(c => c.CustomerPaymentCards.Where(card => !card.IsDeleted))
                 .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
             if (customer == null) return RedirectToAction("CompleteProfile");
 
-            // Decrypt cards
             foreach (var card in customer.CustomerPaymentCards)
             {
                 try { card.CardNumber = _protector.Unprotect(card.CardNumber); }
                 catch { card.CardNumber = "********"; }
             }
 
-            // 2. Get Cart Data
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(ci => ci.Product)
@@ -443,7 +350,7 @@ namespace EcommerceSystem.Controllers
                 Items = cart.CartItems.Select(ci => new CartItemViewModel
                 {
                     ProductId = ci.ProductId,
-                    ProductName = ci.Product!.ProductName, 
+                    ProductName = ci.Product!.ProductName,
                     ImageUrl = ci.Product.ProductImages.Select(img => img.ProductImagePath).FirstOrDefault() ?? "/images/products/default-product.jpg",
                     Price = ci.Product.ProductPrice,
                     Quantity = ci.ItemQuantity
@@ -459,14 +366,14 @@ namespace EcommerceSystem.Controllers
             return View(viewModel);
         }
 
+        // =========================================================
+        // PLACE ORDER POST (AJAX)
+        // =========================================================
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PlaceOrder([FromBody] PlaceOrderRequest request)
         {
-            if (request == null)
-            {
-                return Json(new { success = false, message = "Invalid data format received." });
-            }
+            if (request == null) return Json(new { success = false, message = "Invalid data format received." });
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
@@ -477,8 +384,7 @@ namespace EcommerceSystem.Controllers
                     .ThenInclude(ci => ci.Product)
                 .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
 
-            if (cart == null || !cart.CartItems.Any())
-                return Json(new { success = false, message = "Your cart is empty." });
+            if (cart == null || !cart.CartItems.Any()) return Json(new { success = false, message = "Your cart is empty." });
 
             if (request.Quantities != null)
             {
@@ -491,21 +397,18 @@ namespace EcommerceSystem.Controllers
                 }
             }
 
-            //  Verify Card Expiration Date for New Cards
             if (request.PaymentMethod == "Visa" && !request.SelectedCardId.HasValue)
             {
                 if (!request.NewCardExpire.HasValue || request.NewCardExpire.Value.Date < DateTime.Now.Date)
                 {
                     return Json(new { success = false, message = "Card expiration date is invalid or has expired." });
                 }
-
                 if (string.IsNullOrWhiteSpace(request.NewCardNumber))
                 {
                     return Json(new { success = false, message = "Please provide valid card details." });
                 }
             }
 
-            // 1. Validate Stock Constraints
             var stockErrors = new List<object>();
             decimal totalPrice = 0;
 
@@ -513,35 +416,26 @@ namespace EcommerceSystem.Controllers
             {
                 if (item.ItemQuantity > item.Product!.ProductQuantity)
                 {
-                    stockErrors.Add(new
-                    {
-                        productId = item.ProductId,
-                        message = $"Only {item.Product.ProductQuantity} in stock"
-                    });
+                    stockErrors.Add(new { productId = item.ProductId, message = $"Only {item.Product.ProductQuantity} in stock" });
                 }
                 totalPrice += (item.ItemQuantity * item.Product.ProductPrice);
             }
 
-            if (stockErrors.Any())
-            {
-                return Json(new { success = false, message = "Some items exceed available stock.", errors = stockErrors });
-            }
+            if (stockErrors.Any()) return Json(new { success = false, message = "Some items exceed available stock.", errors = stockErrors });
 
-            // 2. Create the Order
             var order = new Order
             {
                 CustomerId = customer.CustomerId,
                 TotalPrice = totalPrice,
                 Location = string.IsNullOrWhiteSpace(request.Location) ? customer.Location : request.Location,
-                OrderStatusId = 1, // Example: 1 = Pending
-                PaymentStatusId = 1, // Example: 1 = Unpaid
-                PaymentTypeId = request.PaymentMethod == "Visa" ? 2 : 1, // Example: 1 = Cash, 2 = Visa
+                OrderStatusId = 1,
+                PaymentStatusId = 1,
+                PaymentTypeId = request.PaymentMethod == "Visa" ? 2 : 1,
                 CreatedAt = DateTime.Now
             };
 
             _context.Orders.Add(order);
 
-            // 3. Create Order Items & Deduct Stock
             foreach (var item in cart.CartItems)
             {
                 var orderItem = new OrderItem
@@ -552,44 +446,31 @@ namespace EcommerceSystem.Controllers
                     ItemTotalPrice = item.ItemQuantity * item.Product!.ProductPrice
                 };
                 _context.OrderItems.Add(orderItem);
-
-                // Deduct from inventory
                 item.Product.ProductQuantity -= item.ItemQuantity;
             }
 
-            // 4. Handle Save New Card
-            if (request.PaymentMethod == "Visa" && request.SaveNewCard && !string.IsNullOrEmpty(request.NewCardNumber))
+            // حفظ البطاقة الجديدة تلقائياً إذا اختار الفيزا ولم يقم باختيار بطاقة محفوظة مسبقاً
+            if (request.PaymentMethod == "Visa" && !request.SelectedCardId.HasValue && !string.IsNullOrEmpty(request.NewCardNumber))
             {
-                // Encrypt the card number exactly like you do in AddPaymentCard
                 string encryptedCardNumber = _protector.Protect(request.NewCardNumber);
-
                 var newCard = new CustomerPaymentCard
                 {
                     PaymentCardId = Guid.NewGuid(),
                     CardHolderName = request.NewCardHolderName ?? string.Empty,
                     CardNumber = encryptedCardNumber,
-
-                    // Safely convert DateTime? to DateOnly
-                    CardExpire = request.NewCardExpire.HasValue
-                        ? DateOnly.FromDateTime(request.NewCardExpire.Value)
-                        : DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
-
+                    CardExpire = request.NewCardExpire.HasValue ? DateOnly.FromDateTime(request.NewCardExpire.Value) : DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
                     CustomerId = customer.CustomerId,
                     IsDeleted = false
                 };
-
                 _context.CustomerPaymentCards.Add(newCard);
             }
 
-            // 5. Empty the Cart
             _context.CartItems.RemoveRange(cart.CartItems);
-
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Order placed successfully!" });
+            // إرجاع الـ orderId مع حالة النجاح لكي يتم توجيه العميل لصفحة الفاتورة مباشرة
+            return Json(new { success = true, message = "Order placed successfully!", orderId = order.OrderId });
         }
-
-        // Simple DTO class to catch the AJAX JSON payload
         public class PlaceOrderRequest
         {
             public string Location { get; set; } = string.Empty;
@@ -606,43 +487,27 @@ namespace EcommerceSystem.Controllers
         // =========================================================
         // CUSTOMER PAYMENT CARDS
         // =========================================================
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> PaymentCards()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            if (userId == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             var customer = await _context.Customers
                 .Include(c => c.CustomerPaymentCards.Where(card => !card.IsDeleted))
                 .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
-            if (customer == null)
+            if (customer == null) return RedirectToAction("CompleteProfile");
+
+            foreach (var card in customer.CustomerPaymentCards)
             {
-                return RedirectToAction("CompleteProfile");
-            }
-            else
-            {
-                foreach (var card in customer.CustomerPaymentCards)
-                {
-                    try
-                    {
-                        card.CardNumber = _protector.Unprotect(card.CardNumber);
-                    }
-                    catch
-                    {
-                        card.CardNumber = "********";
-                    }
-                }
+                try { card.CardNumber = _protector.Unprotect(card.CardNumber); }
+                catch { card.CardNumber = "********"; }
             }
 
             return View(customer);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -651,17 +516,11 @@ namespace EcommerceSystem.Controllers
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-
-            if (customer == null)
-            {
-                return RedirectToAction("CompleteProfile");
-            }
+            if (customer == null) return RedirectToAction("CompleteProfile");
 
             if (!string.IsNullOrWhiteSpace(cardNumber))
             {
-                // تشفير رقم البطاقة قبل حفظه في قاعدة البيانات لأمان تام
                 string encryptedCardNumber = _protector.Protect(cardNumber);
-
                 var newCard = new CustomerPaymentCard
                 {
                     PaymentCardId = Guid.NewGuid(),
@@ -674,15 +533,11 @@ namespace EcommerceSystem.Controllers
 
                 _context.CustomerPaymentCards.Add(newCard);
                 await _context.SaveChangesAsync();
-
                 TempData["SuccessMessage"] = "Payment card added securely!";
             }
 
             return RedirectToAction(nameof(PaymentCards));
         }
-        // =========================================================
-        // DELETE PAYMENT CARD
-        // =========================================================
 
         [Authorize]
         [HttpPost]
@@ -690,21 +545,16 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> DeletePaymentCard(Guid cardId)
         {
             var card = await _context.CustomerPaymentCards.FindAsync(cardId);
-
             if (card != null)
             {
                 card.IsDeleted = true;
                 _context.CustomerPaymentCards.Update(card);
                 await _context.SaveChangesAsync();
-
                 TempData["SuccessMessage"] = "Payment card removed successfully!";
             }
 
             return RedirectToAction(nameof(PaymentCards));
         }
-        // =========================================================
-        // CUSTOMER WISHLIST PAGE
-        // =========================================================
 
         [Authorize]
         [HttpGet]
