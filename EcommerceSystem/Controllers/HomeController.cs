@@ -24,6 +24,11 @@ namespace EcommerceSystem.Controllers
         {
             var featuredProducts = await _context.Products
                 .Where(p => !p.IsDeleted && p.ProductQuantity >= 1)
+                .Where(p => p.ProductSubCategories.Any(psc =>
+                    psc.SubCategory != null &&
+                    !psc.SubCategory.IsDeleted &&
+                    psc.SubCategory.Category != null &&
+                    !psc.SubCategory.Category.IsDeleted))
                 .Include(p => p.ProductImages)
                 .OrderBy(p => p.ProductName)
                 .Take(8)
@@ -104,7 +109,7 @@ namespace EcommerceSystem.Controllers
                     TestimonialId = Guid.NewGuid(),
                     CustomerTestimonial = customerTestimonial,
                     CustomerId = customer.CustomerId,
-                    IsApproved = false // تبدأ كـ غير معتمدة لحين موافقة الأدمن
+                    IsApproved = false 
                 };
 
                 _context.Testimonials.Add(testimonial);
@@ -145,25 +150,35 @@ namespace EcommerceSystem.Controllers
     string? sort)
         {
             var query = _context.Products
-                .Where(p => !p.IsDeleted && p.ProductQuantity >= 1)
-                .Include(p => p.ProductImages)
-                .Include(p => p.ProductSubCategories)
-                    .ThenInclude(psc => psc.SubCategory)
-                .AsQueryable();
+      .Where(p => !p.IsDeleted && p.ProductQuantity >= 1)
+      // ADDED: Product must belong to at least one active SubCategory AND active Category
+      .Where(p => p.ProductSubCategories.Any(psc =>
+          psc.SubCategory != null &&
+          !psc.SubCategory.IsDeleted &&
+          psc.SubCategory.Category != null &&
+          !psc.SubCategory.Category.IsDeleted))
+      .Include(p => p.ProductImages)
+      .Include(p => p.ProductSubCategories)
+          .ThenInclude(psc => psc.SubCategory)
+      .AsQueryable();
 
             if (categoryId.HasValue)
             {
                 query = query.Where(p =>
                     p.ProductSubCategories.Any(psc =>
                         psc.SubCategory != null &&
-                        psc.SubCategory.CategoryId == categoryId.Value));
+                        psc.SubCategory.CategoryId == categoryId.Value &&
+                        !psc.SubCategory.IsDeleted &&
+                        !psc.SubCategory.Category.IsDeleted));
             }
 
             if (subCategoryId.HasValue)
             {
                 query = query.Where(p =>
                     p.ProductSubCategories.Any(psc =>
-                        psc.SubCategoryId == subCategoryId.Value));
+                        psc.SubCategoryId == subCategoryId.Value &&
+                        !psc.SubCategory.IsDeleted &&
+                        !psc.SubCategory.Category.IsDeleted));
             }
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -211,12 +226,12 @@ namespace EcommerceSystem.Controllers
                 if (customer != null)
                 {
                     userWishlistIds = await _context.Wishlists
-    .Where(w => w.CustomerId == customer.CustomerId)
-    .SelectMany(w => w.WishlistItems)
-    .Select(wi => wi.ProductId)
-    .ToListAsync();
-                }
-            }
+                .Where(w => w.CustomerId == customer.CustomerId)
+                .SelectMany(w => w.WishlistItems)
+                .Select(wi => wi.ProductId)
+                .ToListAsync();
+                            }
+                        }
 
             ViewBag.Categories = categories;
             ViewBag.SelectedCategoryId = categoryId;
