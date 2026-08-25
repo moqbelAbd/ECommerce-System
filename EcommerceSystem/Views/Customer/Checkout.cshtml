@@ -166,7 +166,6 @@
 
                 document.querySelectorAll('[id^="stock-error-"]').forEach(el => el.innerText = '');
 
-                // Gather the live quantities from the UI
                 const liveQuantities = {};
                 document.querySelectorAll('.num-product').forEach(input => {
                     const id = input.getAttribute("data-product-id");
@@ -185,7 +184,7 @@
                     NewCardNumber: formData.get("newCardNumber"),
                     NewCardExpire: expireDate ? expireDate : null, 
                     DummyCVV: formData.get("dummyCVV"),
-                    SaveNewCard: true, // حفظ البطاقة الجديدة تلقائياً
+                    SaveNewCard: true, 
                     Quantities: liveQuantities 
                 };
 
@@ -218,8 +217,7 @@
                 });
             });
         }
-        
-        // Remove Item AJAX
+
         document.body.addEventListener("click", function(e) {
             const removeBtn = e.target.closest(".ajax-remove-btn");
             if (!removeBtn) return;

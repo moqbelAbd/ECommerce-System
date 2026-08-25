@@ -32,6 +32,8 @@ namespace EcommerceSystem.Controllers
             ViewBag.TotalProducts = await _context.Products.CountAsync(p => !p.IsDeleted);
             ViewBag.TotalCategories = await _context.Categories.CountAsync(c => !c.IsDeleted);
 
+            ViewBag.TotalSubCategories = await _context.SubCategories.CountAsync(sc => !sc.IsDeleted);
+
             var totalRevenue = await _context.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
             var totalOrders = await _context.Orders.CountAsync();
             var totalCustomers = await _context.Customers.CountAsync(c => !c.IsDeleted);
@@ -72,7 +74,6 @@ namespace EcommerceSystem.Controllers
                 .Take(5)
                 .ToListAsync();
 
-            // --- Customers panel data ---
             var customerQuery = _context.Customers
                 .Where(c => !c.IsDeleted)
                 .AsQueryable();
@@ -105,7 +106,6 @@ namespace EcommerceSystem.Controllers
                 .ThenBy(c => c.LastName)
                 .ToListAsync();
 
-            // --- Orders panel data ---
             var orderQuery = _context.Orders
                 .Include(o => o.Customer)
                     .ThenInclude(c => c!.CustomerPhoneNumbers)
@@ -171,7 +171,7 @@ namespace EcommerceSystem.Controllers
             ViewBag.SelectedOrderStatusId = orderStatusId;
             ViewBag.SelectedPaymentStatusId = paymentStatusId;
 
-            ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "overview" : activeTab;
+            ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "orders" : activeTab;
 
             return View(recentOrders);
         }
@@ -215,7 +215,7 @@ namespace EcommerceSystem.Controllers
 
             return View(customers);
         }
-        // عرض جميع الـ Testimonials للأدمن
+
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Testimonials()
         {
@@ -226,8 +226,7 @@ namespace EcommerceSystem.Controllers
 
             return View(testimonials);
         }
-
-        // تبديل حالة الموافقة (Approval Toggle)
+        
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -243,7 +242,6 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction(nameof(Testimonials));
         }
 
-        // حذف رأي
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]

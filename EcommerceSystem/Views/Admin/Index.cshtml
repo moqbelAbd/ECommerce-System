@@ -3,14 +3,13 @@
 @model IEnumerable<Order>
 
 @{
-    ViewData["Title"] = "Admin Dashboard ";
+    ViewData["Title"] = "Admin Dashboard";
 
-    decimal totalRevenue = ViewBag.TotalRevenue;
-    int totalOrders = ViewBag.TotalOrders;
-    int totalCustomers = ViewBag.TotalCustomers;
-    int lowStockCount = ViewBag.LowStockCount;
-    decimal? revenueChangePercent = ViewBag.RevenueChangePercent;
-    decimal? ordersChangePercent = ViewBag.OrdersChangePercent;
+    int totalUsers = ViewBag.TotalUsers ?? ViewBag.TotalCustomers;
+    int totalCategories = ViewBag.TotalCategories ?? 0;
+    int totalSubCategories = ViewBag.TotalSubCategories ?? 0;
+    int totalProducts = ViewBag.TotalProducts ?? 0;
+    int lowStockCount = ViewBag.LowStockCount ?? 0;
 
     var customers = ViewBag.Customers as List<AdminCustomerListItem> ?? new List<AdminCustomerListItem>();
     string? customerSearch = ViewBag.CustomerSearch;
@@ -22,20 +21,20 @@
     int? selectedOrderStatusId = ViewBag.SelectedOrderStatusId;
     int? selectedPaymentStatusId = ViewBag.SelectedPaymentStatusId;
 
-    string activeTab = ViewBag.ActiveTab ?? "overview";
+    string activeTab = ViewBag.ActiveTab ?? "orders";
     string currentUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <div class="container py-5" style="margin-top: 40px; margin-bottom: 60px;">
 
     <!-- رأس لوحة التحكم -->
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 pb-3 border-bottom">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 pb-3" style="border-bottom: 2px solid #1a1d20;">
         <div>
-            <h2 class="fw-bold text-dark mb-1" style="letter-spacing: 1px;">Admin Dashboard</h2>
-            <p class="text-muted mb-0" style="font-size: 14px;">Welcome back, <span class="text-dark fw-semibold">@User.Identity?.Name</span>! Monitor store performance and recent orders.</p>
+            <h2 class="fw-bold mb-1" style="letter-spacing: 1px; color: #1a1d20;">Admin Dashboard</h2>
+            <p class="mb-0" style="font-size: 14px; color: #555;">Welcome back, <span class="fw-semibold" style="color: #1a1d20;">@User.Identity?.Name</span>! Monitor store metrics and manage operations.</p>
         </div>
         <div class="mt-3 mt-md-0">
-            <span class="badge bg-dark text-warning px-3 py-2" style="font-size: 13px; border-radius: 20px;">
+            <span class="badge px-3 py-2" style="font-size: 13px; border-radius: 20px; background-color: #1a1d20; color: #c9aa6f;">
                 <i class="fa fa-shield m-r-5"></i> Admin Privilege
             </span>
         </div>
@@ -43,250 +42,107 @@
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px;">
+        <div class="alert alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
             <i class="fa fa-check-circle m-r-5"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     <!-- كروت الإحصائيات (Stats Cards) -->
     <div class="row g-4 mb-5">
-        <!-- Total Revenue -->
+        <!-- Total Users -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: linear-gradient(135deg, #fff 0%, #fcfcfc 100%); border-left: 4px solid #c9aa6f !important;">
+            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: #fff; border-left: 4px solid #c9aa6f !important; border: 1px solid #1a1d20;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 500;">Total Revenue</span>
-                        <h3 class="fw-bold text-dark mb-2">@totalRevenue.ToString("C")</h3>
-                        @if (revenueChangePercent.HasValue)
-                        {
-                            <span class="badge @(revenueChangePercent >= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger")" style="font-size: 11px;">
-                                @(revenueChangePercent >= 0 ? "+" : "")@revenueChangePercent.Value.ToString("0.0")% last month
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="text-muted" style="font-size: 11px;">All-time revenue</span>
-                        }
+                        <span class="d-block mb-1" style="font-size: 13px; font-weight: 600; color: #555;">Total Users</span>
+                        <h3 class="fw-bold mb-2" style="color: #1a1d20;">@totalUsers</h3>
+                        <span style="font-size: 11px; color: #777;">Registered accounts</span>
                     </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(201, 170, 111, 0.1); color: #c9aa6f; font-size: 22px;">
-                        <i class="fa fa-dollar"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Watch Orders -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: linear-gradient(135deg, #fff 0%, #fcfcfc 100%); border-left: 4px solid #1a1d20 !important;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 500;">Total Orders</span>
-                        <h3 class="fw-bold text-dark mb-2">@totalOrders</h3>
-                        @if (ordersChangePercent.HasValue)
-                        {
-                            <span class="badge @(ordersChangePercent >= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger")" style="font-size: 11px;">
-                                @(ordersChangePercent >= 0 ? "+" : "")@ordersChangePercent.Value.ToString("0.0")% vs last month
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="text-muted" style="font-size: 11px;">Total orders placed</span>
-                        }
-                    </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(26, 29, 32, 0.08); color: #1a1d20; font-size: 22px;">
-                        <i class="fa fa-shopping-bag"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Customers -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: linear-gradient(135deg, #fff 0%, #fcfcfc 100%); border-left: 4px solid #0dcaf0 !important;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 500;">Customers</span>
-                        <h3 class="fw-bold text-dark mb-2">@totalCustomers</h3>
-                        <span class="text-muted" style="font-size: 11px;">Registered accounts</span>
-                    </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; font-size: 22px;">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(201, 170, 111, 0.15); color: #c9aa6f; font-size: 22px;">
                         <i class="fa fa-users"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Low Stock Items -->
+        <!-- Categories -->
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: linear-gradient(135deg, #fff 0%, #fcfcfc 100%); border-left: 4px solid #dc3545 !important;">
+            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: #fff; border-left: 4px solid #1a1d20 !important; border: 1px solid #1a1d20;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 500;">Low Stock Items</span>
-                        <h3 class="fw-bold text-danger mb-2">@lowStockCount</h3>
-                        <span class="text-danger" style="font-size: 11px;">Stock remaining &lt;= 5</span>
+                        <span class="d-block mb-1" style="font-size: 13px; font-weight: 600; color: #555;">Categories</span>
+                        <h3 class="fw-bold mb-2" style="color: #1a1d20;">@totalCategories</h3>
+                        <span style="font-size: 11px; color: #777;">Main store categories</span>
                     </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(220, 53, 69, 0.1); color: #dc3545; font-size: 22px;">
-                        <i class="fa fa-exclamation-triangle"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(26, 29, 32, 0.1); color: #1a1d20; font-size: 22px;">
+                        <i class="fa fa-tags"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Categories -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: #fff; border-left: 4px solid #c9aa6f !important; border: 1px solid #1a1d20;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="d-block mb-1" style="font-size: 13px; font-weight: 600; color: #555;">Sub Categories</span>
+                        <h3 class="fw-bold mb-2" style="color: #1a1d20;">@totalSubCategories</h3>
+                        <span style="font-size: 11px; color: #777;">Detailed sub-sections</span>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(201, 170, 111, 0.15); color: #c9aa6f; font-size: 22px;">
+                        <i class="fa fa-list-ul"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products & Low Stock -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: #fff; border-left: 4px solid #1a1d20 !important; border: 1px solid #1a1d20;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="d-block mb-1" style="font-size: 13px; font-weight: 600; color: #555;">Total Products</span>
+                        <h3 class="fw-bold mb-1" style="color: #1a1d20;">@totalProducts</h3>
+                        <span class="text-danger fw-semibold" style="font-size: 11px;">
+                            <i class="fa fa-exclamation-triangle"></i> @lowStockCount low stock (&lt;=5)
+                        </span>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(26, 29, 32, 0.1); color: #1a1d20; font-size: 22px;">
+                        <i class="fa fa-cube"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Dashboard Tabs -->
+    <!-- Dashboard Management Tabs -->
     <div class="dash-tabs mb-4">
-        <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
-            <i class="fa fa-home m-r-5"></i> Overview
+        <button type="button" class="dash-tab-btn @(activeTab == "orders" ? "active" : "")" data-tab="orders">
+            <i class="fa fa-list-alt m-r-5"></i> Manage Orders
         </button>
         <button type="button" class="dash-tab-btn @(activeTab == "customers" ? "active" : "")" data-tab="customers">
             <i class="fa fa-users m-r-5"></i> Manage Customers
         </button>
-        <button type="button" class="dash-tab-btn @(activeTab == "orders" ? "active" : "")" data-tab="orders">
-            <i class="fa fa-list-alt m-r-5"></i> Manage Orders
-        </button>
     </div>
 
-    <!-- ===================== OVERVIEW PANEL ===================== -->
-    <div class="dash-panel card border-0 shadow-sm p-4" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none"); border-radius: 16px;">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold text-dark mb-0" style="font-size: 20px;">Recent Watch Orders</h4>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table align-middle table-hover mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th class="py-3 px-3">Order ID</th>
-                        <th class="py-3 px-3">Customer</th>
-                        <th class="py-3 px-3">Total Price</th>
-                        <th class="py-3 px-3">Status</th>
-                        <th class="py-3 px-3 text-end">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (!Model.Any())
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">No orders found yet.</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        @foreach (var order in Model)
-                        {
-                            <tr>
-                                <td class="py-3 px-3 fw-semibold text-secondary">#@order.OrderId</td>
-                                <td class="py-3 px-3">
-                                    @(order.Customer == null ? "-" : $"{order.Customer.FirstName} {order.Customer.LastName}")
-                                </td>
-                                <td class="py-3 px-3 fw-bold text-dark">@order.TotalPrice.ToString("C")</td>
-                                <td class="py-3 px-3">
-                                    <span class="badge bg-info-subtle text-info border border-info px-2 py-1" style="font-size: 12px; border-radius: 6px;">
-                                        @(order.OrderStatus?.OrderStatusName ?? "-")
-                                    </span>
-                                </td>
-                                <td class="py-3 px-3 text-end">
-                                    <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-dark" style="border-radius: 20px; padding: 5px 15px;">
-                                        <i class="fa fa-eye m-r-5"></i> View
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ===================== CUSTOMERS PANEL ===================== -->
-    <div class="dash-panel card border-0 shadow-sm p-4" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none"); border-radius: 16px;">
+    <!--ORDERS PANEL -->
+    <div class="dash-panel card border-0 shadow-sm p-4" data-panel="orders" style="display:@(activeTab == "orders" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">
 
         <!-- Filter Form -->
-        <div class="p-4 mb-4 bg-light" style="border-radius: 12px; border: 1px solid #eaeaea;">
-            <form asp-controller="Admin" asp-action="Index" method="get">
-                <input type="hidden" name="activeTab" value="customers" />
-
-                <div class="row align-items-end">
-                    <div class="col-md-8 mb-3 mb-md-0">
-                        <label class="form-label fw-semibold text-secondary" style="font-size: 13px;">Search Customers</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
-                            <input type="text" name="customerSearch" value="@customerSearch" class="form-control border-start-0 bg-white" placeholder="Search by name, phone, or location..." />
-                        </div>
-                    </div>
-                    <div class="col-md-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-dark w-100 py-2" style="border-radius: 8px; font-weight: 500; background-color: #1a1d20;">
-                            <i class="fa fa-filter m-r-5"></i> Filter
-                        </button>
-                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="customers" class="btn btn-outline-secondary w-100 py-2" style="border-radius: 8px; font-weight: 500;">
-                            Clear
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="mb-3">
-            <span class="text-muted" style="font-size: 14px;">Showing <strong class="text-dark">@customers.Count</strong> customer(s)</span>
-        </div>
-
-        @if (!customers.Any())
-        {
-            <div class="text-center py-5 bg-light" style="border-radius: 12px;">
-                <i class="fa fa-users fa-3x text-muted mb-3"></i>
-                <h5 class="text-dark fw-bold">No customers found</h5>
-                <p class="text-muted mb-0">Try adjusting your search criteria.</p>
-            </div>
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table align-middle table-hover mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="py-3 px-3">Customer ID</th>
-                            <th class="py-3 px-3">Phone Number</th>
-                            <th class="py-3 px-3">Name</th>
-                            <th class="py-3 px-3">Location</th>
-                            <th class="py-3 px-3 text-center">Orders</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var customer in customers)
-                        {
-                            <tr>
-                                <td class="py-3 px-3 font-monospace text-muted" style="font-size: 13px;">@customer.CustomerId</td>
-                                <td class="py-3 px-3">@(customer.PhoneNumber ?? "-")</td>
-                                <td class="py-3 px-3"><strong class="text-dark">@customer.FullName</strong></td>
-                                <td class="py-3 px-3">@(customer.Location ?? "-")</td>
-                                <td class="py-3 px-3 text-center">
-                                    <span class="badge bg-secondary px-2 py-1" style="border-radius: 6px;">@customer.OrderCount</span>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-    </div>
-
-    <!-- ===================== ORDERS PANEL ===================== -->
-    <div class="dash-panel card border-0 shadow-sm p-4" data-panel="orders" style="display:@(activeTab == "orders" ? "block" : "none"); border-radius: 16px;">
-
-        <!-- Filter Form -->
-        <div class="p-4 mb-4 bg-light" style="border-radius: 12px; border: 1px solid #eaeaea;">
+        <div class="p-4 mb-4" style="border-radius: 12px; border: 1px solid #1a1d20; background-color: #fcfcfc;">
             <form asp-controller="Admin" asp-action="Index" method="get">
                 <input type="hidden" name="activeTab" value="orders" />
 
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label fw-semibold text-secondary" style="font-size: 13px;">Search Orders</label>
-                        <input type="text" name="orderSearch" value="@orderSearch" class="form-control bg-white" placeholder="Customer name, phone, location..." />
+                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Search Orders</label>
+                        <input type="text" name="orderSearch" value="@orderSearch" class="form-control bg-white custom-dropdown" placeholder="Customer name, phone, location..." />
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold text-secondary" style="font-size: 13px;">Order Status</label>
-                        <select name="orderStatusId" class="form-control bg-white">
+                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Order Status</label>
+                        <select name="orderStatusId" class="form-select custom-dropdown">
                             <option value="">All Statuses</option>
                             @foreach (var status in orderStatuses)
                             {
@@ -295,8 +151,8 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold text-secondary" style="font-size: 13px;">Payment Status</label>
-                        <select name="paymentStatusId" class="form-control bg-white">
+                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Payment Status</label>
+                        <select name="paymentStatusId" class="form-select custom-dropdown">
                             <option value="">All Payment Statuses</option>
                             @foreach (var status in paymentStatuses)
                             {
@@ -305,22 +161,22 @@
                         </select>
                     </div>
                     <div class="col-md-2 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-dark w-100 py-2" style="border-radius: 8px; background-color: #1a1d20;">Filter</button>
-                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="orders" class="btn btn-outline-secondary w-100 py-2" style="border-radius: 8px;">Clear</a>
+                        <button type="submit" class="btn w-100 py-2 fw-bold" style="border-radius: 8px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">Filter</button>
+                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="orders" class="btn btn-outline-dark w-100 py-2 fw-semibold" style="border-radius: 8px;">Clear</a>
                     </div>
                 </div>
             </form>
         </div>
 
         <div class="mb-3">
-            <span class="text-muted" style="font-size: 14px;">Showing <strong class="text-dark">@orders.Count</strong> order(s)</span>
+            <span style="font-size: 14px; color: #555;">Showing <strong style="color: #1a1d20;">@orders.Count</strong> order(s)</span>
         </div>
 
         @if (!orders.Any())
         {
-            <div class="text-center py-5 bg-light" style="border-radius: 12px;">
-                <i class="fa fa-box-open fa-3x text-muted mb-3"></i>
-                <h5 class="text-dark fw-bold">No orders found</h5>
+            <div class="text-center py-5" style="border-radius: 12px; background-color: #fcfcfc; border: 1px solid #eaeaea;">
+                <i class="fa fa-box-open fa-3x mb-3" style="color: #c9aa6f;"></i>
+                <h5 class="fw-bold" style="color: #1a1d20;">No orders found</h5>
                 <p class="text-muted mb-0">Try clearing or changing your filters.</p>
             </div>
         }
@@ -328,34 +184,38 @@
         {
             <div class="table-responsive">
                 <table class="table align-middle table-hover mb-0">
-                    <thead class="table-dark">
+                    <thead style="background-color: #1a1d20; color: #fff;">
                         <tr>
-                            <th class="py-3 px-2">Order ID</th>
-                            <th class="py-3 px-2">Customer</th>
-                            <th class="py-3 px-2">Phone</th>
-                            <th class="py-3 px-2">Location</th>
-                            <th class="py-3 px-2">Total Price</th>
-                            <th class="py-3 px-2">Payment</th>
-                            <th class="py-3 px-2" style="min-width: 150px;">Order Status</th>
-                            <th class="py-3 px-2 text-end">Action</th>
+                            <th class="py-3 px-2 text-white">Order ID</th>
+                            <th class="py-3 px-2 text-white">Customer</th>
+                            <th class="py-3 px-2 text-white">Phone</th>
+                            <th class="py-3 px-2 text-white">Location</th>
+                            <th class="py-3 px-2 text-white">Total Price</th>
+                            <th class="py-3 px-2 text-white">Payment</th>
+                            <th class="py-3 px-2 text-white" style="min-width: 150px;">Order Status</th>
+                            <th class="py-3 px-2 text-end text-white">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var order in orders)
                         {
-                            <tr>
-                                <td class="py-3 px-2 fw-semibold text-secondary">#@order.OrderId</td>
-                                <td class="py-3 px-2">@order.CustomerName</td>
-                                <td class="py-3 px-2">@(order.CustomerPhoneNumber ?? "-")</td>
-                                <td class="py-3 px-2">@(order.Location ?? "-")</td>
-                                <td class="py-3 px-2 fw-bold text-dark">@order.TotalPrice.ToString("C")</td>
-                                <td class="py-3 px-2"><span class="badge bg-light text-dark border">@order.PaymentStatusName</span></td>
+                            <tr style="border-bottom: 1px solid #eaeaea;">
+                                <td class="py-3 px-2 fw-semibold" style="color: #1a1d20;">#@order.OrderId</td>
+                                <td class="py-3 px-2" style="color: #1a1d20;">@order.CustomerName</td>
+                                <td class="py-3 px-2" style="color: #1a1d20;">@(order.CustomerPhoneNumber ?? "-")</td>
+                                <td class="py-3 px-2" style="color: #1a1d20;">@(order.Location ?? "-")</td>
+                                <td class="py-3 px-2 fw-bold" style="color: #1a1d20;">@order.TotalPrice.ToString("C")</td>
+                                <td class="py-3 px-2">
+                                    <span class="badge px-3 py-2 fw-semibold" style="background-color: #f8f9fa; color: #1a1d20; border: 1px solid #1a1d20; border-radius: 8px; font-size: 12px;">
+                                        <i class="fa fa-credit-card m-r-4 text-warning"></i> @order.PaymentStatusName
+                                    </span>
+                                </td>
                                 <td class="py-3 px-2">
                                     <form asp-controller="Order" asp-action="UpdateStatus" method="post">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
                                         <input type="hidden" name="returnUrl" value="@currentUrl" />
-                                        <select name="orderStatusId" class="form-select form-select-sm" onchange="this.form.submit()" style="border-radius: 6px; font-size: 13px;">
+                                        <select name="orderStatusId" class="form-select form-select-sm fw-semibold custom-dropdown" onchange="this.form.submit()" style="font-size: 13px;">
                                             @foreach (var status in orderStatuses)
                                             {
                                                 <option value="@status.OrderStatusId" selected="@(status.OrderStatusId == order.OrderStatusId)">@status.OrderStatusName</option>
@@ -364,7 +224,7 @@
                                     </form>
                                 </td>
                                 <td class="py-3 px-2 text-end">
-                                    <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-secondary" style="border-radius: 20px; padding: 4px 12px;">
+                                    <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm fw-semibold" style="border-radius: 20px; padding: 4px 12px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
                                         <i class="fa fa-eye"></i> Preview
                                     </a>
                                 </td>
@@ -375,43 +235,127 @@
             </div>
         }
     </div>
+
+    <!-- ===================== CUSTOMERS PANEL ===================== -->
+    <div class="dash-panel card border-0 shadow-sm p-4" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">
+        
+        <!-- Filter Form -->
+        <div class="p-4 mb-4" style="border-radius: 12px; border: 1px solid #1a1d20; background-color: #fcfcfc;">
+            <form asp-controller="Admin" asp-action="Index" method="get">
+                <input type="hidden" name="activeTab" value="customers" />
+
+                <div class="row align-items-end">
+                    <div class="col-md-8 mb-3 mb-md-0">
+                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Search Customers</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border-color: #1a1d20;"><i class="fa fa-search" style="color: #c9aa6f;"></i></span>
+                            <input type="text" name="customerSearch" value="@customerSearch" class="form-control border-start-0 bg-white" placeholder="Search by name, phone, or location..." style="border-color: #1a1d20;" />
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn w-100 py-2 fw-bold" style="border-radius: 8px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
+                            <i class="fa fa-filter m-r-5"></i> Filter
+                        </button>
+                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="customers" class="btn btn-outline-dark w-100 py-2 fw-semibold" style="border-radius: 8px;">
+                            Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="mb-3">
+            <span style="font-size: 14px; color: #555;">Showing <strong style="color: #1a1d20;">@customers.Count</strong> customer(s)</span>
+        </div>
+
+        @if (!customers.Any())
+        {
+            <div class="text-center py-5" style="border-radius: 12px; background-color: #fcfcfc; border: 1px solid #eaeaea;">
+                <i class="fa fa-users fa-3x mb-3" style="color: #c9aa6f;"></i>
+                <h5 class="fw-bold" style="color: #1a1d20;">No customers found</h5>
+                <p class="text-muted mb-0">Try adjusting your search criteria.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle table-hover mb-0">
+                    <thead style="background-color: #1a1d20; color: #fff;">
+                        <tr>
+                            <th class="py-3 px-3 text-white">Customer ID</th>
+                            <th class="py-3 px-3 text-white">Phone Number</th>
+                            <th class="py-3 px-3 text-white">Name</th>
+                            <th class="py-3 px-3 text-white">Location</th>
+                            <th class="py-3 px-3 text-center text-white">Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var customer in customers)
+                        {
+                            <tr style="border-bottom: 1px solid #eaeaea;">
+                                <td class="py-3 px-3 font-monospace" style="font-size: 13px; color: #777;">@customer.CustomerId</td>
+                                <td class="py-3 px-3" style="color: #1a1d20;">@(customer.PhoneNumber ?? "-")</td>
+                                <td class="py-3 px-3"><strong style="color: #1a1d20;">@customer.FullName</strong></td>
+                                <td class="py-3 px-3" style="color: #1a1d20;">@(customer.Location ?? "-")</td>
+                                <td class="py-3 px-3 text-center">
+                                    <span class="badge px-2 py-1" style="border-radius: 6px; background-color: #1a1d20; color: #c9aa6f;">@customer.OrderCount</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
 </div>
 
 <style>
-    /* تنسيق أزرار التبويبات الفاخرة */
+    .custom-dropdown {
+        border: 1px solid #1a1d20 !important;
+        border-radius: 8px !important;
+        background-color: #fff !important;
+        color: #1a1d20 !important;
+        transition: all 0.3s ease;
+    }
+
+    .custom-dropdown:focus {
+        border-color: #c9aa6f !important;
+        box-shadow: 0 0 0 0.2rem rgba(201, 170, 111, 0.25) !important;
+    }
+
     .dash-tabs {
         display: flex;
         gap: 12px;
-        border-bottom: 2px solid #eaeaea;
+        border-bottom: 2px solid #1a1d20;
         padding-bottom: 0;
     }
 
     .dash-tab-btn {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
+        background: #fff;
+        border: 1px solid #1a1d20;
         border-bottom: none;
         padding: 12px 24px;
         font-size: 14px;
         font-weight: 600;
-        color: #495057;
+        color: #1a1d20;
         cursor: pointer;
         border-radius: 10px 10px 0 0;
         transition: all 0.3s ease;
     }
 
-        .dash-tab-btn:hover {
-            background: #e9ecef;
-            color: #1a1d20;
-        }
+    .dash-tab-btn:hover {
+        background: #1a1d20;
+        color: #c9aa6f;
+    }
 
-        .dash-tab-btn.active {
-            background: #1a1d20;
-            color: #c9aa6f;
-            border-color: #1a1d20;
-            box-shadow: 0 -3px 10px rgba(0,0,0,0.05);
-        }
+    .dash-tab-btn.active {
+        background: #1a1d20;
+        color: #c9aa6f;
+        border-color: #1a1d20;
+        box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+    }
 
-    /* تحسين جداول العرض */
     .table th {
         font-size: 13px;
         letter-spacing: 0.5px;

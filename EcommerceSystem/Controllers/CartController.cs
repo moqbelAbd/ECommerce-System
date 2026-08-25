@@ -99,7 +99,6 @@ namespace EcommerceSystem.Controllers
         [HttpGet]
         public IActionResult RefreshSidebarCart()
         {
-            // This  re-runs CartSidebarViewComponent and returns just the HTML!
             return ViewComponent("CartSidebar");
         }
 
@@ -129,7 +128,6 @@ namespace EcommerceSystem.Controllers
                             }
                             catch (DbUpdateConcurrencyException)
                             {
-                                // تجاهل الخطأ في حال كانت العنصر محذوف مسبقاً لتجنب توقف البرنامج
                                 _context.Entry(itemToRemove).State = EntityState.Detached;
                             }
                         }
@@ -152,7 +150,6 @@ namespace EcommerceSystem.Controllers
                 }
             }
 
-            // إرجاع الـ JSON المطلوب للـ AJAX والـ Toast
             return Json(new { success = true, message = "Product removed from cart successfully!" });
         }
 
@@ -172,8 +169,7 @@ namespace EcommerceSystem.Controllers
                     {
                         var item = cart.CartItems.FirstOrDefault(ci => ci.ProductId == kvp.Key);
                         if (item != null)
-                        {
-                            // Optional: You can check product stock limits again right here!
+                        {]
                             item.ItemQuantity = kvp.Value > 0 ? kvp.Value : 1;
                         }
                     }

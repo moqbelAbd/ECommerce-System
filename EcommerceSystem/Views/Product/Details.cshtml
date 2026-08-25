@@ -208,7 +208,6 @@
                             var hasAlreadyReviewed = ViewBag.HasAlreadyReviewed != null && (bool)ViewBag.HasAlreadyReviewed;
                         }
 
-                        <!-- زر إضافة تقييم يظهر للـ Customer فقط إذا اشترى المنتج ولم يقيمه مسبقاً -->
                         @if (isCustomer && hasPurchased && !hasAlreadyReviewed)
                         {
                             <button type="button" id="openReviewModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
@@ -376,7 +375,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // 1. Modal Logic
             const openBtn = document.getElementById("openReviewModalBtn");
             const modal = document.getElementById("reviewModal");
             if (openBtn && modal) {
@@ -410,7 +408,6 @@
                 });
             }
 
-            // 2. Star Rating Logic
             const stars = document.querySelectorAll(".rating-star");
             const ratingInput = document.getElementById("selectedRating");
             const ratingText = document.getElementById("rating-text");
@@ -456,7 +453,6 @@
                 });
             }
 
-            // 3. Wishlist AJAX Toggle Script
             document.body.addEventListener("click", function(e) {
                 const btn = e.target.closest(".btn-toggle-wishlist");
                 if (!btn) return;
@@ -495,7 +491,6 @@
                     .catch(error => console.error('Error:', error));
             });
 
-            // 4. AJAX Add To Cart Script (بدون ريفريش، مع تحديث العداد والسلة والتوست)
             const cartForm = document.getElementById("details-cart-form");
             if (cartForm) {
                 cartForm.addEventListener("submit", function(e) {
@@ -514,10 +509,8 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // إظهار التوست باللون الذهبي الراقي
                                 showToast(data.message || "Product added to cart successfully!", "success");
 
-                                // تحديث محتوى السلة الجانبية
                                 fetch('/Cart/RefreshSidebarCart')
                                     .then(response => response.text())
                                     .then(html => {
