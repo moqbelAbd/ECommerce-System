@@ -16,31 +16,12 @@
     <div class="container">
         <div class="row">
 
+            <!-- Sidebar Menu (Using Shared Partial) -->
             <div class="col-lg-3 m-b-40">
-                <div class="bor10 p-lr-25 p-tb-30" style="border-radius: 12px; background: #fff;">
-                    <h4 class="mtext-109 cl2 p-b-20" style="font-weight: 600; border-bottom: 1px solid #eee;">
-                        My Account
-                    </h4>
-                    <ul class="p-t-15" style="list-style: none; padding: 0;">
-                        <li class="m-b-12">
-                            <a asp-controller="Customer" asp-action="Profile" class="stext-106 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-10" style="text-decoration: none; border-radius: 6px;">
-                                <i class="zmdi zmdi-account m-r-8"></i> Profile Details
-                            </a>
-                        </li>
-                        <li class="m-b-12">
-                            <a asp-controller="Customer" asp-action="OrderHistory" class="stext-106 cl1 trans-04 d-block p-tb-8 p-lr-10" style="text-decoration: none; border-radius: 6px; background: #f2f2f2; font-weight: 600;">
-                                <i class="zmdi zmdi-shopping-basket m-r-8"></i> My Orders
-                            </a>
-                        </li>
-                        <li class="m-b-12">
-                            <a asp-controller="Customer" asp-action="Wishlist" class="stext-106 cl6 hov-cl1 trans-04 d-block p-tb-8 p-lr-10" style="text-decoration: none; border-radius: 6px;">
-                                <i class="zmdi zmdi-favorite-outline m-r-8"></i> Wishlist
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <partial name="_AccountMenu" />
             </div>
 
+            <!-- Main Details Content -->
             <div class="col-lg-9">
                 <div class="flex-w flex-sb-m p-b-25">
                     <div>
@@ -67,11 +48,10 @@
                             <p class="stext-111 cl6 p-t-10">
                                 <b>@Model.Customer?.FirstName @Model.Customer?.LastName</b><br>
                                 @Model.Location<br>
-                                    @if (Model.Customer?.CustomerPhoneNumbers != null && Model.Customer.CustomerPhoneNumbers.Any())
-                                    {
-                                        // Note: Change ".PhoneNumber" to whatever your actual string property is named in your database model!
-                                        <span>Phone: @Model.Customer.CustomerPhoneNumbers.FirstOrDefault()?.PhoneNumber</span>
-                                    }
+                                @if (Model.Customer?.CustomerPhoneNumbers != null && Model.Customer.CustomerPhoneNumbers.Any())
+                                {
+                                    <span>Phone: @Model.Customer.CustomerPhoneNumbers.Where(p => !p.IsDeleted).Select(p => p.PhoneNumber).FirstOrDefault()</span>
+                                }
                             </p>
                         </div>
                     </div>
@@ -89,6 +69,7 @@
                     </div>
                 </div>
 
+                <!-- Products Table -->
                 <div class="wrap-table-shopping-cart" style="border: 1px solid #e6e6e6; border-radius: 12px; overflow: hidden; background: #fff;">
                     <table class="table-shopping-cart" style="width: 100%; border-collapse: collapse;">
                         <tr class="table_head" style="background-color: #f8f9fa;">
@@ -102,16 +83,15 @@
                         @foreach (var item in Model.OrderItems)
                         {
                             var imgPath = item.Product?.ProductImages?.Select(img => img.ProductImagePath).FirstOrDefault() ?? "/images/default-product.png";
-                            var price = item.ItemTotalPrice / item.ItemQuantity; // Re-calculate unit price
-
+                            var unitPrice = item.ItemQuantity > 0 ? (item.ItemTotalPrice / item.ItemQuantity) : 0;
                             <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
                                 <td class="column-1" style="padding-left: 25px; padding-top: 15px; padding-bottom: 15px;">
                                     <div class="how-itemcart1" style="width: 50px; height: 70px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 6px;">
-                                        <img src="@imgPath" alt="@item.Product?.ProductName" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                        <img src="@Url.Content(imgPath)" alt="@item.Product?.ProductName" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                                     </div>
                                 </td>
                                 <td class="column-2" style="font-weight: 500; color: #111;">@item.Product?.ProductName</td>
-                                <td class="column-3" style="color: #555;">$@price.ToString("0.00")</td>
+                                <td class="column-3" style="color: #555;">$@unitPrice.ToString("0.00")</td>
                                 <td class="column-4" style="text-align: center; color: #333; font-weight: 600;">@item.ItemQuantity</td>
                                 <td class="column-5" style="text-align: right; padding-right: 25px; font-weight: 600; color: #111;">$@item.ItemTotalPrice.ToString("0.00")</td>
                             </tr>
@@ -119,6 +99,7 @@
                     </table>
                 </div>
 
+                <!-- Summary Totals -->
                 <div class="row justify-content-end m-t-25">
                     <div class="col-md-5">
                         <div class="bor10 p-lr-25 p-tb-20" style="border-radius: 10px; background: #fff;">
@@ -145,6 +126,8 @@
 
 <style>
     @@media (max-width: 992px) {
-        .table-shopping-cart { min-width: 750px; }
+        .table-shopping-cart {
+            min-width: 750px;
+        }
     }
 </style>

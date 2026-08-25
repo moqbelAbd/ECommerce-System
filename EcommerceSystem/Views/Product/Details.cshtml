@@ -495,7 +495,7 @@
                     .catch(error => console.error('Error:', error));
             });
 
-            // 4. AJAX Add To Cart Script (مضافة حديثاً لتفعيل الـ Toast في صفحة التفاصيل)
+            // 4. AJAX Add To Cart Script (بدون ريفريش، مع تحديث العداد والسلة والتوست)
             const cartForm = document.getElementById("details-cart-form");
             if (cartForm) {
                 cartForm.addEventListener("submit", function(e) {
@@ -503,7 +503,7 @@
 
                     const formData = new FormData(cartForm);
                     const productId = formData.get("productId");
-                    const quantity = formData.get("quantity") || 1;
+                    const quantity = parseInt(formData.get("quantity")) || 1;
 
                     fetch(`/Cart/AddToCart?productId=${productId}&quantity=${quantity}`, {
                         method: 'POST',
@@ -514,10 +514,10 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // إظهار التوست عند النجاح
+                                // إظهار التوست باللون الذهبي الراقي
                                 showToast(data.message || "Product added to cart successfully!", "success");
 
-                                // تحديث السلة الجانبية وسحب محتواها الجديد
+                                // تحديث محتوى السلة الجانبية
                                 fetch('/Cart/RefreshSidebarCart')
                                     .then(response => response.text())
                                     .then(html => {
@@ -531,9 +531,22 @@
                                             panelCart.classList.add('show-header-cart');
                                         }
 
-                                        // تحديث الرقم الموجود على أيقونة الهيدر إن وجد
-                                        location.reload(); // أو تحديث العداد برمجياً لتجنب الريفريش الكامل
+                                        const hideCartElements = document.querySelectorAll('.js-hide-cart');
+                                        hideCartElements.forEach(el => {
+                                            el.addEventListener('click', function(e) {
+                                                e.preventDefault();
+                                                panelCart.classList.remove('show-header-cart');
+                                            });
+                                        });
                                     });
+
+                                // تحديث عداد السلة في الهيدر فوراً بالكمية المضافة بدون ريفريش
+                                const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
+                                cartNotiElements.forEach(el => {
+                                    let currentCount = parseInt(el.getAttribute('data-notify')) || 0;
+                                    el.setAttribute('data-notify', currentCount + quantity);
+                                });
+
                             } else {
                                 showToast(data.message || "Error adding product to cart", "error");
                             }
