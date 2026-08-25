@@ -51,12 +51,18 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: SubCategory/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(Guid? categoryId)
         {
-            await PopulateCategoriesAsync();
-            return View();
-        }
+            ViewBag.Categories = new SelectList(await _context.Categories.Where(c => !c.IsDeleted).ToListAsync(), "CategoryId", "CategoryName", categoryId);
 
+            var subCategory = new SubCategory();
+            if (categoryId.HasValue)
+            {
+                subCategory.CategoryId = categoryId.Value;
+            }
+
+            return View(subCategory);
+        }
         // POST: SubCategory/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

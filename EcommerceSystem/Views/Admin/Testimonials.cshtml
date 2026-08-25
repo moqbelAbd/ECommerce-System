@@ -1,0 +1,81 @@
+﻿@model IEnumerable<EcommerceSystem.Models.Testimonial>
+
+@{
+    ViewData["Title"] = "Manage Testimonials";
+}
+
+<!-- أضفنا min-height لضمان ألا يصعد الفوتر أبداً حتى لو كانت الصفحة فارغة -->
+<div class="bg0 p-t-80 p-b-100" style="min-height: calc(100vh - 200px); display: flex; flex-direction: column;">
+    <div class="container" style="flex: 1;">
+        <div class="flex-sb-m flex-w p-b-35">
+            <div>
+                <h1 class="ltext-103 cl5">Manage Testimonials</h1>
+                <p class="stext-102 cl6 p-t-5">Approve or remove customer testimonials shown on the home page.</p>
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="bor10 p-all-40 text-center my-auto">
+                <h4 class="mtext-102 cl2">No testimonials found.</h4>
+            </div>
+        }
+        else
+        {
+            <div class="wrap-table-shopping-cart">
+                <table class="table-shopping-cart">
+                    <thead>
+                        <tr class="table_head">
+                            <th class="p-l-20">Customer</th>
+                            <th>Testimonial</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center p-r-20">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model)
+                        {
+                            <tr class="table_row">
+                                <td class="p-l-20 font-weight-bold">
+                                    @(t.Customer != null ? $"{t.Customer.FirstName} {t.Customer.LastName}" : "Unknown")
+                                </td>
+                                <td style="max-width: 400px; white-space: normal; padding: 15px;">
+                                    @t.CustomerTestimonial
+                                </td>
+                                <td class="text-center">
+                                    @if (t.IsApproved)
+                                    {
+                                        <span class="badge bg-success">Approved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                </td>
+                                <td class="text-center p-r-20">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <!-- زر تبديل الحالة -->
+                                        <form asp-action="ToggleTestimonialApproval" method="post" class="m-0">
+                                            <input type="hidden" name="id" value="@t.TestimonialId" />
+                                            <button type="submit" class="btn btn-sm @(t.IsApproved ? "btn-outline-warning" : "btn-outline-success")" title="@(t.IsApproved ? "Unapprove" : "Approve")">
+                                                <i class="fa @(t.IsApproved ? "fa-ban" : "fa-check")"></i>
+                                            </button>
+                                        </form>
+
+                                        <!-- زر الحذف -->
+                                        <form asp-action="DeleteTestimonial" method="post" onsubmit="return confirm('Are you sure you want to delete this testimonial?');" class="m-0">
+                                            <input type="hidden" name="id" value="@t.TestimonialId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

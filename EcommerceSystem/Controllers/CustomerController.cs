@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace EcommerceSystem.Controllers
 {
@@ -299,6 +300,8 @@ namespace EcommerceSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Cart()
         {
+            var cartViewModel = new CartViewModel();
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
@@ -313,8 +316,53 @@ namespace EcommerceSystem.Controllers
                 return RedirectToAction("CompleteProfile");
             }
 
-            return View();
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Product)
+                    .ThenInclude(p => p.ProductImages)
+                .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
+
+
+            if (cart != null)
+            {
+                cartViewModel.Items = cart.CartItems.Select(ci => new CartItemViewModel
+                {
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product!.ProductName,
+                    ImageUrl = ci.Product.ProductImages.FirstOrDefault().ProductImagePath,
+                    Price = ci.Product.ProductPrice,        
+                    Quantity = ci.ItemQuantity
+                }).ToList();
+            }
+
+            else
+            {
+                var sessionCartStr = HttpContext.Session.GetString("GuestCart");
+                if (!string.IsNullOrEmpty(sessionCartStr))
+                {
+                    var sessionItems = JsonSerializer.Deserialize<List<SessionCartItem>>(sessionCartStr);
+
+                    foreach (var item in sessionItems!)
+                    {
+                        var product = await _context.Products.FindAsync(item.ProductId);
+                        if (product != null)
+                        {
+                            cartViewModel.Items.Add(new CartItemViewModel
+                            {
+                                ProductId = product.ProductId,
+                                ProductName = product.ProductName,
+                                ImageUrl = product.ProductImages.FirstOrDefault().ProductImagePath,
+                                Price = product.ProductPrice,
+                                Quantity = item.Quantity
+                            });
+                        }
+                    }
+                }
+            }
+
+            return View(cartViewModel);
         }
+
 
         [Authorize]
         [HttpGet]

@@ -4,6 +4,7 @@ using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EcommerceSystem.Controllers
 {
@@ -129,7 +130,7 @@ namespace EcommerceSystem.Controllers
         }
 
         // =========================================================
-        // PRODUCT DETAILS (Admin & Customer view)
+        // PUBLIC PRODUCT DETAILS
         // =========================================================
         public async Task<IActionResult> Details(Guid? id, int? ratingFilter, string? customerSearch)
         {
@@ -137,21 +138,49 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             var productQuery = _context.Products
+                .Where(p => !p.IsDeleted)
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-                .Include(p => p.ProductSubCategories)
-                    .ThenInclude(psc => psc.SubCategory)
                 .Include(p => p.ProductReviews)
                     .ThenInclude(r => r.Customer)
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
                 .AsQueryable();
 
-            var product = await productQuery.FirstOrDefaultAsync(p => p.ProductId == id && !p.IsDeleted);
+            var product = await productQuery.FirstOrDefaultAsync(p => p.ProductId == id.Value);
 
             if (product == null)
                 return NotFound();
 
-            // تصفية المراجعات للأدمن (حسب التقييم أو اسم العميل)
+            bool hasPurchased = false;
+            bool hasAlreadyReviewed = false;
+
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers
+                    .Include(c => c.Orders)
+                        .ThenInclude(o => o.OrderItems)
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null)
+                {
+                    // 1. التحقق مما إذا كان العميل قد اشترى المنتج
+                    hasPurchased = customer.Orders
+                        .SelectMany(o => o.OrderItems)
+                        .Any(oi => oi.ProductId == product.ProductId);
+
+                    // 2. التحقق مما إذا كان العميل قد قام بتقييم المنتج مسبقاً
+                    hasAlreadyReviewed = product.ProductReviews
+                        .Any(r => r.CustomerId == customer.CustomerId);
+                }
+            }
+
+            ViewBag.HasPurchased = hasPurchased;
+            ViewBag.HasAlreadyReviewed = hasAlreadyReviewed;
+
+            // تصفية المراجعات
             var reviews = product.ProductReviews.AsEnumerable();
 
             if (ratingFilter.HasValue)
@@ -169,7 +198,6 @@ namespace EcommerceSystem.Controllers
             ViewBag.SelectedRatingFilter = ratingFilter;
             ViewBag.CustomerSearch = customerSearch;
 
-            // حساب متوسط التقييم
             if (product.ProductReviews.Any())
             {
                 ViewBag.AverageRating = product.ProductReviews.Average(r => r.CustomerProductRating);
@@ -181,7 +209,85 @@ namespace EcommerceSystem.Controllers
                 ViewBag.TotalReviews = 0;
             }
 
+            var userWishlistIds = new List<Guid>();
+            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null)
+                {
+                    userWishlistIds = await _context.WishlistItems
+                        .Where(wi => wi.Wishlist != null && wi.Wishlist.CustomerId == customer.CustomerId)
+                        .Select(wi => wi.ProductId)
+                        .ToListAsync();
+                }
+            }
+            ViewBag.UserWishlistIds = userWishlistIds;
+
             return View(product);
+        }
+
+        // =========================================================
+        // ADD PRODUCT REVIEW (POST)
+        // =========================================================
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(Guid productId, int rating, string reviewText)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers
+                .Include(c => c.Orders)
+                    .ThenInclude(o => o.OrderItems)
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (customer == null)
+            {
+                return RedirectToAction("CompleteProfile", "Customer");
+            }
+
+            // التحقق من أن العميل قد اشترى المنتج فعلياً
+            bool hasPurchased = customer.Orders
+                .SelectMany(o => o.OrderItems)
+                .Any(oi => oi.ProductId == productId);
+
+            if (!hasPurchased)
+            {
+                TempData["ErrorMessage"] = "You can only review products you have purchased.";
+                return RedirectToAction("Details", new { id = productId });
+            }
+
+            // التحقق من عدم وجود تقييم سابـق لهذا العميل لنفس المنتج
+            bool existingReview = await _context.ProductReviews
+                .AnyAsync(r => r.ProductId == productId && r.CustomerId == customer.CustomerId);
+
+            if (existingReview)
+            {
+                TempData["ErrorMessage"] = "You have already reviewed this product.";
+                return RedirectToAction("Details", new { id = productId });
+            }
+
+            if (ModelState.IsValid && rating >= 1 && rating <= 5)
+            {
+                var review = new ProductReview
+                {
+                    ProductReviewId = Guid.NewGuid(),
+                    ProductId = productId,
+                    CustomerId = customer.CustomerId,
+                    CustomerProductRating = rating,
+                    CustomerProductReview = reviewText ?? string.Empty,
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.ProductReviews.Add(review);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Review added successfully!";
+            }
+
+            return RedirectToAction("Details", new { id = productId });
         }
 
         // حذف مراجعة (خاص بالأدمن)
@@ -199,11 +305,11 @@ namespace EcommerceSystem.Controllers
             }
             return RedirectToAction(nameof(Details), new { id = productId });
         }
+
         // GET: Product/Create
         public async Task<IActionResult> Create()
         {
             await LoadProductDropdowns();
-
             return View();
         }
 
@@ -224,7 +330,6 @@ namespace EcommerceSystem.Controllers
             product.ProductId = Guid.NewGuid();
             product.IsDeleted = false;
 
-            // Add product images
             foreach (var imageFile in imageFiles ?? new List<IFormFile>())
             {
                 if (imageFile.Length == 0)
@@ -242,7 +347,6 @@ namespace EcommerceSystem.Controllers
 
             _context.Products.Add(product);
 
-            // Add Product <-> SubCategory relationship
             if (subCategoryId.HasValue)
             {
                 var productSubCategory = new ProductSubCategory
@@ -256,7 +360,6 @@ namespace EcommerceSystem.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             TempData["Success"] = "Product created successfully.";
 
             return RedirectToAction(nameof(Index));
@@ -294,16 +397,11 @@ namespace EcommerceSystem.Controllers
             Guid id,
             Product product,
             Guid? subCategoryId,
-            List<IFormFile>? imageFiles)
+            List<IFormFile>? imageFiles,
+            List<Guid>? deleteImageIds)
         {
             if (id != product.ProductId)
                 return NotFound();
-
-            if (!ModelState.IsValid)
-            {
-                await LoadProductDropdowns(subCategoryId);
-                return View(product);
-            }
 
             var existingProduct = await _context.Products
                 .Include(p => p.ProductImages)
@@ -315,56 +413,53 @@ namespace EcommerceSystem.Controllers
             if (existingProduct == null)
                 return NotFound();
 
-            // Update product information
-            existingProduct.ProductName =
-                product.ProductName;
+            if (!ModelState.IsValid)
+            {
+                await LoadProductDropdowns(subCategoryId);
+                return View(existingProduct);
+            }
 
-            existingProduct.ProductDescription =
-                product.ProductDescription;
+            existingProduct.ProductName = product.ProductName;
+            existingProduct.ProductDescription = product.ProductDescription;
+            existingProduct.ProductPrice = product.ProductPrice;
+            existingProduct.ProductQuantity = product.ProductQuantity;
+            existingProduct.ProductBrandId = product.ProductBrandId;
+            existingProduct.ProductModelId = product.ProductModelId;
 
-            existingProduct.ProductPrice =
-                product.ProductPrice;
+            if (deleteImageIds != null && deleteImageIds.Any())
+            {
+                foreach (var imgId in deleteImageIds)
+                {
+                    var imgRecord = await _context.ProductImages.FindAsync(imgId);
+                    if (imgRecord != null)
+                    {
+                        _context.ProductImages.Remove(imgRecord);
+                    }
+                }
+            }
 
-            existingProduct.ProductQuantity =
-                product.ProductQuantity;
-
-            existingProduct.ProductBrandId =
-                product.ProductBrandId;
-
-            existingProduct.ProductModelId =
-                product.ProductModelId;
-
-            // Replace images only when new files were uploaded
             var uploadedFiles = (imageFiles ?? new List<IFormFile>())
                 .Where(f => f.Length > 0)
                 .ToList();
 
-            if (uploadedFiles.Any())
+            foreach (var imageFile in uploadedFiles)
             {
-                _context.ProductImages.RemoveRange(
-                    existingProduct.ProductImages);
+                var imagePath = await ImageUploadHelper.SaveImageAsync(imageFile, "products", _environment);
 
-                foreach (var imageFile in uploadedFiles)
+                _context.ProductImages.Add(new ProductImage
                 {
-                    var imagePath = await ImageUploadHelper.SaveImageAsync(imageFile, "products", _environment);
-
-                    existingProduct.ProductImages.Add(new ProductImage
-                    {
-                        ProductImageId = Guid.NewGuid(),
-                        ProductImagePath = imagePath,
-                        ProductId = existingProduct.ProductId
-                    });
-                }
+                    ProductImageId = Guid.NewGuid(),
+                    ProductImagePath = imagePath,
+                    ProductId = existingProduct.ProductId
+                });
             }
 
-            // Remove old Product/SubCategory relationships
             _context.ProductSubCategories.RemoveRange(
                 existingProduct.ProductSubCategories);
 
-            // Add new relationship
             if (subCategoryId.HasValue)
             {
-                existingProduct.ProductSubCategories.Add(
+                _context.ProductSubCategories.Add(
                     new ProductSubCategory
                     {
                         ProductSubCategoryId = Guid.NewGuid(),
@@ -374,7 +469,6 @@ namespace EcommerceSystem.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             TempData["Success"] = "Product updated successfully.";
 
             return RedirectToAction(nameof(Index));
@@ -387,14 +481,11 @@ namespace EcommerceSystem.Controllers
                 return NotFound();
 
             var product = await _context.Products
-
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
-
                 .Include(p => p.ProductSubCategories)
                     .ThenInclude(psc => psc.SubCategory)
-
                 .FirstOrDefaultAsync(p =>
                     p.ProductId == id &&
                     !p.IsDeleted);
@@ -419,13 +510,10 @@ namespace EcommerceSystem.Controllers
             if (product == null)
                 return NotFound();
 
-            // Soft Delete
             product.IsDeleted = true;
-
             await _context.SaveChangesAsync();
 
             TempData["Warning"] = "Product deleted successfully.";
-
             return RedirectToAction(nameof(Index));
         }
 

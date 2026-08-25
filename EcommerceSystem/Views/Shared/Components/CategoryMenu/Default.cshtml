@@ -3,8 +3,8 @@
 @foreach (var category in Model)
 {
     <li class="p-b-8">
-        <a asp-controller="Home"
-           asp-action="Product"
+        <a asp-controller="Category"
+           asp-action="Index"
            asp-route-categoryId="@category.CategoryId"
            class="stext-102 trans-04"
            style="color: #adb5bd;">

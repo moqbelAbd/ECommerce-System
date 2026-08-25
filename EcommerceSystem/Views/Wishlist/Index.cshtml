@@ -1,0 +1,163 @@
+@model EcommerceSystem.Models.Wishlist
+
+@{
+    ViewData["Title"] = "My Wishlist - Rolexyal";
+}
+
+<!-- Title Page -->
+<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
+    <h2 class="ltext-105 cl0 txt-center fw-bold" style="color: #111; letter-spacing: 2px;">
+        My Wishlist
+    </h2>
+</section>
+
+<!-- Content Page -->
+<section class="bg0 p-t-75 p-b-120">
+    <div class="container">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-3 p-b-30">
+                <partial name="_AccountMenu" />
+            </div>
+
+            <!-- Wishlist Content -->
+            <div class="col-md-9 p-b-30">
+                <div class="p-all-30 bg0 bor10 shadow-sm rounded-4" style="border: 1px solid #eee;">
+                    <div class="p-b-25 border-bottom m-b-30 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mtext-105 cl2 fw-bold">Saved Favorite Items</h4>
+                            <p class="stext-107 cl6 p-t-5">Quickly review the luxury pieces you love and move them to your cart.</p>
+                        </div>
+                        <span class="badge rounded-pill px-3 py-2" style="background-color: #c9aa6f; color: #fff; font-size: 13px;">
+                            @(Model?.WishlistItems?.Count ?? 0) Items
+                        </span>
+                    </div>
+
+                    @if (Model == null || Model.WishlistItems == null || !Model.WishlistItems.Any())
+                    {
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa fa-heart-o fa-3x mb-3" style="color: #c9aa6f;"></i>
+                            <p class="stext-113 fs-5">Your wishlist is currently empty.</p>
+                            <a asp-controller="Home" asp-action="Shop" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-20 mx-auto rounded-pill" style="width: auto; display: inline-flex; background-color: #c9aa6f; border-color: #c9aa6f;">
+                                Explore Shop
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="wrap-table-shopping-cart" style="border: 1px solid #e6e6e6; border-radius: 12px; overflow: hidden; background: #fff;">
+                            <table class="table-shopping-cart" style="width: 100%; border-collapse: collapse;">
+                                <tr class="table_head" style="background-color: #f8f9fa; border-bottom: 2px solid #eee;">
+                                    <th class="column-1" style="padding-left: 25px; padding-top: 15px; padding-bottom: 15px;">Product</th>
+                                    <th class="column-2 fw-bold text-dark">Product Name</th>
+                                    <th class="column-3 fw-bold text-dark">Price</th>
+                                    <th class="column-4 text-center fw-bold text-dark">Stock Status</th>
+                                    <th class="column-5 text-end fw-bold text-dark" style="padding-right: 25px;">Actions</th>
+                                </tr>
+
+                                @foreach (var item in Model.WishlistItems)
+                                {
+                                    var product = item.Product;
+                                    var imagePath = product?.ProductImages?.FirstOrDefault()?.ProductImagePath ?? "~/images/product-01.jpg";
+
+                                    <tr class="table_row align-middle" style="border-top: 1px solid #f1f1f1; transition: background 0.2s;">
+                                        <td class="column-1" style="padding-left: 25px; padding-top: 15px; padding-bottom: 15px;">
+                                            <div class="how-itemcart1" style="width: 65px; height: 80px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 8px; border: 1px solid #eaeaea;">
+                                                <img src="@Url.Content(imagePath)" alt="@product?.ProductName" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+                                            </div>
+                                        </td>
+                                        <td class="column-2" style="font-weight: 500; color: #111;">
+                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product?.ProductId" class="text-dark hov-cl1 trans-04" style="text-decoration: none; font-size: 15px; font-weight: 600;">
+                                                @(product?.ProductName ?? "Product Name")
+                                            </a>
+                                        </td>
+                                        <td class="column-3" style="font-weight: 600; color: #111; font-size: 15px;">
+                                            @(product?.ProductPrice.ToString("C") ?? "$0.00")
+                                        </td>
+                                        <td class="column-4 text-center">
+                                            @if (product != null && product.ProductQuantity > 0)
+                                            {
+                                                <span class="badge px-3 py-2" style="background-color: #e2f0d9; color: #385723; border-radius: 20px; font-weight: 500; font-size: 12px;">
+                                                    In Stock
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge px-3 py-2" style="background-color: #fce8e6; color: #a51d24; border-radius: 20px; font-weight: 500; font-size: 12px;">
+                                                    Out of Stock
+                                                </span>
+                                            }
+                                        </td>
+                                        <td class="column-5 text-end" style="padding-right: 25px;">
+                                            <div class="flex-w flex-m justify-content-end align-items-center" style="gap: 10px;">
+                                                <!-- View Product Button -->
+                                                <a asp-controller="Product" asp-action="Details" asp-route-id="@product?.ProductId" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer rounded-pill text-white" style="display: inline-flex; height: 38px; font-size: 12px; text-decoration: none; background-color: #111; border-color: #111;">
+                                                    View Product
+                                                </a>
+                                                
+                                                <!-- Heart Icon Button (Remove from Wishlist) -->
+                                                <form asp-controller="Wishlists" asp-action="ToggleWishlist" method="post" class="m-0 d-inline-block">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="productId" value="@product?.ProductId" />
+                                                    <button type="submit" class="btn p-0 border-0 bg-transparent d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; border-radius: 50%; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.08); transition: transform 0.2s;" title="Remove from Wishlist">
+                                                        <i class="fa fa-heart" style="font-size: 18px; color: #e60023;"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // التعامل مع أزرار الإزالة في صفحة المفضلة عبر AJAX
+            document.querySelectorAll("form[asp-action='ToggleWishlist']").forEach(form => {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const row = this.closest("tr");
+                    const token = this.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': token || ''
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // إزالة الصف بسلاسة من الجدول عند حذفه
+                            row.style.transition = "opacity 0.4s ease";
+                            row.style.opacity = "0";
+                            setTimeout(() => {
+                                row.remove();
+                                // إذا أصبحت القائمة فارغة، قم بتحديث الصفحة لإظهار رسالة "Wishlist is empty"
+                                const remainingRows = document.querySelectorAll(".table_row");
+                                if (remainingRows.length === 0) {
+                                    location.reload();
+                                }
+                            }, 400);
+                        } else if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        });
+    </script>
+}
