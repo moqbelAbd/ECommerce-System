@@ -448,7 +448,6 @@ namespace EcommerceSystem.Controllers
                 item.Product.ProductQuantity -= item.ItemQuantity;
             }
 
-            // حفظ البطاقة الجديدة تلقائياً إذا اختار الفيزا ولم يقم باختيار بطاقة محفوظة مسبقاً
             if (request.PaymentMethod == "Visa" && !request.SelectedCardId.HasValue && !string.IsNullOrEmpty(request.NewCardNumber))
             {
                 string encryptedCardNumber = _protector.Protect(request.NewCardNumber);
@@ -467,7 +466,6 @@ namespace EcommerceSystem.Controllers
             _context.CartItems.RemoveRange(cart.CartItems);
             await _context.SaveChangesAsync();
 
-            // إرجاع الـ orderId مع حالة النجاح لكي يتم توجيه العميل لصفحة الفاتورة مباشرة
             return Json(new { success = true, message = "Order placed successfully!", orderId = order.OrderId });
         }
         public class PlaceOrderRequest
@@ -483,9 +481,6 @@ namespace EcommerceSystem.Controllers
             public Dictionary<Guid, int> Quantities { get; set; } = new();
         }
 
-        // =========================================================
-        // CUSTOMER PAYMENT CARDS
-        // =========================================================
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> PaymentCards()

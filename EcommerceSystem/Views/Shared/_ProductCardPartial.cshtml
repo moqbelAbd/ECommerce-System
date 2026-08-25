@@ -35,7 +35,8 @@
                     <button type="button" class="btn-toggle-wishlist p-0 border-0 bg-transparent" data-product-id="@Model.ProductId" style="cursor: pointer;" title="Add/Remove Wishlist">
                         <div class="btn-addwish-b2 dis-block pos-relative">
                             <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON" style="@(isInWishlist ? "opacity: 0;" : "opacity: 1;")">
-                            <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON" style="@(isInWishlist ? "opacity: 1;" : "opacity: 0;")">
+                            <!-- تم إضافة كلاس gold-heart للقلب الممتلئ ليتلون بالذهبي -->
+                            <img class="icon-heart2 dis-block trans-04 ab-t-l gold-heart" src="~/images/icons/icon-heart-02.png" alt="ICON" style="@(isInWishlist ? "opacity: 1;" : "opacity: 0;")">
                         </div>
                     </button>
                 }
@@ -94,6 +95,10 @@
     .cart-gold-btn:hover {
         background-color: #b08d4c !important;
         transform: scale(1.08);
+    }
+
+    .gold-heart {
+        filter: brightness(0) saturate(100%) invert(73%) sepia(34%) saturate(664%) hue-rotate(5deg) brightness(94%) contrast(87%);
     }
 </style>
 
