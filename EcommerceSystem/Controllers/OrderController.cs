@@ -141,5 +141,36 @@ namespace EcommerceSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // POST: Order/UpdatePaymentStatus
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdatePaymentStatus(Guid orderId, int paymentStatusId, string? returnUrl)
+        {
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+                return NotFound();
+
+            var statusExists = await _context.PaymentStatuses
+                .AnyAsync(s => s.PaymentStatusId == paymentStatusId);
+
+            if (!statusExists)
+                return NotFound();
+
+            order.PaymentStatusId = paymentStatusId;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Payment status updated successfully.";
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
