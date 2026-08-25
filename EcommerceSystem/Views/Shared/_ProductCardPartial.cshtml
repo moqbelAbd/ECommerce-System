@@ -144,18 +144,18 @@
             });
         });
     }
+
 document.addEventListener('DOMContentLoaded', function () {
     const cartButtons = document.querySelectorAll('.ajax-cart-btn');
 
     cartButtons.forEach(button => {
-        // 1. Prevent duplicate event bindings if this script runs twice
+        // 1. Prevent duplicate event bindings
         if (button.getAttribute('data-bound') === 'true') return;
         button.setAttribute('data-bound', 'true');
 
         button.addEventListener('click', function (e) {
-            e.preventDefault();
+            e.preventDefault(); // This line physically stops the page refresh!
             
-            // 2. Prevent double-clicks! If it's already loading, do nothing.
             if (this.style.pointerEvents === 'none') return;
             
             // Disable the button temporarily and dim it
@@ -173,10 +173,14 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // إظهار التوست الفاخر
-                    showToast(data.message || "Product added to cart successfully!", "success");
+                    // 1. Show the Toast (Safely checks if the function exists first to prevent crashes)
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || "Product added to cart successfully!", "success");
+                    } else {
+                        alert(data.message || "Product added to cart successfully!");
+                    }
 
-                    // تحديث محتوى السلة الجانبية
+                    // 2. Silently update the Sidebar HTML in the background (DOES NOT OPEN IT)
                     fetch('/Cart/RefreshSidebarCart')
                         .then(response => response.text())
                         .then(html => {
@@ -185,12 +189,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 sidebarContainer.innerHTML = html;
                             }
 
+                            // Re-bind close events just in case they open it manually later
                             const panelCart = document.querySelector('.js-panel-cart');
-                            if (panelCart) {
-                                panelCart.classList.add('show-header-cart');
-                            }
-
-                            // إعادة ربط أحداث الإغلاق
                             const hideCartElements = document.querySelectorAll('.js-hide-cart');
                             hideCartElements.forEach(el => {
                                 el.addEventListener('click', function(event) {
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                         });
 
-                    // **تحديث عداد السلة في الهيدر فوراً بدون ريفريش**
+                    // 3. Update the cart counter badge in the header
                     const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
                     cartNotiElements.forEach(el => {
                         let currentCount = parseInt(el.getAttribute('data-notify')) || 0;
@@ -210,12 +210,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
 
                 } else {
-                    showToast(data.message || "Error adding product to cart", "error");
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || "Error adding product to cart", "error");
+                    } else {
+                        alert(data.message || "Error adding product to cart");
+                    }
                 }
             })
             .catch(error => console.error('Error:', error))
             .finally(() => {
-                // 3. Re-enable the button once the entire process is finished!
+                // Re-enable the button
                 this.style.pointerEvents = 'auto';
                 this.style.opacity = '1';
             });

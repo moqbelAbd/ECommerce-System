@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<EcommerceSystem.Models.Order>
+
+@{
     ViewData["Title"] = "Order History - Rolexyal";
 }
 
@@ -11,7 +13,6 @@
 <section class="bg0 p-t-75 p-b-120">
     <div class="container">
         <div class="row">
-
             <div class="col-md-3 p-b-30">
                 <partial name="_AccountMenu" />
             </div>
@@ -34,70 +35,59 @@
                                 <th class="column-6" style="text-align: center; padding-right: 15px;">Actions</th>
                             </tr>
 
-                            <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
-                                <td class="column-1" style="padding-left: 20px; font-weight: 600; color: #111;">#RX-2026-081</td>
-                                <td class="column-2" style="color: #666;">August 18, 2026</td>
-                                <td class="column-3" style="color: #555;">Amman, Jordan</td>
-                                <td class="column-4">
-                                    <span class="badge" style="background-color: #e2f0d9; color: #385723; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 11px;">
-                                        Delivered
-                                    </span>
-                                </td>
-                                <td class="column-5" style="text-align: right; padding-right: 20px; font-weight: 600; color: #111;">$240.00</td>
-                                <td class="column-6" style="text-align: center; padding-right: 15px;">
-                                    <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="1" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="display: inline-flex; height: 32px; font-size: 11px; border-radius: 6px; text-decoration: none;">
-                                        View Details
-                                    </a>
-                                </td>
-                            </tr>
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center p-t-40 p-b-40 stext-111 cl6">
+                                        You have no past orders.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var order in Model)
+                                {
+                                    // Generate a short ID from the Guid (e.g., first 8 characters)
+                                    string shortOrderId = order.OrderId.ToString().Substring(0, 8).ToUpper();
+                                    
+                                    // Dynamic Badge Styling
+                                    string badgeBg = "#fff2cc"; // Default Yellow
+                                    string badgeColor = "#806000";
+                                    string statusName = order.OrderStatus?.OrderStatusName ?? "Processing";
 
-                            <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
-                                <td class="column-1" style="padding-left: 20px; font-weight: 600; color: #111;">#RX-2026-074</td>
-                                <td class="column-2" style="color: #666;">July 30, 2026</td>
-                                <td class="column-3" style="color: #555;">Irbid, Jordan</td>
-                                <td class="column-4">
-                                    <span class="badge" style="background-color: #fff2cc; color: #806000; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 11px;">
-                                        Processing
-                                    </span>
-                                </td>
-                                <td class="column-5" style="text-align: right; padding-right: 20px; font-weight: 600; color: #111;">$145.00</td>
-                                <td class="column-6" style="text-align: center; padding-right: 15px;">
-                                    <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="2" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="display: inline-flex; height: 32px; font-size: 11px; border-radius: 6px; text-decoration: none;">
-                                        View Details
-                                    </a>
-                                </td>
-                            </tr>
+                                    if (order.OrderStatusId == 1) { badgeBg = "#fff2cc"; badgeColor = "#806000"; statusName = "Pending"; }
+                                    else if (order.OrderStatusId == 2) { badgeBg = "#e2e3e5"; badgeColor = "#383d41"; statusName = "Processing"; }
+                                    else if (order.OrderStatusId == 3) { badgeBg = "#fce4d6"; badgeColor = "#c65911"; statusName = "Shipped"; }
+                                    else if (order.OrderStatusId == 4) { badgeBg = "#e2f0d9"; badgeColor = "#385723"; statusName = "Delivered"; }
 
-                            <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
-                                <td class="column-1" style="padding-left: 20px; font-weight: 600; color: #111;">#RX-2026-059</td>
-                                <td class="column-2" style="color: #666;">June 12, 2026</td>
-                                <td class="column-3" style="color: #555;">Zarqa, Jordan</td>
-                                <td class="column-4">
-                                    <span class="badge" style="background-color: #fce4d6; color: #c65911; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 11px;">
-                                        Shipped
-                                    </span>
-                                </td>
-                                <td class="column-5" style="text-align: right; padding-right: 20px; font-weight: 600; color: #111;">$95.00</td>
-                                <td class="column-6" style="text-align: center; padding-right: 15px;">
-                                    <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="3" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="display: inline-flex; height: 32px; font-size: 11px; border-radius: 6px; text-decoration: none;">
-                                        View Details
-                                    </a>
-                                </td>
-                            </tr>
-
+                                    <tr class="table_row" style="border-top: 1px solid #f1f1f1;">
+                                        <td class="column-1" style="padding-left: 20px; font-weight: 600; color: #111;">#RX-@shortOrderId</td>
+                                        <td class="column-2" style="color: #666;">@order.CreatedAt.ToString("MMMM dd, yyyy")</td>
+                                        <td class="column-3" style="color: #555;">@order.Location</td>
+                                        <td class="column-4">
+                                            <span class="badge" style="background-color: @badgeBg; color: @badgeColor; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 11px;">
+                                                @statusName
+                                            </span>
+                                        </td>
+                                        <td class="column-5" style="text-align: right; padding-right: 20px; font-weight: 600; color: #111;">$@order.TotalPrice.ToString("0.00")</td>
+                                        <td class="column-6" style="text-align: center; padding-right: 15px;">
+                                            <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="@order.OrderId" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="display: inline-flex; height: 32px; font-size: 11px; border-radius: 6px; text-decoration: none;">
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
                         </table>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
 <style>
     @@media (max-width: 992px) {
-        .table-shopping-cart {
-            min-width: 750px;
-        }
+        .table-shopping-cart { min-width: 750px; }
     }
 </style>
