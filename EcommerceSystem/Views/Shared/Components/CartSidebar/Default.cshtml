@@ -4,6 +4,7 @@
     <div class="s-full js-hide-cart"></div>
     
     <div class="header-cart flex-col-l p-l-0 p-r-0">
+        <!-- عنوان السلة وزر الإغلاق المثبت في الطرف تماماً -->
         <div class="header-cart-title w-full flex-sb-m" style="padding: 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.1);">
             <span class="mtext-103" style="color: #fff; font-weight: 600;">Your Cart</span>
             <div class="fs-35 lh-10 pointer hov-cl1 trans-04 js-hide-cart" style="color: #fff;">
@@ -23,6 +24,7 @@
                     @foreach (var item in Model.Items)
                     {
                         <li class="header-cart-item flex-w flex-t m-b-18" style="align-items: center;" id="sidebar-item-@item.ProductId">
+                            <!-- صورة المنتج: عند النقر عليها يتم حذفه من السلة عبر الـ AJAX -->
                             <div class="header-cart-item-img ajax-sidebar-remove" data-product-id="@item.ProductId" style="width: 60px; height: 80px; overflow: hidden; background: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.2s;" title="Click to remove item" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
                                 <img src="@item.ImageUrl" alt="@item.ProductName" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                             </div>
@@ -54,6 +56,7 @@
     </div>
 </div>
 
+<!-- سكريبت خاص بحذف المنتج عند النقر على الصورة في السلة الجانبية وتحديث العداد -->
 <script>
     if (typeof sidebarRemoveInitialized === 'undefined') {
         var sidebarRemoveInitialized = true;
@@ -73,8 +76,10 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // إظهار التوست باللون الذهبي التحذيري
                     showToast(data.message || "Product removed from cart successfully!", "warning");
 
+                    // إعادة تحديث السلة الجانبية وسحب المحتوى الجديد
                     fetch('/Cart/RefreshSidebarCart')
                         .then(response => response.text())
                         .then(html => {
@@ -84,6 +89,7 @@
                             }
                         });
 
+                    // تحديث عداد الهيدر (تقليصه بواحدة أو حسب الكمية)
                     const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
                     cartNotiElements.forEach(el => {
                         let currentCount = parseInt(el.getAttribute('data-notify')) || 1;

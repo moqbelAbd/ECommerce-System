@@ -179,6 +179,7 @@
             width: auto;
         }
 
+        /* تثبيت زر الإغلاق (X) في أعلى السلة في المنتصف تماماً وبشكل إجباري */
         .header-cart-title {
             display: flex !important;
             flex-direction: column !important;
@@ -210,6 +211,7 @@
             margin-top: 25px !important;
         }
 
+        /* تنسيق شريط التمرير (Scrollbar) في السلة الجانبية */
         .header-cart-content::-webkit-scrollbar {
             width: 6px;
         }
@@ -431,7 +433,7 @@
                                 <a asp-controller="Admin" asp-action="Customers" class="stext-102 trans-04">Customers</a>
                             </li>
                             <li class="p-b-13">
-                                <a asp-controller="Admin" asp-action="Orders" class="stext-102 trans-04">Orders</a>
+                                <a asp-controller="Order" asp-action="Index" class="stext-102 trans-04">Orders</a>
                             </li>
                             <li class="p-b-13">
                                 <a asp-controller="Admin" asp-action="Testimonials" class="stext-102 trans-04">Testimonials</a>
