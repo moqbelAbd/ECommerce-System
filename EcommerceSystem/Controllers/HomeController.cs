@@ -38,7 +38,7 @@ namespace EcommerceSystem.Controllers
                 .Where(c => !c.IsDeleted)
                 .Include(c => c.SubCategories)
                 .OrderBy(c => c.CategoryName)
-                .Take(3)
+                .Take(10)
                 .ToListAsync();
 
             var approvedTestimonials = await _context.Testimonials
@@ -151,7 +151,6 @@ namespace EcommerceSystem.Controllers
         {
             var query = _context.Products
       .Where(p => !p.IsDeleted && p.ProductQuantity >= 1)
-      // ADDED: Product must belong to at least one active SubCategory AND active Category
       .Where(p => p.ProductSubCategories.Any(psc =>
           psc.SubCategory != null &&
           !psc.SubCategory.IsDeleted &&

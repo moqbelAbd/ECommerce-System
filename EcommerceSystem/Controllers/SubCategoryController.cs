@@ -32,6 +32,7 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: SubCategory/Details/{id}
+        [AllowAnonymous]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
