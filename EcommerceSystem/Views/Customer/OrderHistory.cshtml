@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<EcommerceSystem.Models.Order>
 
 @{
-    ViewData["Title"] = "Order History - Rolexyal";
+    ViewData["Title"] = "Order History  ";
+    var selectedStatusId = Context.Request.Query["statusId"].ToString();
 }
 
 <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
@@ -13,15 +14,34 @@
 <section class="bg0 p-t-75 p-b-120">
     <div class="container">
         <div class="row">
+            <!-- Sidebar Menu -->
             <div class="col-md-3 p-b-30">
                 <partial name="_AccountMenu" />
             </div>
 
+            <!-- Main Content -->
             <div class="col-md-9 p-b-30">
                 <div class="p-all-30 bg0 bor10 hov-shadow1 trans-04">
-                    <div class="p-b-25 border-bottom m-b-30">
-                        <h4 class="mtext-105 cl2">Your Past Orders</h4>
-                        <p class="stext-107 cl6">Track, review, and check the status of your luxury purchases.</p>
+                    <div class="p-b-25 border-bottom m-b-30 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <h4 class="mtext-105 cl2">Your Past Orders</h4>
+                            <p class="stext-107 cl6">Track, review, and check the status of your luxury purchases.</p>
+                        </div>
+
+                        <!-- Filter Form -->
+                        <form method="get" asp-action="OrderHistory" class="d-flex align-items-center gap-2 m-0">
+                            <select name="statusId" class="form-control form-control-sm" style="width: 160px; border-radius: 6px;" onchange="this.form.submit()">
+                                <option value="">All Statuses</option>
+                                <option value="1" selected="@(selectedStatusId == "1")">Pending</option>
+                                <option value="2" selected="@(selectedStatusId == "2")">Processing</option>
+                                <option value="3" selected="@(selectedStatusId == "3")">Shipped</option>
+                                <option value="4" selected="@(selectedStatusId == "4")">Delivered</option>
+                            </select>
+                            @if (!string.IsNullOrEmpty(selectedStatusId))
+                            {
+                                <a asp-action="OrderHistory" class="btn btn-outline-secondary btn-sm" style="border-radius: 6px; font-size: 12px; padding: 5px 10px;">Reset</a>
+                            }
+                        </form>
                     </div>
 
                     <div class="wrap-table-shopping-cart" style="border: 1px solid #e6e6e6; border-radius: 8px; overflow: hidden; background: #fff;">
@@ -39,7 +59,7 @@
                             {
                                 <tr>
                                     <td colspan="6" class="text-center p-t-40 p-b-40 stext-111 cl6">
-                                        You have no past orders.
+                                        No past orders found matching this filter.
                                     </td>
                                 </tr>
                             }
@@ -47,11 +67,9 @@
                             {
                                 foreach (var order in Model)
                                 {
-                                    // Generate a short ID from the Guid (e.g., first 8 characters)
                                     string shortOrderId = order.OrderId.ToString().Substring(0, 8).ToUpper();
-                                    
-                                    // Dynamic Badge Styling
-                                    string badgeBg = "#fff2cc"; // Default Yellow
+
+                                    string badgeBg = "#fff2cc";
                                     string badgeColor = "#806000";
                                     string statusName = order.OrderStatus?.OrderStatusName ?? "Processing";
 
@@ -88,6 +106,8 @@
 
 <style>
     @@media (max-width: 992px) {
-        .table-shopping-cart { min-width: 750px; }
+        .table-shopping-cart {
+            min-width: 750px;
+        }
     }
 </style>

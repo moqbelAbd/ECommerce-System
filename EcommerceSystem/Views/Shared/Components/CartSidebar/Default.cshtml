@@ -1,60 +1,106 @@
-﻿@model EcommerceSystem.Models.CartViewModel
+﻿@model CartViewModel
 
 <div class="wrap-header-cart js-panel-cart">
     <div class="s-full js-hide-cart"></div>
-    <div class="header-cart flex-col-l p-l-65 p-r-25">
-        <div class="header-cart-title flex-w flex-sb-m p-b-8">
-            <span class="mtext-103" style="color: #fff;">Your Cart</span>
-            <div class="fs-35 lh-10 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart" style="color: #fff;">
+    
+    <div class="header-cart flex-col-l p-l-0 p-r-0">
+        <!-- عنوان السلة وزر الإغلاق المثبت في الطرف تماماً -->
+        <div class="header-cart-title w-full flex-sb-m" style="padding: 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <span class="mtext-103" style="color: #fff; font-weight: 600;">Your Cart</span>
+            <div class="fs-35 lh-10 pointer hov-cl1 trans-04 js-hide-cart" style="color: #fff;">
                 <i class="zmdi zmdi-close"></i>
             </div>
         </div>
         
-        <div class="header-cart-content flex-w js-pscroll">
+        <div class="header-cart-content flex-w w-full js-pscroll" style="padding: 20px 25px; overflow-y: auto; max-height: calc(100vh - 280px);">
             <ul class="header-cart-wrapitem w-full">
                 
                 @if(!Model.Items.Any())
                 {
-                    <li class="p-b-10" style="color: #adb5bd;">Your cart is currently empty.</li>
+                    <li class="p-b-10 text-center" style="color: #adb5bd;">Your cart is currently empty.</li>
                 }
                 else
                 {
                     @foreach (var item in Model.Items)
                     {
-                        <li class="header-cart-item flex-w flex-t m-b-12">
-                            <div class="header-cart-item-img" style="width: 60px; height: 80px; overflow: hidden; background: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                        <li class="header-cart-item flex-w flex-t m-b-18" style="align-items: center;" id="sidebar-item-@item.ProductId">
+                            <!-- صورة المنتج: عند النقر عليها يتم حذفه من السلة عبر الـ AJAX -->
+                            <div class="header-cart-item-img ajax-sidebar-remove" data-product-id="@item.ProductId" style="width: 60px; height: 80px; overflow: hidden; background: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.2s;" title="Click to remove item" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
                                 <img src="@item.ImageUrl" alt="@item.ProductName" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                             </div>
+                            
                             <div class="header-cart-item-txt p-t-8" style="padding-left: 15px; width: calc(100% - 60px);">
-                                <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04" style="color: #f8f9fa; display: block; text-decoration: none;">@item.ProductName</a>
-                                <span class="header-cart-item-info" style="color: #adb5bd;">@item.Quantity x $@item.Price.ToString("0.00")</span>
+                                <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="header-cart-item-name m-b-18 hov-cl1 trans-04" style="color: #f8f9fa; display: block; text-decoration: none; font-weight: 500;">@item.ProductName</a>
+                                <span class="header-cart-item-info" style="color: #c9aa6f;">@item.Quantity x $@item.Price.ToString("0.00")</span>
                             </div>
                         </li>
                     }
                 }
             </ul>
-            
-            <div class="w-full">
-                <div class="header-cart-total w-full p-tb-40" style="color: #fff; font-size: 18px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    Total: $@Model.CartTotal.ToString("0.00")
+        </div>
+
+        @if (Model.Items.Any())
+        {
+            <div class="w-full p-lr-25 p-t-20 p-b-30" style="background: #1a1d20; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
+                <div class="header-cart-total w-full p-b-20" style="color: #fff; font-size: 18px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #adb5bd; font-size: 16px;">Total:</span>
+                    <span style="color: #c9aa6f; font-weight: bold;">$@Model.CartTotal.ToString("0.00")</span>
                 </div>
 
-                    @if (Model.Items.Count >= 1 ){
-
-                <div class="header-cart-buttons flex-w w-full">
-                    <a asp-controller="Customer" asp-action="Cart" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-r-8 m-b-10">View Cart</a>
-                    <a asp-controller="Customer" asp-action="Checkout" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-b-10">Check Out</a>
+                <div class="header-cart-buttons flex-w w-full" style="justify-content: space-between;">
+                    <a asp-controller="Customer" asp-action="Cart" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10" style="border-radius: 20px; text-decoration: none; width: 48%;">View Cart</a>
+                    <a asp-controller="Customer" asp-action="Checkout" class="flex-c-m stext-101 cl0 size-107 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-b-10" style="border-radius: 20px; text-decoration: none; width: 48%;">Check Out</a>
                 </div>               
-                    }
-
-                    @* else {
-                    <div class="header-cart-buttons  w-full">
-                    <a asp-controller="Customer" asp-action="Cart" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04 m-r-8 m-b-10">View Cart</a>
-                    </div>
-                    } *@
-
-               </div>
             </div>
-        </div>
+        }
     </div>
 </div>
+
+<!-- سكريبت خاص بحذف المنتج عند النقر على الصورة في السلة الجانبية وتحديث العداد -->
+<script>
+    if (typeof sidebarRemoveInitialized === 'undefined') {
+        var sidebarRemoveInitialized = true;
+        document.addEventListener("click", function(e) {
+            const imgWrapper = e.target.closest(".ajax-sidebar-remove");
+            if (!imgWrapper) return;
+
+            e.preventDefault();
+            const productId = imgWrapper.getAttribute("data-product-id");
+
+            fetch(`/Cart/RemoveFromCart?productId=${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // إظهار التوست باللون الذهبي التحذيري
+                    showToast(data.message || "Product removed from cart successfully!", "warning");
+
+                    // إعادة تحديث السلة الجانبية وسحب المحتوى الجديد
+                    fetch('/Cart/RefreshSidebarCart')
+                        .then(response => response.text())
+                        .then(html => {
+                            const sidebarContainer = document.getElementById('cart-sidebar-container');
+                            if (sidebarContainer) {
+                                sidebarContainer.innerHTML = html;
+                            }
+                        });
+
+                    // تحديث عداد الهيدر (تقليصه بواحدة أو حسب الكمية)
+                    const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
+                    cartNotiElements.forEach(el => {
+                        let currentCount = parseInt(el.getAttribute('data-notify')) || 1;
+                        el.setAttribute('data-notify', Math.max(0, currentCount - 1));
+                    });
+
+                } else {
+                    showToast(data.message || "Error removing item", "error");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+</script>

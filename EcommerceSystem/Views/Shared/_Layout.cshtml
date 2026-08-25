@@ -11,7 +11,6 @@
         .OrderBy(c => c.CategoryName)
         .ToListAsync();
 
-    // حساب عدد عناصر السلة ديناميكياً للعرض بجانب الأيقونة
     int cartCount = 0;
     if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
     {
@@ -68,131 +67,164 @@
     <link rel="stylesheet" type="text/css" href="~/css/toast.css">
 
     <style>
-            html, body {
-                height: 100%;
-                margin: 0;
-            }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
 
-                body.animsition {
-                    display: flex;
-                    flex-direction: column;
-                    min-height: 100vh;
-                }
+        body.animsition {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-            .page-content-wrapper {
-                flex: 1 0 auto;
-            }
+        .page-content-wrapper {
+            flex: 1 0 auto;
+        }
 
-            .menu-mobile {
-                background-color: #1a1d20 !important;
-                border-top: 1px solid rgba(201, 170, 111, 0.2);
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            }
+        .menu-mobile {
+            background-color: #1a1d20 !important;
+            border-top: 1px solid rgba(201, 170, 111, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-                .menu-mobile .main-menu-m {
-                    background-color: #1a1d20 !important;
-                    padding: 15px 0;
-                }
+        .menu-mobile .main-menu-m {
+            background-color: #1a1d20 !important;
+            padding: 15px 0;
+        }
 
-                    .menu-mobile .main-menu-m li {
-                        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-                    }
+        .menu-mobile .main-menu-m li {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-                        .menu-mobile .main-menu-m li a {
-                            color: #f8f9fa !important;
-                            padding: 14px 25px;
-                            font-size: 15px;
-                            font-family: 'Poppins-Medium', sans-serif;
-                            letter-spacing: 0.5px;
-                            transition: all 0.3s ease;
-                            display: block;
-                        }
+        .menu-mobile .main-menu-m li a {
+            color: #f8f9fa !important;
+            padding: 14px 25px;
+            font-size: 15px;
+            font-family: 'Poppins-Medium', sans-serif;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            display: block;
+        }
 
-                            .menu-mobile .main-menu-m li a:hover {
-                                color: #c9aa6f !important;
-                                background-color: rgba(201, 170, 111, 0.08);
-                                padding-left: 30px;
-                            }
+        .menu-mobile .main-menu-m li a:hover {
+            color: #c9aa6f !important;
+            background-color: rgba(201, 170, 111, 0.08);
+            padding-left: 30px;
+        }
 
-            .header-cart {
-                background-color: #1a1d20 !important;
-                color: #fff !important;
-            }
+        .header-cart {
+            background-color: #1a1d20 !important;
+            color: #fff !important;
+        }
 
-            .auth-btn-login {
-                color: #c9aa6f !important;
-                border: 1px solid #c9aa6f !important;
-                background-color: transparent !important;
-                border-radius: 20px !important;
-                padding: 6px 18px !important;
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
+        .auth-btn-login {
+            color: #c9aa6f !important;
+            border: 1px solid #c9aa6f !important;
+            background-color: transparent !important;
+            border-radius: 20px !important;
+            padding: 6px 18px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
 
-                .auth-btn-login:hover {
-                    background-color: #c9aa6f !important;
-                    color: #1a1d20 !important;
-                }
+        .auth-btn-login:hover {
+            background-color: #c9aa6f !important;
+            color: #1a1d20 !important;
+        }
 
-            .auth-btn-register {
-                color: #1a1d20 !important;
-                background-color: #c9aa6f !important;
-                border: 1px solid #c9aa6f !important;
-                border-radius: 20px !important;
-                padding: 6px 18px !important;
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
+        .auth-btn-register {
+            color: #1a1d20 !important;
+            background-color: #c9aa6f !important;
+            border: 1px solid #c9aa6f !important;
+            border-radius: 20px !important;
+            padding: 6px 18px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
 
-                .auth-btn-register:hover {
-                    background-color: transparent !important;
-                    color: #c9aa6f !important;
-                    border-color: #c9aa6f !important;
-                }
+        .auth-btn-register:hover {
+            background-color: transparent !important;
+            color: #c9aa6f !important;
+            border-color: #c9aa6f !important;
+        }
 
-            .icon-header-item.cart-styled {
-                color: #c9aa6f !important;
-                transition: transform 0.3s ease;
-            }
+        .icon-header-item.cart-styled {
+            color: #c9aa6f !important;
+            transition: transform 0.3s ease;
+        }
 
-                .icon-header-item.cart-styled:hover {
-                    transform: scale(1.1);
-                }
+        .icon-header-item.cart-styled:hover {
+            transform: scale(1.1);
+        }
 
-            .icon-header-noti::after {
-                background-color: #c9aa6f !important;
-                color: #1a1d20 !important;
-                font-weight: 700;
-            }
+        .icon-header-noti::after {
+            background-color: #c9aa6f !important;
+            color: #1a1d20 !important;
+            font-weight: 700;
+        }
 
-            footer.bg3 {
-                padding-top: 5px !important;
-                padding-bottom: 5px !important;
-                flex-shrink: 0;
-            }
+        footer.bg3 {
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            flex-shrink: 0;
+        }
 
-                footer.bg3 .container {
-                    line-height: 1;
-                }
+        footer.bg3 .container {
+            line-height: 1;
+        }
 
-                footer.bg3 img.logo-footer {
-                    max-height: 80px !important;
-                    width: auto;
-                }
+        footer.bg3 img.logo-footer {
+            max-height: 80px !important;
+            width: auto;
+        }
 
-            /* تثبيت زر الإغلاق (X) في أعلى السلة على الطرف تماماً بدون المساس بباقي العناصر */
-            .header-cart-title {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                position: relative !important;
-            }
+        /* تثبيت زر الإغلاق (X) في أعلى السلة في المنتصف تماماً وبشكل إجباري */
+        .header-cart-title {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+            padding: 25px 0 15px 0 !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-                .header-cart-title .fs-35 {
-                    position: relative !important;
-                    top: auto !important;
-                    right: auto !important;
-                }
+        .header-cart-title .fs-35 {
+            position: absolute !important;
+            top: 12px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            right: auto !important;
+            bottom: auto !important;
+            cursor: pointer !important;
+            color: #c9aa6f !important;
+            z-index: 10 !important;
+            transition: color 0.3s ease;
+        }
+
+        .header-cart-title .fs-35:hover {
+            color: #fff !important;
+        }
+
+        .header-cart-title .mtext-103 {
+            margin-top: 25px !important;
+        }
+
+        /* تنسيق شريط التمرير (Scrollbar) في السلة الجانبية */
+        .header-cart-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .header-cart-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .header-cart-content::-webkit-scrollbar-thumb {
+            background: #c9aa6f;
+            border-radius: 10px;
+        }
+        .header-cart-content::-webkit-scrollbar-thumb:hover {
+            background: #b3925a;
+        }
     </style>
 </head>
 <body class="animsition">
@@ -219,7 +251,6 @@
                                 <li>
                                     <a asp-controller="Admin" asp-action="Index">Dashboard</a>
                                 </li>
-
                             }
                             else
                             {
@@ -255,7 +286,6 @@
                         @if (!User.IsInRole("Admin"))
                         {
                             <div class="flex-c-m h-full p-l-10 p-r-25 bor6">
-                                <!-- تم ربط الـ data-notify بالمتغير الديناميكي cartCount -->
                                 <div class="icon-header-item cart-styled hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify="@cartCount">
                                     <i class="zmdi zmdi-shopping-cart"></i>
                                 </div>
@@ -449,10 +479,12 @@
         }
     </div>
 
+    <!-- Main Page Content Wrapper -->
     <div class="page-content-wrapper">
         @RenderBody()
     </div>
 
+    <!-- Footer -->
     <footer class="bg3 p-t-5 p-b-5" style="background-color: #1a1d20 !important;">
         <div class="container">
             <div class="flex-w flex-sb-m">
@@ -470,22 +502,24 @@
         </div>
     </footer>
 
+    <!-- Back to top button -->
     <div class="btn-back-to-top" id="myBtn">
         <span class="symbol-btn-back-to-top"><i class="zmdi zmdi-chevron-up"></i></span>
     </div>
 
+    <!-- Scripts -->
     <script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
     <script src="~/vendor/animsition/js/animsition.min.js"></script>
     <script src="~/vendor/bootstrap/js/popper.js"></script>
     <script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="~/vendor/select2/select2.min.js"></script>
     <script>
-            $(".js-select2").each(function() {
-                $(this).select2({
-                    minimumResultsForSearch: 20,
-                    dropdownParent: $(this).next('.dropDownSelect2')
-                });
-            })
+        $(".js-select2").each(function() {
+            $(this).select2({
+                minimumResultsForSearch: 20,
+                dropdownParent: $(this).next('.dropDownSelect2')
+            });
+        })
     </script>
     <script src="~/vendor/daterangepicker/moment.min.js"></script>
     <script src="~/vendor/daterangepicker/daterangepicker.js"></script>
@@ -493,25 +527,25 @@
     <script src="~/js/slick-custom.js"></script>
     <script src="~/vendor/parallax100/parallax100.js"></script>
     <script>
-            $('.parallax100').parallax100();
+        $('.parallax100').parallax100();
     </script>
     <script src="~/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
     <script src="~/vendor/isotope/isotope.pkgd.min.js"></script>
     <script src="~/vendor/sweetalert/sweetalert.min.js"></script>
     <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script>
-            $('.js-pscroll').each(function() {
-                $(this).css('position', 'relative');
-                $(this).css('overflow', 'hidden');
-                var ps = new PerfectScrollbar(this, {
-                    wheelSpeed: 1,
-                    scrollingThreshold: 1000,
-                    wheelPropagation: false,
-                });
-                $(window).on('resize', function() {
-                    ps.update();
-                })
+        $('.js-pscroll').each(function() {
+            $(this).css('position', 'relative');
+            $(this).css('overflow', 'hidden');
+            var ps = new PerfectScrollbar(this, {
+                wheelSpeed: 1,
+                scrollingThreshold: 1000,
+                wheelPropagation: false,
             });
+            $(window).on('resize', function() {
+                ps.update();
+            })
+        });
     </script>
     <script src="~/js/main.js"></script>
     <script src="~/js/toast.js"></script>
