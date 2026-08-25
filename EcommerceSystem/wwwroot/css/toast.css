@@ -24,28 +24,23 @@
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.toast-item.show {
-    opacity: 1;
-    transform: translateX(0);
-}
+    .toast-item.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
 
-.toast-item.hide {
-    opacity: 0;
-    transform: translateX(40px);
-}
+    .toast-item.hide {
+        opacity: 0;
+        transform: translateX(40px);
+    }
 
-.toast-item.toast-success {
-    background: #2ea44f;
-}
-
-.toast-item.toast-warning {
-    background: #c9aa6f;
-    color: #1a1d20;
-}
-
-.toast-item.toast-error {
-    background: #dc3545;
-}
+    /*  ÊÕÌœ ﬂ· «·Õ«·«  (Success, Warning, Error) · ﬂÊ‰ »«··Ê‰ «·–Â»Ì «·›«Œ— */
+    .toast-item.toast-success,
+    .toast-item.toast-warning,
+    .toast-item.toast-error {
+        background: #c9aa6f !important;
+        color: #1a1d20 !important;
+    }
 
 .toast-close {
     position: absolute;
@@ -61,6 +56,6 @@
     padding: 4px;
 }
 
-.toast-close:hover {
-    opacity: 1;
-}
+    .toast-close:hover {
+        opacity: 1;
+    }
