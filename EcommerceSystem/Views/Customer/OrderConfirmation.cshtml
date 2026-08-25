@@ -15,7 +15,7 @@
 <div class="bg0 m-t-60 p-b-140">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-9">
 
                 <div class="bor10 p-lr-40 p-tb-50" style="border-radius: 16px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.06);">
 
@@ -103,7 +103,49 @@
 
                 </div>
 
+                <!-- Action Buttons (Hidden when printing) -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4 print-hide">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                        <i class="fa fa-arrow-left m-r-5"></i> Back To Home
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button onclick="window.print();" class="btn btn-outline-dark px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                            <i class="fa fa-print m-r-5"></i> Print Invoice
+                        </button>
+                        <a asp-controller="Customer" asp-action="OrderHistory" class="btn px-4 py-2 text-dark fw-bold shadow-sm" style="border-radius: 20px; background-color: #c9aa6f; border: none;">
+                            View All Orders <i class="fa fa-list m-l-5"></i>
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <style>
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printableInvoice, #printableInvoice * {
+                visibility: visible;
+            }
+
+            #printableInvoice {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            .print-hide {
+                display: none !important;
+            }
+        }
+    </style>
+}

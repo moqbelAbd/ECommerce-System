@@ -18,7 +18,7 @@ namespace EcommerceSystem.Controllers
             _environment = environment;
         }
 
-        // GET: Category (متاح للجميع: زوار، عملاء، وأدمن)
+        // GET: Category 
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
@@ -30,7 +30,7 @@ namespace EcommerceSystem.Controllers
             return View(categories);
         }
 
-        // GET: Category/Details/{id} (متاح للجميع)
+        // GET: Category/Details/{id} 
         [AllowAnonymous]
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -49,7 +49,7 @@ namespace EcommerceSystem.Controllers
             return View(category);
         }
 
-        // GET: Category/Create (للأدمن فقط)
+        // GET: Category/Create
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
@@ -84,7 +84,7 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Category/Edit/{id} (للأدمن فقط)
+        // GET: Category/Edit/{id}
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid? id)
         {
@@ -138,7 +138,7 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Category/Delete/{id} (للأدمن فقط)
+        // GET: Category/Delete/{id}
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid? id)
         {
@@ -171,7 +171,6 @@ namespace EcommerceSystem.Controllers
             if (category == null)
                 return NotFound();
 
-            // Soft Delete
             category.IsDeleted = true;
 
             await _context.SaveChangesAsync();

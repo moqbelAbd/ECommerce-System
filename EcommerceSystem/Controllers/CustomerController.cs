@@ -21,11 +21,6 @@ namespace EcommerceSystem.Controllers
             _protector = protectorProvider.CreateProtector("EcommerceSystem.PaymentCards.CardNumberKey");
         }
 
-        // =========================================================
-        // PUBLIC SHOP
-        // Guest + Customer
-        // =========================================================
-
         public async Task<IActionResult> Index(
             Guid? categoryId,
             Guid? subCategoryId,
@@ -133,9 +128,6 @@ namespace EcommerceSystem.Controllers
             return View(orders);
         }
 
-        // =========================================================
-        // ORDER DETAILS
-        // =========================================================
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> OrderDetails(Guid id)

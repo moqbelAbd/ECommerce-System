@@ -16,11 +16,6 @@ namespace EcommerceSystem.Controllers
             _context = context;
         }
 
-        // =========================================================
-        // CUSTOMER ACTIONS (Only Logged-in Customers)
-        // =========================================================
-
-        // GET: Wishlists/Index (عرض قائمة الأمنيات الخاصة بالعميل)
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Index()
         {
@@ -39,11 +34,9 @@ namespace EcommerceSystem.Controllers
                         .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(w => w.CustomerId == customer.CustomerId);
 
-            // تحديد مسار الـ View بالاسم الصحيح لمجلد Wishlist (مفرد)
             return View("~/Views/Wishlist/Index.cshtml", wishlist);
         }
 
-        // POST: Wishlists/ToggleWishlist
         [Authorize(Roles = "Customer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -58,7 +51,6 @@ namespace EcommerceSystem.Controllers
                 return Json(new { success = false, redirect = Url.Page("/Account/Login", new { area = "Identity" }) });
             }
 
-            // 1. البحث عن قائمة الأمنيات الخاصة بالعميل أو إنشاؤها إن لم تكن موجودة
             var wishlist = await _context.Wishlists
                 .FirstOrDefaultAsync(w => w.CustomerId == customer.CustomerId);
 
@@ -73,7 +65,6 @@ namespace EcommerceSystem.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // 2. التحقق المباشر من وجود المنتج في جدول العناصر الوسيطة
             var existingItem = await _context.WishlistItems
                 .FirstOrDefaultAsync(wi => wi.WishlistId == wishlist.WishlistId && wi.ProductId == productId);
 
@@ -81,13 +72,11 @@ namespace EcommerceSystem.Controllers
 
             if (existingItem != null)
             {
-                // إزالة المنتج إذا كان موجوداً
                 _context.WishlistItems.Remove(existingItem);
                 isAdded = false;
             }
             else
             {
-                // إضافة المنتج إذا لم يكن موجوداً
                 var wishlistItem = new WishlistItem
                 {
                     WishlistItemId = Guid.NewGuid(),
@@ -104,7 +93,6 @@ namespace EcommerceSystem.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                // في حال حدوث تداخل، نقوم بإلغاء التتبع وإعادة المحاولة أو تجاهله بأمان
                 foreach (var entry in _context.ChangeTracker.Entries())
                 {
                     entry.Reload();
@@ -116,11 +104,6 @@ namespace EcommerceSystem.Controllers
         }
 
 
-        // =========================================================
-        // ADMIN ACTIONS (Manage All Wishlists)
-        // =========================================================
-
-        // GET: Wishlists/AdminList
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminList()
         {
@@ -132,7 +115,6 @@ namespace EcommerceSystem.Controllers
             return View("AdminIndex", wishlists);
         }
 
-        // GET: WISHLISTS/Details/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(Guid? wishlistid)
         {
@@ -155,7 +137,6 @@ namespace EcommerceSystem.Controllers
             return View(wishlist);
         }
 
-        // GET: WISHLISTS/Delete/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid? wishlistid)
         {
@@ -176,7 +157,6 @@ namespace EcommerceSystem.Controllers
             return View(wishlist);
         }
 
-        // POST: WISHLISTS/Delete/5
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
