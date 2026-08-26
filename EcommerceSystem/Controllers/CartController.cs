@@ -169,7 +169,7 @@ namespace EcommerceSystem.Controllers
                     {
                         var item = cart.CartItems.FirstOrDefault(ci => ci.ProductId == kvp.Key);
                         if (item != null)
-                        {]
+                        {
                             item.ItemQuantity = kvp.Value > 0 ? kvp.Value : 1;
                         }
                     }
