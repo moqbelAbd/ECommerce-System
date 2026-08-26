@@ -134,6 +134,15 @@ namespace EcommerceSystem.Controllers
             if (id == null)
                 return NotFound();
 
+            Guid? currentCustomerId = null;
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var cust = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+                if (cust != null) currentCustomerId = cust.CustomerId;
+            }
+            ViewBag.CurrentCustomerId = currentCustomerId;
+
             var productQuery = _context.Products
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.ProductBrand)
@@ -280,18 +289,79 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction("Details", new { id = productId });
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditReview(Guid reviewId, Guid productId, int rating, string reviewText)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (customer == null) return RedirectToAction("CompleteProfile", "Customer");
+
+            var review = await _context.ProductReviews.FirstOrDefaultAsync(r => r.ProductReviewId == reviewId && r.CustomerId == customer.CustomerId);
+
+            if (review == null)
+            {
+                TempData["ErrorMessage"] = "Review not found or you do not have permission to edit it.";
+                return RedirectToAction("Details", new { id = productId });
+            }
+
+            if (ModelState.IsValid && rating >= 1 && rating <= 5)
+            {
+                review.CustomerProductRating = rating;
+                review.CustomerProductReview = reviewText ?? string.Empty;
+
+                _context.ProductReviews.Update(review);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Review updated successfully!";
+            }
+
+            return RedirectToAction("Details", new { id = productId });
+        }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteReview(Guid reviewId, Guid productId)
         {
-            var review = await _context.ProductReviews.FindAsync(reviewId);
-            if (review != null)
+            var review = await _context.ProductReviews
+                .Include(r => r.Customer)
+                .FirstOrDefaultAsync(r => r.ProductReviewId == reviewId);
+
+            if (review == null)
+            {
+                TempData["ErrorMessage"] = "Review not found.";
+                return RedirectToAction(nameof(Details), new { id = productId });
+            }
+
+            bool isAdmin = User.IsInRole("Admin");
+            bool isOwner = false;
+
+            if (!isAdmin && User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null && review.CustomerId == customer.CustomerId)
+                {
+                    isOwner = true;
+                }
+            }
+
+            if (isAdmin || isOwner)
             {
                 _context.ProductReviews.Remove(review);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Review deleted successfully.";
+                TempData["SuccessMessage"] = "Review deleted successfully.";
             }
+            else
+            {
+                TempData["ErrorMessage"] = "You do not have permission to delete this review.";
+            }
+
             return RedirectToAction(nameof(Details), new { id = productId });
         }
 
@@ -512,8 +582,7 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task LoadProductDropdowns(
-            Guid? selectedSubCategoryId = null)
+        private async Task LoadProductDropdowns()
         {
             ViewBag.Brands = await _context.ProductBrands
                 .OrderBy(brand => brand.BrandName)
@@ -527,8 +596,6 @@ namespace EcommerceSystem.Controllers
                 .Where(sc => !sc.IsDeleted)
                 .OrderBy(subCategory => subCategory.SubCategoryName)
                 .ToListAsync();
-
-            ViewBag.SelectedSubCategoryId = selectedSubCategoryId;
         }
     }
 }

@@ -1,7 +1,7 @@
 @model EcommerceSystem.Models.Product
 
 @{
-    ViewData["Title"] = "Product Details";
+    ViewData["Title"] = "Product Details - Rolexyal";
     var averageRating = ViewBag.AverageRating != null ? (double)ViewBag.AverageRating : 0;
     var totalReviews = ViewBag.TotalReviews != null ? (int)ViewBag.TotalReviews : 0;
     var filteredReviews = ViewBag.FilteredReviews as List<EcommerceSystem.Models.ProductReview> ?? new List<EcommerceSystem.Models.ProductReview>();
@@ -11,6 +11,8 @@
 
     var isAdmin = User.IsInRole("Admin");
     var isCustomer = User.Identity != null && User.Identity.IsAuthenticated && !isAdmin;
+
+    var currentCustomerId = ViewBag.CurrentCustomerId as Guid?;
 
     var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
     bool isInWishlist = userWishlistIds.Contains(Model.ProductId);
@@ -22,16 +24,16 @@
         <!-- Top Navigation / Actions for Admin -->
         @if (isAdmin)
         {
-            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded shadow-sm" style="border: 1px solid #1a1d20;">
                 <h4 class="fw-bold mb-0" style="color: #1a1d20; font-size: 18px;">Admin Product Control</h4>
                 <div class="d-flex" style="gap: 10px;">
-                    <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center" title="Edit Product" style="border-radius: 50%; width: 36px; height: 36px;">
+                    <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-sm d-flex align-items-center justify-content-center" title="Edit Product" style="border-radius: 50%; width: 36px; height: 36px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
                         <i class="fa fa-pencil" style="font-size: 13px;"></i>
                     </a>
                     <a asp-action="Delete" asp-route-id="@Model.ProductId" class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center" title="Delete Product" style="border-radius: 50%; width: 36px; height: 36px;">
                         <i class="fa fa-trash" style="font-size: 13px;"></i>
                     </a>
-                    <a asp-action="Index" class="btn btn-dark btn-sm d-flex align-items-center justify-content-center" title="Back to List" style="border-radius: 50%; width: 36px; height: 36px;">
+                    <a asp-action="Index" class="btn btn-sm d-flex align-items-center justify-content-center" title="Back to List" style="border-radius: 50%; width: 36px; height: 36px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
                         <i class="fa fa-arrow-left" style="font-size: 13px;"></i>
                     </a>
                 </div>
@@ -52,7 +54,7 @@
                                 foreach (var img in Model.ProductImages)
                                 {
                                     <div class="item-slick3" data-thumb="@Url.Content(img.ProductImagePath)">
-                                        <div class="wrap-pic-w pos-relative" style="height: 450px; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 12px; border: 1px solid #eee;">
+                                        <div class="wrap-pic-w pos-relative" style="height: 450px; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 16px; border: 1px solid #1a1d20;">
                                             <img src="@Url.Content(img.ProductImagePath)" alt="@Model.ProductName" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                         </div>
                                     </div>
@@ -61,7 +63,7 @@
                             else
                             {
                                 <div class="item-slick3" data-thumb="~/images/product-01.jpg">
-                                    <div class="wrap-pic-w pos-relative" style="height: 450px; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 12px; border: 1px solid #eee;">
+                                    <div class="wrap-pic-w pos-relative" style="height: 450px; display: flex; align-items: center; justify-content: center; background: #fcfcfc; border-radius: 16px; border: 1px solid #1a1d20;">
                                         <img src="~/images/product-01.jpg" alt="Default" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                     </div>
                                 </div>
@@ -76,28 +78,28 @@
 
                     <!-- Product Title & Wishlist Icon Next to it -->
                     <div class="d-flex align-items-center justify-content-between p-b-14">
-                        <h4 class="mtext-105 cl2 js-name-detail m-0" style="font-weight: 700;">
+                        <h4 class="mtext-105 cl2 js-name-detail m-0 fw-bold" style="color: #1a1d20;">
                             @Model.ProductName
                         </h4>
 
                         @if (isCustomer)
                         {
                             <button type="button" class="btn-toggle-wishlist p-0 border-0 bg-transparent" data-product-id="@Model.ProductId" style="cursor: pointer;" title="Add/Remove Wishlist">
-                                <div class="btn-addwish-b2 dis-block pos-relative" style="width: 25px; height: 25px;">
-                                    <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON" style="@(isInWishlist ? "opacity: 0;" : "opacity: 1;") width: 22px;">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="~/images/icons/icon-heart-02.png" alt="ICON" style="@(isInWishlist ? "opacity: 1;" : "opacity: 0;") width: 22px;">
+                                <div class="btn-addwish-b2 dis-block pos-relative" style="width: 28px; height: 28px;">
+                                    <img class="icon-heart1 dis-block trans-04" src="~/images/icons/icon-heart-01.png" alt="ICON" style="@(isInWishlist ? "opacity: 0;" : "opacity: 1;") width: 25px;">
+                                    <img class="icon-heart2 dis-block trans-04 ab-t-l gold-heart" src="~/images/icons/icon-heart-02.png" alt="ICON" style="@(isInWishlist ? "opacity: 1;" : "opacity: 0;") width: 25px;">
                                 </div>
                             </button>
                         }
                     </div>
 
-                    <span class="mtext-106 cl2" style="font-size: 24px; color: #c5a059;">
+                    <span class="mtext-106 fw-bold" style="font-size: 26px; color: #c9aa6f;">
                         @Model.ProductPrice.ToString("C")
                     </span>
 
                     <!-- Average Rating Display -->
                     <div class="flex-w flex-m p-t-15 p-b-23">
-                        <div class="fs-18 rej-ratings m-r-15" style="color: #ffc107;">
+                        <div class="fs-18 rej-ratings m-r-15" style="color: #c9aa6f;">
                             @for (int i = 1; i <= 5; i++)
                             {
                                 if (i <= Math.Round(averageRating))
@@ -111,33 +113,31 @@
                             }
                         </div>
                         <span class="stext-102 cl3">
-                            <strong>@averageRating.ToString("0.0")</strong> / 5.0 (@totalReviews Review(s))
+                            <strong style="color: #1a1d20;">@averageRating.ToString("0.0")</strong> / 5.0 (@totalReviews Review(s))
                         </span>
                     </div>
 
-                    <p class="stext-102 cl3 p-t-10">
+                    <p class="stext-102 cl6 p-t-10" style="line-height: 1.7;">
                         @Model.ProductDescription
                     </p>
 
                     <!-- Extra Details Specs -->
-                    <div class="p-t-33">
+                    <div class="p-t-33" style="border-top: 1px solid #eee; margin-top: 20px;">
                         <div class="flex-w flex-m p-s-0 p-b-10">
-                            <span class="stext-102 cl3 size-205">Brand:</span>
+                            <span class="stext-102 cl3 size-205 fw-bold" style="color: #1a1d20;">Brand:</span>
                             <span class="stext-102 cl6">@(Model.ProductBrand?.BrandName ?? "N/A")</span>
                         </div>
                         <div class="flex-w flex-m p-s-0 p-b-10">
-                            <span class="stext-102 cl3 size-205">Model:</span>
+                            <span class="stext-102 cl3 size-205 fw-bold" style="color: #1a1d20;">Model:</span>
                             <span class="stext-102 cl6">@(Model.ProductModel?.ModelName ?? "N/A")</span>
                         </div>
                         <div class="flex-w flex-m p-s-0 p-b-10">
-                            <span class="stext-102 cl3 size-205">Stock Quantity:</span>
+                            <span class="stext-102 cl3 size-205 fw-bold" style="color: #1a1d20;">Stock Quantity:</span>
                             <span class="stext-102 cl6">@Model.ProductQuantity</span>
                         </div>
                     </div>
 
-                    <!-- ========================================= -->
-                    <!-- Quantity + Add To Cart Form (مدمجة من الصفحة الأولى) -->
-                    <!-- ========================================= -->
+                    <!-- Quantity + Add To Cart Form -->
                     @if (!isAdmin)
                     {
                         @if (Model.ProductQuantity > 0)
@@ -148,11 +148,10 @@
 
                                         <form id="details-cart-form" asp-controller="Cart" asp-action="AddToCart" method="post" class="flex-w flex-m flex-grow-1" style="width: 100%;">
                                             @Html.AntiForgeryToken()
-
                                             <input type="hidden" name="productId" value="@Model.ProductId" />
 
                                             <!-- Quantity Selector (+/-) -->
-                                            <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                                            <div class="wrap-num-product flex-w m-r-20 m-tb-10" style="border: 1px solid #1a1d20; border-radius: 8px;">
                                                 <button type="button" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
                                                     <i class="fs-16 zmdi zmdi-minus"></i>
                                                 </button>
@@ -170,10 +169,9 @@
                                             </div>
 
                                             <!-- Add To Cart Button -->
-                                            <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" style="border-radius: 20px;">
+                                            <button type="submit" class="flex-c-m stext-101 cl0 size-101 px-4 py-3 trans-04 shadow-sm" style="border-radius: 25px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f; font-weight: 600;">
                                                 Add to cart
                                             </button>
-
                                         </form>
 
                                     </div>
@@ -183,7 +181,7 @@
                         else
                         {
                             <div class="p-t-30">
-                                <button type="button" class="flex-c-m stext-101 cl0 size-101 bg3 bor1 p-lr-15" disabled style="border-radius: 20px;">
+                                <button type="button" class="flex-c-m stext-101 cl0 size-101 px-4 py-3" disabled style="border-radius: 25px; background-color: #ccc; border: none; font-weight: 600;">
                                     Out of stock
                                 </button>
                             </div>
@@ -196,9 +194,9 @@
 
         <!-- Product Reviews & Ratings Section -->
         <div class="p-t-60">
-            <div class="bor10 p-all-30 bg-light rounded shadow-sm">
+            <div class="bor10 p-all-30 shadow-sm" style="background-color: #fcfcfc; border-radius: 16px; border: 1px solid #1a1d20;">
                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-4">
-                    <h3 class="mtext-103 cl5 m-0">
+                    <h3 class="mtext-103 cl5 m-0 fw-bold" style="color: #1a1d20;">
                         Customer Reviews & Ratings
                     </h3>
 
@@ -210,21 +208,21 @@
 
                         @if (isCustomer && hasPurchased && !hasAlreadyReviewed)
                         {
-                            <button type="button" id="openReviewModalBtn" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                            <button type="button" id="openReviewModalBtn" class="flex-c-m stext-101 cl0 size-101 px-4 py-2 shadow-sm trans-04 text-dark fw-bold" style="border-radius: 25px; background-color: #c9aa6f; border: none;">
                                 <i class="fa fa-pencil m-r-8"></i> Add Review
                             </button>
                         }
                         else if (isCustomer && hasPurchased && hasAlreadyReviewed)
                         {
-                            <span class="text-muted" style="font-size: 13px;">You have already reviewed this product.</span>
+                            <span class="text-muted fw-semibold" style="font-size: 13px;"><i class="fa fa-check-circle text-success m-r-5"></i> You have already reviewed this product.</span>
                         }
 
                         @if (isAdmin)
                         {
                             <form method="get" asp-action="Details" asp-route-id="@Model.ProductId" class="d-flex align-items-center gap-2 flex-wrap m-0">
-                                <input type="text" name="customerSearch" value="@customerSearch" class="form-control form-control-sm" placeholder="Search customer..." style="width: 150px;">
+                                <input type="text" name="customerSearch" value="@customerSearch" class="form-control form-control-sm" placeholder="Search customer..." style="width: 150px; border-radius: 8px;">
 
-                                <select name="ratingFilter" class="form-control form-control-sm" style="width: 120px;">
+                                <select name="ratingFilter" class="form-control form-control-sm" style="width: 120px; border-radius: 8px;">
                                     <option value="">All Ratings</option>
                                     <option value="5" selected="@(selectedRating == 5)">5 Stars</option>
                                     <option value="4" selected="@(selectedRating == 4)">4 Stars</option>
@@ -233,8 +231,8 @@
                                     <option value="1" selected="@(selectedRating == 1)">1 Star</option>
                                 </select>
 
-                                <button type="submit" class="btn btn-dark btn-sm px-3">Filter</button>
-                                <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-outline-secondary btn-sm">Reset</a>
+                                <button type="submit" class="btn btn-sm px-3 fw-bold" style="background-color: #1a1d20; color: #c9aa6f; border-radius: 8px;">Filter</button>
+                                <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-outline-dark btn-sm" style="border-radius: 8px;">Reset</a>
                             </form>
                         }
                     </div>
@@ -243,7 +241,7 @@
                 @if (!filteredReviews.Any())
                 {
                     <div class="text-center py-4 text-muted">
-                        <i class="fa fa-comment-o fa-2x mb-2"></i>
+                        <i class="fa fa-comment-o fa-2x mb-2" style="color: #c9aa6f;"></i>
                         <p>No reviews found for this product yet.</p>
                     </div>
                 }
@@ -252,17 +250,23 @@
                     <div class="list-group">
                         @foreach (var review in filteredReviews)
                         {
-                            <div class="list-group-item bg-white p-4 mb-3 rounded border shadow-sm">
+                            bool isMyReview = currentCustomerId.HasValue && review.CustomerId == currentCustomerId.Value;
+
+                            <div class="list-group-item bg-white p-4 mb-3 rounded-4 shadow-sm border" style="border-color: #eaeaea !important;">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <div>
-                                        <h5 class="mb-1 fw-bold" style="color: #333;">
+                                        <h5 class="mb-1 fw-bold" style="color: #1a1d20;">
                                             @(review.Customer != null ? $"{review.Customer.FirstName} {review.Customer.LastName}" : "Customer")
+                                            @if (isMyReview)
+                                            {
+                                                <span class="badge ms-2" style="background-color: rgba(201, 170, 111, 0.2); color: #1a1d20; font-size: 11px;">(You)</span>
+                                            }
                                         </h5>
                                         <span class="text-muted" style="font-size: 12px;">@review.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
                                     </div>
 
                                     <div class="d-flex align-items-center gap-3">
-                                        <div style="color: #ffc107;">
+                                        <div style="color: #c9aa6f;">
                                             @for (int i = 1; i <= 5; i++)
                                             {
                                                 if (i <= review.CustomerProductRating)
@@ -276,15 +280,23 @@
                                             }
                                         </div>
 
-                                        @if (isAdmin)
+                                        <!-- زر التعديل والحذف يظهر لصاحب التعليق فقط (isMyReview) ولن يظهر للأدمن -->
+                                        @if (isMyReview)
                                         {
-                                            <form asp-action="DeleteReview" method="post" onsubmit="return confirm('Are you sure you want to delete this review?');" class="m-0">
-                                                <input type="hidden" name="reviewId" value="@review.ProductReviewId" />
-                                                <input type="hidden" name="productId" value="@Model.ProductId" />
-                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Review">
-                                                    <i class="fa fa-trash"></i>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-outline-warning btn-sm px-2 py-1" onclick="openEditReviewModal('@review.ProductReviewId', '@review.CustomerProductRating', @JsonSerializer.Serialize(review.CustomerProductReview))" title="Edit Review" style="border-radius: 6px;">
+                                                    <i class="fa fa-pencil"></i>
                                                 </button>
-                                            </form>
+
+                                                <form asp-action="DeleteReview" method="post" onsubmit="return confirm('Are you sure you want to delete this review?');" class="m-0">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="reviewId" value="@review.ProductReviewId" />
+                                                    <input type="hidden" name="productId" value="@Model.ProductId" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm px-2 py-1" title="Delete Review" style="border-radius: 6px;">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         }
                                     </div>
                                 </div>
@@ -301,16 +313,17 @@
     </div>
 </div>
 
-<!-- Review Modal -->
+<!-- Add Review Modal -->
 <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" style="margin-top: 80px; max-width: 650px;">
-        <div class="modal-content bor10 p-all-30 bg-white shadow-lg rounded-4">
+        <div class="modal-content bor10 p-all-35 bg-white shadow-lg" style="border-radius: 20px; border: none;">
             <div class="modal-header border-0 pb-0">
-                <h4 class="modal-title mtext-105 cl2 fw-bold" id="reviewModalLabel">Add Your Review</h4>
+                <h4 class="modal-title mtext-105 cl2 fw-bold" style="color: #1a1d20;" id="reviewModalLabel">Add Your Review</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <form asp-controller="Product" asp-action="AddReview" method="post">
+                @Html.AntiForgeryToken()
                 <div class="modal-body p-t-20 p-b-20">
                     <input type="hidden" name="productId" value="@Model.ProductId" />
 
@@ -326,19 +339,65 @@
                         </div>
 
                         <input type="hidden" name="rating" id="selectedRating" value="5" required />
-                        <span id="rating-text" class="text-muted d-block mt-2 stext-102 fw-bold" style="font-size: 15px;">5 Stars - Excellent</span>
+                        <span id="rating-text" class="text-muted d-block mt-2 stext-102 fw-bold" style="font-size: 15px; color: #c9aa6f !important;">5 Stars - Excellent</span>
                     </div>
 
                     <div class="mb-3">
                         <label class="stext-102 cl3 mb-2 d-block fw-bold" style="font-size: 15px;">Your Review</label>
-                        <textarea name="reviewText" class="form-control" rows="5" placeholder="Write your experience with this product..." required maxlength="250" style="font-size: 14px; padding: 12px;"></textarea>
-                        <small class="text-muted">Maximum 250 characters.</small>
+                        <textarea name="reviewText" class="form-control shadow-none" rows="5" placeholder="Write your experience with this product..." required maxlength="250" style="font-size: 14px; padding: 15px; border-radius: 12px; border: 1px solid #ddd;"></textarea>
+                        <small class="text-muted mt-2 d-block">Maximum 250 characters.</small>
                     </div>
                 </div>
 
                 <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="font-size: 14px;">Cancel</button>
-                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 trans-04" style="width: auto; height: 42px; font-size: 14px;">Submit Review</button>
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="font-size: 14px; border-radius: 20px;">Cancel</button>
+                    <button type="submit" class="btn px-4 py-2 text-dark fw-bold shadow-sm" style="font-size: 14px; border-radius: 20px; background-color: #c9aa6f; border: none;">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Review Modal -->
+<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" style="margin-top: 80px; max-width: 650px;">
+        <div class="modal-content bor10 p-all-35 bg-white shadow-lg" style="border-radius: 20px; border: none;">
+            <div class="modal-header border-0 pb-0">
+                <h4 class="modal-title mtext-105 cl2 fw-bold" style="color: #1a1d20;" id="editReviewModalLabel">Edit Your Review</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-controller="Product" asp-action="EditReview" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body p-t-20 p-b-20">
+                    <input type="hidden" name="reviewId" id="editReviewId" />
+                    <input type="hidden" name="productId" value="@Model.ProductId" />
+
+                    <div class="mb-4 text-center">
+                        <label class="stext-102 cl3 mb-3 d-block fw-bold" style="font-size: 16px;">Select Rating</label>
+
+                        <div class="star-rating-edit mb-2" style="cursor: pointer; font-size: 45px; color: #ccc; letter-spacing: 12px;">
+                            <i class="fa fa-star rating-star-edit" data-value="1"></i>
+                            <i class="fa fa-star rating-star-edit" data-value="2"></i>
+                            <i class="fa fa-star rating-star-edit" data-value="3"></i>
+                            <i class="fa fa-star rating-star-edit" data-value="4"></i>
+                            <i class="fa fa-star rating-star-edit" data-value="5"></i>
+                        </div>
+
+                        <input type="hidden" name="rating" id="editSelectedRating" value="5" required />
+                        <span id="edit-rating-text" class="text-muted d-block mt-2 stext-102 fw-bold" style="font-size: 15px; color: #c9aa6f !important;">5 Stars - Excellent</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="stext-102 cl3 mb-2 d-block fw-bold" style="font-size: 15px;">Your Review</label>
+                        <textarea name="reviewText" id="editReviewText" class="form-control shadow-none" rows="5" required maxlength="250" style="font-size: 14px; padding: 15px; border-radius: 12px; border: 1px solid #ddd;"></textarea>
+                        <small class="text-muted mt-2 d-block">Maximum 250 characters.</small>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="font-size: 14px; border-radius: 20px;">Cancel</button>
+                    <button type="submit" class="btn px-4 py-2 text-dark fw-bold shadow-sm" style="font-size: 14px; border-radius: 20px; background-color: #c9aa6f; border: none;">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -347,34 +406,37 @@
 
 @section Scripts {
     @using System.Text.Json
-@{
-        var successMessage = TempData["Success"] as string ?? TempData["SuccessMessage"] as string;
-        var warningMessage = TempData["Warning"] as string;
-        var errorMessage = TempData["ErrorMessage"] as string ?? TempData["Error"] as string;
-    }
 
-    @if (!string.IsNullOrEmpty(successMessage) || !string.IsNullOrEmpty(warningMessage) || !string.IsNullOrEmpty(errorMessage))
-    {
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                @if (!string.IsNullOrEmpty(successMessage))
-                    {
-                        @:showToast(@Html.Raw(JsonSerializer.Serialize(successMessage)), "success");
-                }
-                    @if (!string.IsNullOrEmpty(warningMessage))
-                    {
-                        @:showToast(@Html.Raw(JsonSerializer.Serialize(warningMessage)), "warning");
-                }
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        @:showToast(@Html.Raw(JsonSerializer.Serialize(errorMessage)), "error");
-                }
-                        });
-        </script>
-    }
+<script>
+        function openEditReviewModal(reviewId, rating, reviewText) {
+            document.getElementById("editReviewId").value = reviewId;
+            document.getElementById("editSelectedRating").value = rating;
+            document.getElementById("editReviewText").value = reviewText;
 
-    <script>
+            updateEditStars(rating);
+            const descriptions = { 1: "1 Star - Terrible", 2: "2 Stars - Poor", 3: "3 Stars - Average", 4: "4 Stars - Good", 5: "5 Stars - Excellent" };
+            document.getElementById("edit-rating-text").textContent = descriptions[rating];
+
+            var editModalEl = document.getElementById('editReviewModal');
+            editModalEl.style.display = "block";
+            editModalEl.classList.add("show");
+            editModalEl.style.backgroundColor = "rgba(0,0,0,0.5)";
+            document.body.classList.add("modal-open");
+        }
+
+        function updateEditStars(count) {
+            const editStars = document.querySelectorAll(".rating-star-edit");
+            editStars.forEach(s => {
+                if (s.getAttribute("data-value") <= count) {
+                    s.style.color = "#c9aa6f";
+                } else {
+                    s.style.color = "#ccc";
+                }
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
+            // Modal Add Review logic
             const openBtn = document.getElementById("openReviewModalBtn");
             const modal = document.getElementById("reviewModal");
             if (openBtn && modal) {
@@ -396,32 +458,28 @@
                         if (backdrop) backdrop.remove();
                     });
                 });
+            }
 
-                window.addEventListener("click", function(event) {
-                    if (event.target === modal) {
-                        modal.style.display = "none";
-                        modal.classList.remove("show");
+            // Modal Edit Review close logic
+            const editModal = document.getElementById("editReviewModal");
+            if (editModal) {
+                const closeEditBtns = editModal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+                closeEditBtns.forEach(btn => {
+                    btn.addEventListener("click", function() {
+                        editModal.style.display = "none";
+                        editModal.classList.remove("show");
                         document.body.classList.remove("modal-open");
-                        const backdrop = document.querySelector(".modal-backdrop");
-                        if (backdrop) backdrop.remove();
-                    }
+                    });
                 });
             }
 
+            // Star Rating for Add Modal
             const stars = document.querySelectorAll(".rating-star");
             const ratingInput = document.getElementById("selectedRating");
             const ratingText = document.getElementById("rating-text");
-
-            const descriptions = {
-                1: "1 Star - Terrible",
-                2: "2 Stars - Poor",
-                3: "3 Stars - Average",
-                4: "4 Stars - Good",
-                5: "5 Stars - Excellent"
-            };
+            const descriptions = { 1: "1 Star - Terrible", 2: "2 Stars - Poor", 3: "3 Stars - Average", 4: "4 Stars - Good", 5: "5 Stars - Excellent" };
 
             updateStars(5);
-
             stars.forEach(star => {
                 star.addEventListener("click", function() {
                     const value = this.getAttribute("data-value");
@@ -429,10 +487,8 @@
                     ratingText.textContent = descriptions[value];
                     updateStars(value);
                 });
-
                 star.addEventListener("mouseover", function() {
-                    const value = this.getAttribute("data-value");
-                    updateStars(value);
+                    updateStars(this.getAttribute("data-value"));
                 });
             });
 
@@ -446,13 +502,38 @@
             function updateStars(count) {
                 stars.forEach(s => {
                     if (s.getAttribute("data-value") <= count) {
-                        s.style.color = "#ffc107";
+                        s.style.color = "#c9aa6f";
                     } else {
                         s.style.color = "#ccc";
                     }
                 });
             }
 
+            // Star Rating for Edit Modal
+            const editStars = document.querySelectorAll(".rating-star-edit");
+            const editRatingInput = document.getElementById("editSelectedRating");
+            const editRatingText = document.getElementById("edit-rating-text");
+
+            editStars.forEach(star => {
+                star.addEventListener("click", function() {
+                    const value = this.getAttribute("data-value");
+                    editRatingInput.value = value;
+                    editRatingText.textContent = descriptions[value];
+                    updateEditStars(value);
+                });
+                star.addEventListener("mouseover", function() {
+                    updateEditStars(this.getAttribute("data-value"));
+                });
+            });
+
+            const editStarContainer = document.querySelector(".star-rating-edit");
+            if (editStarContainer) {
+                editStarContainer.addEventListener("mouseleave", function() {
+                    updateEditStars(editRatingInput.value);
+                });
+            }
+
+            // Wishlist Toggle
             document.body.addEventListener("click", function(e) {
                 const btn = e.target.closest(".btn-toggle-wishlist");
                 if (!btn) return;
@@ -461,7 +542,6 @@
                 const productId = btn.getAttribute("data-product-id");
                 const heart1 = btn.querySelector(".icon-heart1");
                 const heart2 = btn.querySelector(".icon-heart2");
-
                 const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
 
                 fetch('/Wishlists/ToggleWishlist', {
@@ -472,83 +552,89 @@
                     },
                     body: `productId=${productId}`
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (data.isAdded) {
-                                if (heart1) heart1.style.opacity = "0";
-                                if (heart2) heart2.style.opacity = "1";
-                                showToast("Added to your Wishlist!", "success");
-                            } else {
-                                if (heart1) heart1.style.opacity = "1";
-                                if (heart2) heart2.style.opacity = "0";
-                                showToast("Removed from your Wishlist!", "warning");
-                            }
-                        } else if (data.redirect) {
-                            window.location.href = data.redirect;
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.isAdded) {
+                            if (heart1) heart1.style.opacity = "0";
+                            if (heart2) heart2.style.opacity = "1";
+                            showToast("Added to your Wishlist!", "success");
+                        } else {
+                            if (heart1) heart1.style.opacity = "1";
+                            if (heart2) heart2.style.opacity = "0";
+                            showToast("Removed from your Wishlist!", "warning");
                         }
-                    })
-                    .catch(error => console.error('Error:', error));
+                    } else if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                });
             });
 
-            // 4. AJAX Add To Cart Script 
+            // Add To Cart AJAX
             const cartForm = document.getElementById("details-cart-form");
             if (cartForm) {
-                cartForm.addEventListener("submit", function(e) {
+                const newCartForm = cartForm.cloneNode(true);
+                cartForm.parentNode.replaceChild(newCartForm, cartForm);
+
+                newCartForm.addEventListener("submit", function(e) {
                     e.preventDefault();
 
-                    const formData = new FormData(cartForm);
+                    const submitBtn = newCartForm.querySelector('button[type="submit"]');
+                    if (submitBtn.disabled) return;
+                    submitBtn.disabled = true;
+
+                    const formData = new FormData(newCartForm);
                     const productId = formData.get("productId");
                     const quantity = parseInt(formData.get("quantity")) || 1;
 
                     fetch(`/Cart/AddToCart?productId=${productId}&quantity=${quantity}`, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast(data.message || "Product added to cart successfully!", "success");
 
-                                showToast(data.message || "Product added to cart successfully!", "success");
-
-
-                                fetch('/Cart/RefreshSidebarCart')
-                                    .then(response => response.text())
-                                    .then(html => {
-                                        const sidebarContainer = document.getElementById('cart-sidebar-container');
-                                        if (sidebarContainer) {
-                                            sidebarContainer.innerHTML = html;
-                                        }
-
-                                        const panelCart = document.querySelector('.js-panel-cart');
-                                        if (panelCart) {
-                                            panelCart.classList.add('show-header-cart');
-                                        }
-
-                                        const hideCartElements = document.querySelectorAll('.js-hide-cart');
-                                        hideCartElements.forEach(el => {
-                                            el.addEventListener('click', function(e) {
-                                                e.preventDefault();
-                                                panelCart.classList.remove('show-header-cart');
-                                            });
-                                        });
-                                    });
-
-                                const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
-                                cartNotiElements.forEach(el => {
-                                    let currentCount = parseInt(el.getAttribute('data-notify')) || 0;
-                                    el.setAttribute('data-notify', currentCount + quantity);
+                            // تحديث محتوى السلة الجانبية في الخلفية بصمت
+                            fetch('/Cart/RefreshSidebarCart')
+                                .then(response => response.text())
+                                .then(html => {
+                                    const sidebarContainer = document.getElementById('cart-sidebar-container');
+                                    if (sidebarContainer) {
+                                        sidebarContainer.innerHTML = html;
+                                    }
                                 });
 
-                            } else {
-                                showToast(data.message || "Error adding product to cart", "error");
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
+                            // تحديث عداد السلة في الهيدر فوراً
+                            const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
+                            cartNotiElements.forEach(el => {
+                                let currentCount = parseInt(el.getAttribute('data-notify')) || 0;
+                                el.setAttribute('data-notify', currentCount + quantity);
+                            });
+
+                        } else {
+                            showToast(data.message || "Error adding product to cart", "error");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast("An error occurred while adding the product.", "error");
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                    });
                 });
             }
         });
     </script>
 }
+
+<style>
+    .gold-heart {
+        filter: brightness(0) saturate(100%) invert(73%) sepia(34%) saturate(664%) hue-rotate(5deg) brightness(94%) contrast(87%);
+    }
+</style>
