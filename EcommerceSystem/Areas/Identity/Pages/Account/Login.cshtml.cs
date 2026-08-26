@@ -105,39 +105,25 @@ public class LoginModel : PageModel
         ReturnUrl = returnUrl;
     }
 
+    [HttpPost]
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
-        returnUrl ??= Url.Content("~/");
-
-        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        returnUrl ??= Url.Content("~/"); // الرابط الافتراضي إذا لم يوجد returnUrl
 
         if (ModelState.IsValid)
         {
             var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
             if (result.Succeeded)
             {
                 _logger.LogInformation("User logged in.");
 
-                // جلب بيانات المستخدم للتحقق مما إذا كان Admin
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
-                {
-                    // توجيه الأدمن مباشرة إلى صفحة لوحة التحكم
-                    return RedirectToAction("Index", "Admin");
-                }
-                else
-                {
-                    await MergeSessionCartToDatabaseAsync(user.Id);
-                    return LocalRedirect(returnUrl);
-                }
+                // هنا يتم إعادة توجيه المستخدم للصفحة الأصلية التي كان يحاول الوصول لها!
+                return LocalRedirect(returnUrl);
             }
-            if (result.RequiresTwoFactor)
-            {
-                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-            }
+
             if (result.IsLockedOut)
             {
-                _logger.LogWarning("User account locked out.");
                 return RedirectToPage("./Lockout");
             }
             else
@@ -147,10 +133,9 @@ public class LoginModel : PageModel
             }
         }
 
-        // If we got this far, something failed, redisplay form
+        // إذا حدث خطأ، نبقي الـ returnUrl موجوداً لكي لا يضيع
         return Page();
     }
-
     private async Task MergeSessionCartToDatabaseAsync(string applicationUserId)
     {
         // 1. Check if there is anything in the guest cart

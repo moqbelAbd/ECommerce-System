@@ -295,7 +295,7 @@
                         @if (!(User.Identity?.IsAuthenticated ?? false))
                         {
                             <div class="flex-c-m h-full p-l-18 p-r-25 bor6 gap-2" style="display: flex; align-items: center;">
-                                <a asp-area="Identity" asp-page="/Account/Login" class="btn auth-btn-login m-r-5">Login</a>
+                                <a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Context.Request.Path" class="btn auth-btn-login">Login</a>
                                 <a asp-area="Identity" asp-page="/Account/Register" class="btn auth-btn-register">Register</a>
                             </div>
                         }

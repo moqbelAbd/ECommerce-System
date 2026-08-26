@@ -264,48 +264,59 @@ namespace EcommerceSystem.Controllers
         public async Task<IActionResult> Cart()
         {
             var cartViewModel = new CartViewModel();
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-            if (customer == null) return RedirectToAction("CompleteProfile");
-
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                    .ThenInclude(ci => ci.Product)
-                    .ThenInclude(p => p.ProductImages)
-                .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
-
-            if (cart != null)
+            // 1. إذا كان المستخدم مسجل دخول وعميل
+            if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
             {
-                cartViewModel.Items = cart.CartItems.Select(ci => new CartItemViewModel
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer != null)
                 {
-                    ProductId = ci.ProductId,
-                    ProductName = ci.Product!.ProductName,
-                    ImageUrl = ci.Product.ProductImages.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
-                    Price = ci.Product.ProductPrice,
-                    Quantity = ci.ItemQuantity
-                }).ToList();
+                    var cart = await _context.Carts
+                        .Include(c => c.CartItems)
+                            .ThenInclude(ci => ci.Product)
+                            .ThenInclude(p => p.ProductImages)
+                        .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
+
+                    if (cart != null)
+                    {
+                        cartViewModel.Items = cart.CartItems.Select(ci => new CartItemViewModel
+                        {
+                            ProductId = ci.ProductId,
+                            ProductName = ci.Product!.ProductName,
+                            ImageUrl = ci.Product.ProductImages.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
+                            Price = ci.Product.ProductPrice,
+                            Quantity = ci.ItemQuantity
+                        }).ToList();
+                    }
+                }
             }
-            else
+            else // 2. إذا كان زائراً (Guest) نأخذ المنتجات من الـ Session
             {
                 var sessionCartStr = HttpContext.Session.GetString("GuestCart");
                 if (!string.IsNullOrEmpty(sessionCartStr))
                 {
                     var sessionItems = JsonSerializer.Deserialize<List<SessionCartItem>>(sessionCartStr);
-                    foreach (var item in sessionItems!)
+                    if (sessionItems != null)
                     {
-                        var product = await _context.Products.Include(p => p.ProductImages).FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
-                        if (product != null)
+                        foreach (var item in sessionItems)
                         {
-                            cartViewModel.Items.Add(new CartItemViewModel
+                            var product = await _context.Products
+                                .Include(p => p.ProductImages)
+                                .FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+
+                            if (product != null)
                             {
-                                ProductId = product.ProductId,
-                                ProductName = product.ProductName,
-                                ImageUrl = product.ProductImages.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
-                                Price = product.ProductPrice,
-                                Quantity = item.Quantity
-                            });
+                                cartViewModel.Items.Add(new CartItemViewModel
+                                {
+                                    ProductId = product.ProductId,
+                                    ProductName = product.ProductName,
+                                    ImageUrl = product.ProductImages.FirstOrDefault()?.ProductImagePath ?? "/images/products/default-product.jpg",
+                                    Price = product.ProductPrice,
+                                    Quantity = item.Quantity
+                                });
+                            }
                         }
                     }
                 }
@@ -313,7 +324,6 @@ namespace EcommerceSystem.Controllers
 
             return View(cartViewModel);
         }
-
         // =========================================================
         // CHECKOUT GET
         // =========================================================
