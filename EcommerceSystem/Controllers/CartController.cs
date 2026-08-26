@@ -2,6 +2,7 @@
 using EcommerceSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
@@ -156,46 +157,95 @@ namespace EcommerceSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCart(Dictionary<Guid, int> quantities)
         {
-            // 1. Customer Logic
-            if (User.Identity != null && User.Identity.IsAuthenticated )
+            if (quantities == null || !quantities.Any())
+            {
+                return Json(new { success = false, message = "No changes were detected." });
+            }
+
+            var productIds = quantities.Keys.ToList();
+            var products = await _context.Products
+                .Where(p => productIds.Contains(p.ProductId) && !p.IsDeleted)
+                .ToDictionaryAsync(p => p.ProductId);
+
+            // 2. Customer Logic
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-                var cart = await _context.Carts.Include(c => c.CartItems).FirstOrDefaultAsync(c => c.CustomerId == customer!.CustomerId);
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+                if (customer == null) return Unauthorized();
+
+                var cart = await _context.Carts
+                    .Include(c => c.CartItems)
+                    .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
 
                 if (cart != null)
                 {
                     foreach (var kvp in quantities)
                     {
-                        var item = cart.CartItems.FirstOrDefault(ci => ci.ProductId == kvp.Key);
-                        if (item != null)
+                        if (!products.TryGetValue(kvp.Key, out var product))
+                            continue;
+
+                        var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == kvp.Key);
+                        int targetQuantity = Math.Max(1, kvp.Value);
+
+                        // Check stock against target quantity
+                        if (targetQuantity > product.ProductQuantity)
                         {
-                            item.ItemQuantity = kvp.Value > 0 ? kvp.Value : 1;
+                            targetQuantity = product.ProductQuantity; // Cap at max available
+                            return Json(new { success = false, message = $"Cannot add item. Only {product.ProductQuantity} available in stock." });
+
+                        }
+
+                        if (existingItem == null)
+                        {
+                            cart.CartItems.Add(new CartItem
+                            {
+                                ProductId = product.ProductId,
+                                ItemQuantity = targetQuantity
+                            });
+                        }
+                        else
+                        {
+                            existingItem.ItemQuantity = targetQuantity;
                         }
                     }
+
                     await _context.SaveChangesAsync();
                 }
             }
-            // 2. Guest Logic (Session)
+            // 3. Guest Logic (Session)
             else
             {
                 var sessionCartStr = HttpContext.Session.GetString("GuestCart");
                 if (!string.IsNullOrEmpty(sessionCartStr))
                 {
-                    var cartList = JsonSerializer.Deserialize<List<SessionCartItem>>(sessionCartStr);
+                    var cartList = JsonSerializer.Deserialize<List<SessionCartItem>>(sessionCartStr) ?? new List<SessionCartItem>();
+
                     foreach (var kvp in quantities)
                     {
-                        var item = cartList!.FirstOrDefault(i => i.ProductId == kvp.Key);
+                        if (!products.TryGetValue(kvp.Key, out var product))
+                            continue;
+
+                        var item = cartList.FirstOrDefault(i => i.ProductId == kvp.Key);
                         if (item != null)
                         {
-                            item.Quantity = kvp.Value > 0 ? kvp.Value : 1;
+                            int targetQuantity = Math.Max(1, kvp.Value);
+                            if (targetQuantity > product.ProductQuantity)
+                            {
+                                targetQuantity = product.ProductQuantity;
+                                return Json(new { success = false, message = $"Cannot add item. Only {product.ProductQuantity} available in stock." });
+                            }
+                            item.Quantity = targetQuantity;
                         }
                     }
+
                     HttpContext.Session.SetString("GuestCart", JsonSerializer.Serialize(cartList));
                 }
             }
 
-            return RedirectToAction("Cart", "Customer");
+            return Json(new { success = true, message = "Cart updated successfully" });
         }
 
     }

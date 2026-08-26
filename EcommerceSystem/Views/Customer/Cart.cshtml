@@ -18,7 +18,7 @@
 </div>
 
 <!-- Shopping Cart Form -->
-<form asp-controller="Cart" asp-action="UpdateCart" method="post" class="bg0 p-t-25 p-b-85">
+<form id="updateCartForm" asp-controller="Cart" asp-action="UpdateCart" method="post" class="bg0 p-t-25 p-b-85">
     <div class="container">
         <div class="row">
             <!-- Products list -->
@@ -80,7 +80,7 @@
                                         <td class="column-5">$@item.Total.ToString("0.00")</td>
 
                                         <td class="column-6" style="vertical-align: middle; text-align: center; padding-right: 20px;">
-                                            <!-- زر الحذف المعتمد على AJAX لإظهار الـ Toast بدلاً من فتح صفحة JSON -->
+
                                             <button type="button"
                                                     class="ajax-remove-btn"
                                                     data-product-id="@item.ProductId"
@@ -144,8 +144,61 @@
 
 @section Scripts {
     <script>
+
+        const updateForm = document.getElementById("updateCartForm");
+        if (updateForm) {
+            updateForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const submitBtn = updateForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.style.pointerEvents = 'none';
+                    submitBtn.style.opacity = '0.5';
+                }
+
+                // 1. THIS IS THE LINE THAT WAS MISSING!
+                const formData = new FormData(updateForm);
+
+                // 2. Now it can safely convert it
+                const urlEncodedData = new URLSearchParams(formData);
+
+                fetch(updateForm.action, {
+                    method: 'POST',
+                    body: urlEncodedData,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            if (typeof showToast === 'function') showToast(data.message, "success");
+                            else alert(data.message);
+
+                            setTimeout(() => { location.reload(); }, 1000);
+                        } else {
+                            if (typeof showToast === 'function') showToast(data.message, "error");
+                            else alert(data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error))
+                    .finally(() => {
+                        if (submitBtn) {
+                            submitBtn.style.pointerEvents = 'auto';
+                            submitBtn.style.opacity = '1';
+                        }
+                    });
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
-            // تفعيل الـ AJAX عند الضغط على زر الحذف
+
             document.body.addEventListener("click", function(e) {
                 const removeBtn = e.target.closest(".ajax-remove-btn");
                 if (!removeBtn) return;
@@ -162,16 +215,15 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // 1. إظهار التوست الذهبي الفاخر
+
                             showToast(data.message, "warning");
 
-                            // 2. إزالة صف المنتج من الجدول مباشرة بدون ريفريش
                             const row = removeBtn.closest("tr");
                             if (row) {
                                 row.remove();
                             }
 
-                            // 3. تحديث السلة الجانبية وسحب محتواها وعداد الهيدر تلقائياً
+                            // 3. Reloads sidebar Cart 
                             fetch('/Cart/RefreshSidebarCart')
                                 .then(response => response.text())
                                 .then(html => {
@@ -181,15 +233,13 @@
                                     }
                                 });
 
-                            // 4. تقليل عداد الهيدر (Badge) بواحدة أو تحديث الصفحة بعد ثانية لو أردت تحديث المجاميع الكلية (Subtotal) بدقة
-                            // أو نقوم بتحديث العداد مباشرة:
+                            // Update Cart number of items
                             const cartNotiElements = document.querySelectorAll('.icon-header-noti.js-show-cart');
                             cartNotiElements.forEach(el => {
                                 let currentCount = parseInt(el.getAttribute('data-notify')) || 1;
                                 el.setAttribute('data-notify', Math.max(0, currentCount - 1));
                             });
 
-                            // ملاحظة: إذا كانت السلة أصبحت فارغة تماماً، نعيد تحميل الصفحة لعرس رسالة "Your cart is empty"
                             const remainingRows = document.querySelectorAll(".table-shopping-cart .table_row");
                             if (remainingRows.length === 0) {
                                 setTimeout(() => {
