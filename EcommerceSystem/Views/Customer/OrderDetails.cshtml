@@ -3,12 +3,13 @@
 @{
     ViewData["Title"] = "Order Details";
     string shortOrderId = Model.OrderId.ToString().Substring(0, 8).ToUpper();
-    string statusName = Model.OrderStatus?.OrderStatusName ?? "Processing";
+    string orderStatusName = Model.OrderStatus?.OrderStatusName ?? "Processing";
+    string paymentStatusName = Model.PaymentStatus?.PaymentStatusName ?? "Pending";
 }
 
 <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
     <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
-        CUSTOMER DASHBOARD
+        CUSTOMER ORDER
     </h2>
 </section>
 
@@ -28,9 +29,30 @@
                         <h3 class="mtext-111 cl2" style="font-weight: 600;">
                             Order #RX-@shortOrderId
                         </h3>
-                        <p class="stext-113 cl6 p-t-5">
-                            Placed on @Model.CreatedAt.ToString("MMMM dd, yyyy") &bull; <span style="font-weight: 600;">@statusName</span>
-                        </p>
+                        <span class="stext-113 cl6 p-t-5">
+                            Placed on @Model.CreatedAt.ToString("MMMM dd, yyyy") &bull; 
+                        </span>
+
+                        @switch (orderStatusName)
+                        {
+                            case "Delivered":
+                                <span class="text-success" style="font-weight: bold;">@orderStatusName</span>
+                                break;
+    
+                            case "Cancelled":
+                                <span class="text-danger" style="font-weight: bold;">@orderStatusName</span>
+                                break;
+        
+                            case "Pending":
+                            case "Processing":
+                                <span style="font-weight: bold; color:ActiveText;">@orderStatusName</span>
+                                break;
+        
+                            default:
+                                <span class="text-secondary" style="font-weight: bold;">@orderStatusName</span>
+                                break;
+                        }
+
                     </div>
                     <div>
                         <a asp-controller="Customer" asp-action="OrderHistory" class="flex-c-m stext-101 cl2 size-119 bg2 bor13 hov-btn3 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none; font-size: 13px;">
@@ -62,6 +84,27 @@
                             </h5>
                             <p class="stext-111 cl6 p-t-10">
                                 <b>Payment Method:</b> @(Model.PaymentTypeId == 1 ? "Cash on Delivery" : "Visa / Credit Card")<br>
+                                <b>Payment Status:</b>   
+
+                                @switch (paymentStatusName)
+                                {
+                                    case "Completed":
+                                        <span class="text-success" style="font-weight: bold;">@paymentStatusName</span>
+                                        break;
+
+                                    case "Failed":
+                                        <span class="text-danger" style="font-weight: bold;">@paymentStatusName</span>
+                                        break;
+
+                                    case "Pending":
+                                        <span style="font-weight: bold; color:ActiveText;">@paymentStatusName</span>
+                                        break;
+
+                                    default:
+                                        <span class="text-secondary" style="font-weight: bold;">@paymentStatusName</span>
+                                        break;
+                                }
+                                <br>
                                 <b>Shipping Method:</b> Express Delivery (1-3 Days)<br>
                                 <b>Tracking Number:</b> TRK-@shortOrderId
                             </p>

@@ -140,6 +140,7 @@ namespace EcommerceSystem.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.OrderStatus)
+                .Include(o => o.PaymentStatus)
                 .Include(o => o.Customer)
                   .ThenInclude(c => c!.CustomerPhoneNumbers)
                 .Include(o => o.OrderItems)
@@ -265,7 +266,6 @@ namespace EcommerceSystem.Controllers
         {
             var cartViewModel = new CartViewModel();
 
-            // 1. إذا كان المستخدم مسجل دخول وعميل
             if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
             {
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -292,7 +292,7 @@ namespace EcommerceSystem.Controllers
                     }
                 }
             }
-            else // 2. إذا كان زائراً (Guest) نأخذ المنتجات من الـ Session
+            else 
             {
                 var sessionCartStr = HttpContext.Session.GetString("GuestCart");
                 if (!string.IsNullOrEmpty(sessionCartStr))

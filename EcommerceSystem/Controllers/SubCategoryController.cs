@@ -21,12 +21,36 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: SubCategory
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, int page = 1 )
         {
-            var subCategories = await _context.SubCategories
-                .Where(sc => !sc.IsDeleted)
+            int pageSize = 8;
+
+            var query = _context.SubCategories
                 .Include(sc => sc.Category)
+                .Where(sc => !sc.IsDeleted)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                query = query.Where(sub => sub.SubCategoryName.Contains(term )
+                                    || sub.Category.CategoryName.Contains(term) );
+            }
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            page = Math.Max(1, page);
+
+            var subCategories = await query
+                .OrderBy(s => s.SubCategoryName)
+                .Skip((page -1 )* pageSize )
+                .Take(pageSize)
                 .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Page = page;
+            ViewBag.TotalCount = totalCount;
 
             return View(subCategories);
         }

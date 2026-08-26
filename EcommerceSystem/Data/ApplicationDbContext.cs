@@ -104,9 +104,8 @@ namespace EcommerceSystem.Data
             modelBuilder.Entity<OrderStatus>().HasData(
                 new OrderStatus { OrderStatusId = 1, OrderStatusName = "Pending" },
                 new OrderStatus { OrderStatusId = 2, OrderStatusName = "Processing" },
-                new OrderStatus { OrderStatusId = 3, OrderStatusName = "Shipped" },
-                new OrderStatus { OrderStatusId = 4, OrderStatusName = "Delivered" },
-                new OrderStatus { OrderStatusId = 5, OrderStatusName = "Cancelled" }
+                new OrderStatus { OrderStatusId = 3, OrderStatusName = "Delivered" },
+                new OrderStatus { OrderStatusId = 4, OrderStatusName = "Cancelled" }
             );
 
             // 5. Seed Payment Statuses

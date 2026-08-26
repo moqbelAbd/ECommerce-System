@@ -103,6 +103,7 @@ namespace EcommerceSystem.Controllers
                 .Include(o => o.OrderStatus)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(o => o.OrderId == id.Value);
 
             if (order == null)
