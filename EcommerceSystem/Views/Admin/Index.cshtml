@@ -29,44 +29,6 @@
 
     string activeTab = ViewBag.ActiveTab ?? "orders";
     string currentUrl = Context.Request.Path + Context.Request.QueryString;
-
-    int customerPage = ViewBag.CustomerPage ?? 1;
-    int customerTotalPages = ViewBag.CustomerTotalPages ?? 1;
-    int totalCustomerCount = ViewBag.TotalCustomerCount ?? customers.Count;
-
-    int orderPage = ViewBag.OrderPage ?? 1;
-    int orderTotalPages = ViewBag.OrderTotalPages ?? 1;
-    int totalOrderCount = ViewBag.TotalOrderCount ?? orders.Count;
-
-    var customerPagination = new PaginationViewModel
-    {
-        CurrentPage = customerPage,
-        TotalPages = customerTotalPages,
-        PageParam = "customerPage",
-        Action = "Index",
-        Controller = "Admin",
-        RouteValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
-        {
-            ["activeTab"] = "customers",
-            ["customerSearch"] = customerSearch
-        }
-    };
-
-    var orderPagination = new PaginationViewModel
-    {
-        CurrentPage = orderPage,
-        TotalPages = orderTotalPages,
-        PageParam = "orderPage",
-        Action = "Index",
-        Controller = "Admin",
-        RouteValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
-        {
-            ["activeTab"] = "orders",
-            ["orderSearch"] = orderSearch,
-            ["orderStatusId"] = selectedOrderStatusId,
-            ["paymentStatusId"] = selectedPaymentStatusId
-        }
-    };
 }
 
 <div class="container p-t-40 my-4 p-b-60">
@@ -244,7 +206,7 @@
         </div>
 
         <div class="p-b-15">
-            <span class="stext-102 cl6">Showing <strong>@customers.Count</strong> of <strong>@totalCustomerCount</strong> customer(s)</span>
+            <span class="stext-102 cl6">Showing <strong>@customers.Count</strong> customer(s)</span>
         </div>
 
         @if (!customers.Any())
@@ -285,8 +247,6 @@
                     </table>
                 </div>
             </div>
-
-            @await Html.PartialAsync("_PaginationPartial", customerPagination)
         }
     </div>
 
@@ -336,7 +296,7 @@
         </div>
 
         <div class="p-b-15">
-            <span class="stext-102 cl6">Showing <strong>@orders.Count</strong> of <strong>@totalOrderCount</strong> order(s)</span>
+            <span class="stext-102 cl6">Showing <strong>@orders.Count</strong> order(s)</span>
         </div>
 
         @if (!orders.Any())
@@ -350,16 +310,16 @@
         {
             <div class="wrap-table-shopping-cart">
                 <table class="table-shopping-cart">
-                    <thead>
+                    <thead style="background:#1a1d20;">
                         <tr class="table_head">
-                            <th class="column-1">Order ID</th>
-                            <th class="column-2">Customer</th>
-                            <th class="column-3">Phone</th>
-                            <th class="column-4">Location</th>
-                            <th class="column-5">Total Price</th>
-                            <th class="column-6" style="padding: 12px 15px;">Payment Status</th>
-                            <th class="column-7" style="padding: 12px 15px;">Order Status</th>
-                            <th class="column-8" style="padding: 12px 15px;">Action</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-1">Order ID</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-2">Customer</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-3">Phone</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-4">Location</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-5">Total Price</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-6" style="padding: 12px 15px;">Payment Status</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-7" style="padding: 12px 15px;">Order Status</th>
+                            <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;" class="column-8" style="padding: 12px 15px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -411,8 +371,6 @@
                     </tbody>
                 </table>
             </div>
-
-            @await Html.PartialAsync("_PaginationPartial", orderPagination)
         }
     </div>
 </div>
