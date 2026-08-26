@@ -1,7 +1,20 @@
-﻿@model IEnumerable<EcommerceSystem.Models.Testimonial>
+﻿@using EcommerceSystem.Models.ViewModels
+@model IEnumerable<EcommerceSystem.Models.Testimonial>
 
 @{
     ViewData["Title"] = "Manage Testimonials";
+
+    int page = ViewBag.Page ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+
+    var pagination = new PaginationViewModel
+    {
+        CurrentPage = page,
+        TotalPages = totalPages,
+        PageParam = "page",
+        Action = "Testimonials",
+        Controller = "Admin"
+    };
 }
 
 <div class="bg0 p-t-80 p-b-100" style="min-height: calc(100vh - 200px); display: flex; flex-direction: column;">
@@ -73,6 +86,8 @@
                     </tbody>
                 </table>
             </div>
+
+            @await Html.PartialAsync("_PaginationPartial", pagination)
         }
     </div>
 </div>

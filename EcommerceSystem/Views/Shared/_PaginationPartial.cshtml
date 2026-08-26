@@ -1,0 +1,52 @@
+@model EcommerceSystem.Models.ViewModels.PaginationViewModel
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="d-flex justify-content-center m-t-20">
+        <ul class="pagination mb-0">
+            <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                @{
+                    var prevRoute = new Microsoft.AspNetCore.Routing.RouteValueDictionary(Model.RouteValues);
+                    prevRoute[Model.PageParam] = Model.CurrentPage - 1;
+                }
+                <a class="page-link" asp-controller="@Model.Controller" asp-action="@Model.Action" asp-all-route-data="@prevRoute.ToDictionary(kv => kv.Key, kv => kv.Value?.ToString())">Previous</a>
+            </li>
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                var pageRoute = new Microsoft.AspNetCore.Routing.RouteValueDictionary(Model.RouteValues);
+                pageRoute[Model.PageParam] = i;
+
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-controller="@Model.Controller" asp-action="@Model.Action" asp-all-route-data="@pageRoute.ToDictionary(kv => kv.Key, kv => kv.Value?.ToString())">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                @{
+                    var nextRoute = new Microsoft.AspNetCore.Routing.RouteValueDictionary(Model.RouteValues);
+                    nextRoute[Model.PageParam] = Model.CurrentPage + 1;
+                }
+                <a class="page-link" asp-controller="@Model.Controller" asp-action="@Model.Action" asp-all-route-data="@nextRoute.ToDictionary(kv => kv.Key, kv => kv.Value?.ToString())">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+    <style>
+        .pagination .page-link {
+            color: #1a1d20;
+            border: 1px solid #1a1d20;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #c9aa6f;
+            border-color: #1a1d20;
+            color: #1a1d20;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #aaa;
+            border-color: #ddd;
+        }
+    </style>
+}

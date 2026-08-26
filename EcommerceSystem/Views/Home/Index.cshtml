@@ -86,7 +86,7 @@
     </div>
 </section>
 
-<!-- Categories Banner -->
+<!-- Categories Banner Slider -->
 @if (featuredCategories.Any())
 {
     <div class="sec-banner bg0 p-t-90 p-b-60">
@@ -95,28 +95,34 @@
                 <h3 class="ltext-105 cl5 fw-bold" style="letter-spacing: 1px;">Featured Categories</h3>
                 <p class="text-muted stext-113">Explore our core luxury categories tailored for you</p>
             </div>
-            <div class="row g-4">
-                @foreach (var category in featuredCategories)
-                {
-                    <div class="col-md-6 col-xl-4 m-lr-auto">
-                        <div class="block1 wrap-pic-w shadow-sm" style="border-radius: 16px; overflow: hidden; border: 1px solid #eaeaea;">
-                            <img src="@Url.Content(category.CategoryImagePath)" alt="@category.CategoryName" style="transition: transform 0.5s ease;">
-                            <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@category.CategoryId"
-                               class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3" style="background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 60%);">
-                                <div class="block1-txt-child1 flex-col-l">
-                                    <span class="block1-name ltext-102 trans-04 p-b-8 text-white fw-bold">
-                                        @category.CategoryName
-                                    </span>
-                                </div>
-                                <div class="block1-txt-child2 p-b-4 trans-05">
-                                    <div class="block1-link stext-101 cl0 trans-09 px-3 py-2 d-inline-block" style="border-radius: 20px; background-color: rgba(201, 170, 111, 0.9); color: #1a1d20; font-weight: 600;">
-                                        Shop Now <i class="fa fa-angle-right m-l-5"></i>
+
+            <div class="wrap-slick2 position-relative px-md-4">
+                <div class="category-slick">
+                    @foreach (var category in featuredCategories)
+                    {
+                        <div class="item-slick2 p-lr-15 p-tb-10">
+                            <div class="block1 wrap-pic-w shadow-sm" style="height: 350px; overflow: hidden; border-radius: 16px; border: 1px solid #eaeaea;">
+                                <img src="@Url.Content(category.CategoryImagePath)" alt="@category.CategoryName"
+                                     style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22350%22%3E%3Crect width=%22400%22 height=%22350%22 fill=%22%23eaeaea%22/%3E%3C/svg%3E';">
+
+                                <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@category.CategoryId"
+                                   class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3" style="background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 60%);">
+                                    <div class="block1-txt-child1 flex-col-l">
+                                        <span class="block1-name ltext-102 trans-04 p-b-8 text-white fw-bold">
+                                            @category.CategoryName
+                                        </span>
                                     </div>
-                                </div>
-                            </a>
+                                    <div class="block1-txt-child2 p-b-4 trans-05">
+                                        <div class="block1-link stext-101 cl0 trans-09 px-3 py-2 d-inline-block" style="border-radius: 20px; background-color: rgba(201, 170, 111, 0.9); color: #1a1d20; font-weight: 600;">
+                                            Shop Now <i class="fa fa-angle-right m-l-5"></i>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -223,15 +229,16 @@
                     @foreach (var t in testimonials)
                     {
                         <div class="item-slick2 p-lr-15 p-tb-10">
-                            <div class="p-all-35 bg0 shadow-sm trans-04 h-100" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: 16px; border: 1px solid #eaeaea;">
-                                <p class="stext-114 cl6 p-b-25 fst-italic text-secondary">
+                            <!-- Fixed height and uniform box sizing -->
+                            <div class="p-all-35 bg0 shadow-sm trans-04" style="height: 270px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 16px; border: 1px solid #eaeaea;">
+                                <p class="stext-114 cl6 fst-italic text-secondary mb-0" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
                                     "@t.CustomerTestimonial"
                                 </p>
-                                <div class="d-flex align-items-center pt-3 border-top">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-dark fw-bold me-3" style="width: 40px; height: 40px; background-color: rgba(201, 170, 111, 0.2); color: #c9aa6f !important;">
+                                <div class="d-flex align-items-center pt-3 border-top mt-auto">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-dark fw-bold me-3" style="width: 40px; height: 40px; background-color: rgba(201, 170, 111, 0.2); color: #c9aa6f !important; flex-shrink: 0;">
                                         @(t.Customer != null && !string.IsNullOrEmpty(t.Customer.FirstName) ? t.Customer.FirstName.Substring(0, 1).ToUpper() : "C")
                                     </div>
-                                    <span class="mtext-107 cl2 fw-bold text-dark">
+                                    <span class="mtext-107 cl2 fw-bold text-dark text-truncate">
                                         @(t.Customer != null ? $"{t.Customer.FirstName} {t.Customer.LastName}" : "Valued Customer")
                                     </span>
                                 </div>
@@ -244,7 +251,6 @@
     </div>
 </section>
 
-<!-- Testimonial Modal (Popup) -->
 <div class="modal fade" id="testimonialModal" tabindex="-1" aria-labelledby="testimonialModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" style="margin-top: 80px; max-width: 650px;">
         <div class="modal-content bor10 p-all-35 bg-white shadow-lg" style="border-radius: 20px; border: none;">
@@ -286,7 +292,7 @@
         <div class="wrap-slick2 position-relative">
             <div class="faq-slick">
                 <div class="item-slick2 p-lr-15 p-tb-10">
-                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
                         <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
                             <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> Are all watches authentic?
                         </h5>
@@ -297,7 +303,7 @@
                 </div>
 
                 <div class="item-slick2 p-lr-15 p-tb-10">
-                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
                         <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
                             <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> What are delivery options?
                         </h5>
@@ -308,7 +314,7 @@
                 </div>
 
                 <div class="item-slick2 p-lr-15 p-tb-10">
-                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
                         <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
                             <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> Can I return a product?
                         </h5>
@@ -319,7 +325,7 @@
                 </div>
 
                 <div class="item-slick2 p-lr-15 p-tb-10">
-                    <div class="p-all-35 bg-light h-100 shadow-sm" style="display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
+                    <div class="p-all-35 bg-light h-100 shadow-sm" style="height: 220px; display: flex; flex-direction: column; justify-content: center; border-radius: 16px; border: 1px solid #eaeaea;">
                         <h5 class="stext-110 cl2 p-b-12 fw-bold text-dark">
                             <i class="zmdi zmdi-help-outline m-r-8" style="color: #c9aa6f;"></i> Do you offer gift wrapping?
                         </h5>
@@ -339,6 +345,7 @@
             const slickPrevButton = '<button type="button" class="slick-prev" style="z-index: 2;"><i class="fa fa-angle-left" style="font-size: 22px;"></i></button>';
             const slickNextButton = '<button type="button" class="slick-next" style="z-index: 2;"><i class="fa fa-angle-right" style="font-size: 22px;"></i></button>';
 
+            // Testimonial Slider
             if ($('.testimonial-slick').length > 0) {
                 $('.testimonial-slick').slick({
                     slidesToShow: 3,
@@ -358,6 +365,7 @@
                 });
             }
 
+            // FAQ Slider
             if ($('.faq-slick').length > 0) {
                 $('.faq-slick').slick({
                     slidesToShow: 3,
@@ -377,6 +385,27 @@
                 });
             }
 
+            // Categories Slider
+            if ($('.category-slick').length > 0) {
+                $('.category-slick').slick({
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    autoplay: true,
+                    autoplaySpeed: 4000,
+                    arrows: true,
+                    dots: false,
+                    prevArrow: slickPrevButton,
+                    nextArrow: slickNextButton,
+                    responsive: [
+                        { breakpoint: 1200, settings: { slidesToShow: 3 } },
+                        { breakpoint: 992, settings: { slidesToShow: 2 } },
+                        { breakpoint: 576, settings: { slidesToShow: 1 } }
+                    ]
+                });
+            }
+
+            // Testimonial Modal Logic
             const openBtn = document.getElementById("openTestimonialModalBtn");
             const modal = document.getElementById("testimonialModal");
 
@@ -419,42 +448,56 @@
         position: relative;
     }
 
+    /* ستايل عام لجميع الأسهم */
     .slick-prev, .slick-next {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        background: #fff !important;
-        border: 1px solid #ddd !important;
+        background: #1a1d20 !important;
+        border: 2px solid #c9aa6f !important;
         border-radius: 50% !important;
         width: 45px !important;
         height: 45px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         transition: all 0.3s ease;
         cursor: pointer;
-        z-index: 10;
-        color: #333;
+        z-index: 99;
     }
 
-    .slick-prev {
+    .slick-prev i, .slick-next i {
+        color: #c9aa6f !important;
+        font-size: 20px !important;
+    }
+
+    .slick-prev:hover, .slick-next:hover {
+        background: #c9aa6f !important;
+        border-color: #1a1d20 !important;
+    }
+
+    .slick-prev:hover i, .slick-next:hover i {
+        color: #1a1d20 !important;
+    }
+
+    /* الأسهم الخاصة بالتصنيفات (Category Slider) - إجبارها على الخروج للأطراف لكي تظهر بوضوح على اللابتوب */
+    .sec-banner .slick-prev {
+        left: -40px !important;
+    }
+
+    .sec-banner .slick-next {
+        right: -40px !important;
+    }
+
+    /* الأسهم لباقي الأقسام (Testimonials & FAQ) */
+    .sec-testimonials .slick-prev, .sec-faq .slick-prev {
         left: -25px !important;
     }
 
-    .slick-next {
+    .sec-testimonials .slick-next, .sec-faq .slick-next {
         right: -25px !important;
     }
-
-        .slick-prev:hover, .slick-next:hover {
-            background: #c9aa6f !important;
-            color: #1a1d20 !important;
-            border-color: #c9aa6f !important;
-        }
-
-            .slick-prev:hover i, .slick-next:hover i {
-                color: #1a1d20 !important;
-            }
 
     .block1:hover img {
         transform: scale(1.05);

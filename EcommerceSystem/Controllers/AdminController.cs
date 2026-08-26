@@ -9,6 +9,8 @@ namespace EcommerceSystem.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
+        private const int PageSize = 5;
+
         private readonly ApplicationDbContext _context;
 
         public AdminController(ApplicationDbContext context)
@@ -22,7 +24,9 @@ namespace EcommerceSystem.Controllers
             string? customerSearch,
             string? orderSearch,
             int? orderStatusId,
-            int? paymentStatusId)
+            int? paymentStatusId,
+            int customerPage = 1,
+            int orderPage = 1)
         {
             var now = DateTime.Now;
             var startOfThisMonth = new DateTime(now.Year, now.Month, 1);
@@ -31,6 +35,7 @@ namespace EcommerceSystem.Controllers
             ViewBag.TotalUsers = await _context.Users.CountAsync();
             ViewBag.TotalProducts = await _context.Products.CountAsync(p => !p.IsDeleted);
             ViewBag.TotalCategories = await _context.Categories.CountAsync(c => !c.IsDeleted);
+            ViewBag.TotalSubCategories = await _context.SubCategories.CountAsync(sc => !sc.IsDeleted);
 
             ViewBag.TotalSubCategories = await _context.SubCategories.CountAsync(sc => !sc.IsDeleted);
 
@@ -89,7 +94,13 @@ namespace EcommerceSystem.Controllers
                     c.CustomerPhoneNumbers.Any(p => !p.IsDeleted && p.PhoneNumber.Contains(term)));
             }
 
+            var totalCustomerCount = await customerQuery.CountAsync();
+            var customerTotalPages = (int)Math.Ceiling(totalCustomerCount / (double)PageSize);
+            customerPage = Math.Max(1, customerPage);
+
             var customers = await customerQuery
+                .OrderBy(c => c.FirstName)
+                .ThenBy(c => c.LastName)
                 .Select(c => new AdminCustomerListItem
                 {
                     CustomerId = c.CustomerId,
@@ -102,8 +113,8 @@ namespace EcommerceSystem.Controllers
                         .FirstOrDefault(),
                     OrderCount = c.Orders.Count
                 })
-                .OrderBy(c => c.FirstName)
-                .ThenBy(c => c.LastName)
+                .Skip((customerPage - 1) * PageSize)
+                .Take(PageSize)
                 .ToListAsync();
 
             var orderQuery = _context.Orders
@@ -134,8 +145,14 @@ namespace EcommerceSystem.Controllers
                 orderQuery = orderQuery.Where(o => o.PaymentStatusId == paymentStatusId.Value);
             }
 
+            var totalOrderCount = await orderQuery.CountAsync();
+            var orderTotalPages = (int)Math.Ceiling(totalOrderCount / (double)PageSize);
+            orderPage = Math.Max(1, orderPage);
+
             var orders = await orderQuery
                 .OrderByDescending(o => o.CreatedAt)
+                .Skip((orderPage - 1) * PageSize)
+                .Take(PageSize)
                 .Select(o => new AdminOrderListItem
                 {
                     OrderId = o.OrderId,
@@ -163,6 +180,9 @@ namespace EcommerceSystem.Controllers
 
             ViewBag.Customers = customers;
             ViewBag.CustomerSearch = customerSearch;
+            ViewBag.CustomerPage = customerPage;
+            ViewBag.CustomerTotalPages = customerTotalPages;
+            ViewBag.TotalCustomerCount = totalCustomerCount;
 
             ViewBag.Orders = orders;
             ViewBag.OrderStatuses = await _context.OrderStatuses.OrderBy(s => s.OrderStatusId).ToListAsync();
@@ -170,6 +190,9 @@ namespace EcommerceSystem.Controllers
             ViewBag.OrderSearch = orderSearch;
             ViewBag.SelectedOrderStatusId = orderStatusId;
             ViewBag.SelectedPaymentStatusId = paymentStatusId;
+            ViewBag.OrderPage = orderPage;
+            ViewBag.OrderTotalPages = orderTotalPages;
+            ViewBag.TotalOrderCount = totalOrderCount;
 
             ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "orders" : activeTab;
 
@@ -177,7 +200,7 @@ namespace EcommerceSystem.Controllers
         }
 
         // GET: Admin/Customers
-        public async Task<IActionResult> Customers(string? search)
+        public async Task<IActionResult> Customers(string? search, int page = 1)
         {
             var query = _context.Customers
                 .Where(c => !c.IsDeleted)
@@ -194,7 +217,13 @@ namespace EcommerceSystem.Controllers
                     c.CustomerPhoneNumbers.Any(p => !p.IsDeleted && p.PhoneNumber.Contains(term)));
             }
 
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+            page = Math.Max(1, page);
+
             var customers = await query
+                .OrderBy(c => c.FirstName)
+                .ThenBy(c => c.LastName)
                 .Select(c => new AdminCustomerListItem
                 {
                     CustomerId = c.CustomerId,
@@ -207,22 +236,38 @@ namespace EcommerceSystem.Controllers
                         .FirstOrDefault(),
                     OrderCount = c.Orders.Count
                 })
-                .OrderBy(c => c.FirstName)
-                .ThenBy(c => c.LastName)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
                 .ToListAsync();
 
             ViewBag.Search = search;
+            ViewBag.Page = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalCount = totalCount;
 
             return View(customers);
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Testimonials()
+        public async Task<IActionResult> Testimonials(int page = 1)
         {
-            var testimonials = await _context.Testimonials
+            var query = _context.Testimonials
                 .Include(t => t.Customer)
                 .OrderByDescending(t => t.TestimonialId)
+                .AsQueryable();
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+            page = Math.Max(1, page);
+
+            var testimonials = await query
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
                 .ToListAsync();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalCount = totalCount;
 
             return View(testimonials);
         }

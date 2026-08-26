@@ -2,7 +2,10 @@
 
 @{
     string extraClasses = "";
+    bool isDeleted = false; // Default to false to prevent crashes
+
     try { extraClasses = (string)Model.ExtraClasses; } catch { }
+    try { isDeleted = (bool)Model.IsDeleted; } catch { }
 }
 
 <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item @extraClasses">
@@ -36,9 +39,18 @@
                 <a href="@Model.EditUrl" class="btn btn-outline-warning btn-sm mt-2 px-3" title="Edit" style="border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 5px;">
                     <i class="fa fa-pencil" style="font-size: 11px;"></i> Edit
                 </a>
-                <a href="@Model.DeleteUrl" class="btn btn-outline-danger btn-sm mt-2 px-3" title="Delete" style="border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                    <i class="fa fa-trash" style="font-size: 11px;"></i> Delete
-                </a>
+                @if (!isDeleted)
+                {
+                    <a href="@Model.DeleteUrl" class="btn btn-outline-danger btn-sm mt-2 px-3" title="Delete" style="border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <i class="fa fa-trash" style="font-size: 11px;"></i> Delete
+                    </a>
+                }
+                else
+                {
+                    <a href="@Model.UnDeleteUrl" class="btn btn-outline-success btn-sm mt-2 px-3" title="Restore" style="border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <i class="fa fa-undo" style="font-size: 11px;"></i> Restore
+                    </a>
+                }
             </div>
         }
     </div>

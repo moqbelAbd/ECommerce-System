@@ -5,6 +5,22 @@
     ViewData["Title"] = "Manage Customers";
 
     string? search = ViewBag.Search;
+    int page = ViewBag.Page ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalCount = ViewBag.TotalCount ?? Model.Count();
+
+    var pagination = new PaginationViewModel
+    {
+        CurrentPage = page,
+        TotalPages = totalPages,
+        PageParam = "page",
+        Action = "Customers",
+        Controller = "Admin",
+        RouteValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
+        {
+            ["search"] = search
+        }
+    };
 }
 
 <div class="bg0 p-t-80 p-b-100">
@@ -90,6 +106,12 @@
 
                     <strong>
                         @Model.Count()
+                    </strong>
+
+                    of
+
+                    <strong>
+                        @totalCount
                     </strong>
 
                     customer(s)
@@ -182,6 +204,8 @@
                 </div>
 
             </div>
+
+            @await Html.PartialAsync("_PaginationPartial", pagination)
         }
 
     </div>

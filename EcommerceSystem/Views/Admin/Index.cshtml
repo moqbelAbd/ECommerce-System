@@ -3,13 +3,19 @@
 @model IEnumerable<Order>
 
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Admin Dashboard - Watch Store";
 
-    int totalUsers = ViewBag.TotalUsers ?? ViewBag.TotalCustomers;
+    decimal totalRevenue = ViewBag.TotalRevenue;
+    int totalOrders = ViewBag.TotalOrders;
+    int totalCustomers = ViewBag.TotalCustomers;
+    int lowStockCount = ViewBag.LowStockCount;
+    decimal? revenueChangePercent = ViewBag.RevenueChangePercent;
+    decimal? ordersChangePercent = ViewBag.OrdersChangePercent;
+
+    int totalUsers = ViewBag.TotalUsers ?? totalCustomers;
     int totalCategories = ViewBag.TotalCategories ?? 0;
     int totalSubCategories = ViewBag.TotalSubCategories ?? 0;
     int totalProducts = ViewBag.TotalProducts ?? 0;
-    int lowStockCount = ViewBag.LowStockCount ?? 0;
 
     var customers = ViewBag.Customers as List<AdminCustomerListItem> ?? new List<AdminCustomerListItem>();
     string? customerSearch = ViewBag.CustomerSearch;
@@ -23,18 +29,55 @@
 
     string activeTab = ViewBag.ActiveTab ?? "orders";
     string currentUrl = Context.Request.Path + Context.Request.QueryString;
+
+    int customerPage = ViewBag.CustomerPage ?? 1;
+    int customerTotalPages = ViewBag.CustomerTotalPages ?? 1;
+    int totalCustomerCount = ViewBag.TotalCustomerCount ?? customers.Count;
+
+    int orderPage = ViewBag.OrderPage ?? 1;
+    int orderTotalPages = ViewBag.OrderTotalPages ?? 1;
+    int totalOrderCount = ViewBag.TotalOrderCount ?? orders.Count;
+
+    var customerPagination = new PaginationViewModel
+    {
+        CurrentPage = customerPage,
+        TotalPages = customerTotalPages,
+        PageParam = "customerPage",
+        Action = "Index",
+        Controller = "Admin",
+        RouteValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
+        {
+            ["activeTab"] = "customers",
+            ["customerSearch"] = customerSearch
+        }
+    };
+
+    var orderPagination = new PaginationViewModel
+    {
+        CurrentPage = orderPage,
+        TotalPages = orderTotalPages,
+        PageParam = "orderPage",
+        Action = "Index",
+        Controller = "Admin",
+        RouteValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
+        {
+            ["activeTab"] = "orders",
+            ["orderSearch"] = orderSearch,
+            ["orderStatusId"] = selectedOrderStatusId,
+            ["paymentStatusId"] = selectedPaymentStatusId
+        }
+    };
 }
 
-<div class="container py-5" style="margin-top: 40px; margin-bottom: 60px;">
+<div class="container p-t-40 my-4 p-b-60">
 
-    <!-- رأس لوحة التحكم -->
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 pb-3" style="border-bottom: 2px solid #1a1d20;">
         <div>
             <h2 class="fw-bold mb-1" style="letter-spacing: 1px; color: #1a1d20;">Admin Dashboard</h2>
             <p class="mb-0" style="font-size: 14px; color: #555;">Welcome back, <span class="fw-semibold" style="color: #1a1d20;">@User.Identity?.Name</span>! Monitor store metrics and manage operations.</p>
         </div>
         <div class="mt-3 mt-md-0">
-            <span class="badge px-3 py-2" style="font-size: 13px; border-radius: 20px; background-color: #1a1d20; color: #c9aa6f;">
+            <span class="badge px-3 py-2" style="font-size: 13px; border-radius: 20px; background-color: #c9aa6f; color: #1a1d20;">
                 <i class="fa fa-shield m-r-5"></i> Admin Privilege
             </span>
         </div>
@@ -42,9 +85,9 @@
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
+        <div class="alert alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px; background-color: #c9aa6f; color: #1a1d20; border: 1px solid #1a1d20;">
             <i class="fa fa-check-circle m-r-5"></i> @TempData["Success"]
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
@@ -117,7 +160,7 @@
         </div>
     </div>
 
-    <!-- Dashboard Management Tabs -->
+    <!-- Dashboard Tabs -->
     <div class="dash-tabs mb-4">
         <button type="button" class="dash-tab-btn @(activeTab == "orders" ? "active" : "")" data-tab="orders">
             <i class="fa fa-list-alt m-r-5"></i> Manage Orders
@@ -125,24 +168,143 @@
         <button type="button" class="dash-tab-btn @(activeTab == "customers" ? "active" : "")" data-tab="customers">
             <i class="fa fa-users m-r-5"></i> Manage Customers
         </button>
+        @* <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
+            <i class="fa fa-dashboard m-r-5"></i> Overview
+        </button> *@
     </div>
 
-    <!--ORDERS PANEL -->
+    <!-- ===================== OVERVIEW PANEL ===================== -->
+    @* <div class="dash-panel" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none");">
+        <h4 class="mtext-103 cl2 p-b-20">Recent Watch Orders</h4>
+        <div class="wrap-table-shopping-cart">
+            <table class="table-shopping-cart">
+                <tr class="table_head">
+                    <th class="column-1">Order ID</th>
+                    <th class="column-2">Customer</th>
+                    <th class="column-3">Total Price</th>
+                    <th class="column-4">Status</th>
+                    <th class="column-5">Action</th>
+                </tr>
+
+                @if (!Model.Any())
+                {
+                    <tr class="table_row">
+                        <td colspan="5" class="text-center">No orders yet</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var order in Model)
+                    {
+                        <tr class="table_row">
+                            <td class="column-1">@order.OrderId</td>
+                            <td class="column-2">
+                                @(order.Customer == null )
+                                    ? "-"
+                                    : $"{order.Customer.FirstName} {order.Customer.LastName}")
+                            </td>
+                            <td class="column-3">@order.TotalPrice.ToString("C")</td>
+                            <td class="column-4">
+                                <span class="badge bg-info text-dark">
+                                    @(order.OrderStatus?.OrderStatusName ?? "-")
+                                </span>
+                            </td>
+                            <td class="column-5">
+                                <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="stext-101 cl1 hov-cl1">View Details</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div> *@
+
+    <!-- ===================== CUSTOMERS PANEL ===================== -->
+    <div class="dash-panel card border-0 shadow-sm p-4" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">
+
+        <div class="p-4 mb-4" style="border-radius: 12px; border: 1px solid #1a1d20; background-color: #fcfcfc;">
+            <form asp-controller="Admin" asp-action="Index" method="get">
+                <input type="hidden" name="activeTab" value="customers" />
+
+                <div class="row">
+                    <div class="col-md-8 m-b-15">
+                        <label class="stext-102 cl3">Search</label>
+                        <input type="text" name="customerSearch" value="@customerSearch" class="form-control" placeholder="Search by name, phone, or location..." />
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end m-b-15">
+                        <button type="submit" class="btn py-2 fw-bold px-4" style="border-radius: 8px; background-color: #c9aa6f; color: #1a1d20; border: 1px solid #1a1d20;">
+                            <i class="fa fa-filter m-r-8"></i> Apply Filters
+                        </button>
+                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="customers" class="btn btn-outline-dark py-2 fw-semibold px-4 m-l-10" style="border-radius: 8px;">
+                            Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="p-b-15">
+            <span class="stext-102 cl6">Showing <strong>@customers.Count</strong> of <strong>@totalCustomerCount</strong> customer(s)</span>
+        </div>
+
+        @if (!customers.Any())
+        {
+            <div class="bor10 p-all-40 text-center">
+                <i class="fa fa-users fa-2x m-b-15"></i>
+                <h4 class="mtext-102 cl2">No customers found</h4>
+            </div>
+        }
+        else
+        {
+            <div class="bor10" style="border-radius:10px; overflow:hidden;">
+                <div class="table-responsive">
+                    <table class="table mb-0" style="margin-bottom:0;">
+                        <thead style="background:#1a1d20;">
+                            <tr>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Customer ID</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Phone Number</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Name</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Location</th>
+                                <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Orders</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var customer in customers)
+                            {
+                                <tr style="vertical-align:middle; border-bottom:1px solid #eee;">
+                                    <td style="padding:16px 20px; font-family:monospace; font-size:0.85rem; color:#888;">@customer.CustomerId</td>
+                                    <td style="padding:16px 20px;">@(customer.PhoneNumber ?? "-")</td>
+                                    <td style="padding:16px 20px;"><strong style="color:#1a1d20;">@customer.FullName</strong></td>
+                                    <td style="padding:16px 20px;">@(customer.Location ?? "-")</td>
+                                    <td style="padding:16px 20px;">
+                                        <span class="badge" style="font-size:0.85rem; padding:6px 12px; background-color: #c9aa6f; color: #1a1d20;">@customer.OrderCount</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @await Html.PartialAsync("_PaginationPartial", customerPagination)
+        }
+    </div>
+
+    <!-- ===================== ORDERS PANEL ===================== -->
     <div class="dash-panel card border-0 shadow-sm p-4" data-panel="orders" style="display:@(activeTab == "orders" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">
 
-        <!-- Filter Form -->
         <div class="p-4 mb-4" style="border-radius: 12px; border: 1px solid #1a1d20; background-color: #fcfcfc;">
             <form asp-controller="Admin" asp-action="Index" method="get">
                 <input type="hidden" name="activeTab" value="orders" />
 
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Search Orders</label>
-                        <input type="text" name="orderSearch" value="@orderSearch" class="form-control bg-white custom-dropdown" placeholder="Customer name, phone, location..." />
+                <div class="row">
+                    <div class="col-md-5 m-b-15">
+                        <label class="stext-102 cl3">Search</label>
+                        <input type="text" name="orderSearch" value="@orderSearch" class="form-control" placeholder="Customer name, phone, or location..." />
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Order Status</label>
-                        <select name="orderStatusId" class="form-select custom-dropdown">
+                    <div class="col-md-3 m-b-15">
+                        <label class="stext-102 cl3">Order Status</label>
+                        <select name="orderStatusId" class="form-control">
                             <option value="">All Statuses</option>
                             @foreach (var status in orderStatuses)
                             {
@@ -150,9 +312,9 @@
                             }
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Payment Status</label>
-                        <select name="paymentStatusId" class="form-select custom-dropdown">
+                    <div class="col-md-4 m-b-15">
+                        <label class="stext-102 cl3">Payment Status</label>
+                        <select name="paymentStatusId" class="form-control">
                             <option value="">All Payment Statuses</option>
                             @foreach (var status in paymentStatuses)
                             {
@@ -160,62 +322,78 @@
                             }
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn w-100 py-2 fw-bold" style="border-radius: 8px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">Filter</button>
-                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="orders" class="btn btn-outline-dark w-100 py-2 fw-semibold" style="border-radius: 8px;">Clear</a>
-                    </div>
+                </div>
+
+                <div class="d-flex m-t-10">
+                    <button type="submit" class="btn py-2 fw-bold px-4" style="border-radius: 8px; background-color: #c9aa6f; color: #1a1d20; border: 1px solid #1a1d20;">
+                        <i class="fa fa-filter m-r-8"></i> Apply Filters
+                    </button>
+                    <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="orders" class="btn btn-outline-dark py-2 fw-semibold px-4 m-l-10" style="border-radius: 8px;">
+                        Clear
+                    </a>
                 </div>
             </form>
         </div>
 
-        <div class="mb-3">
-            <span style="font-size: 14px; color: #555;">Showing <strong style="color: #1a1d20;">@orders.Count</strong> order(s)</span>
+        <div class="p-b-15">
+            <span class="stext-102 cl6">Showing <strong>@orders.Count</strong> of <strong>@totalOrderCount</strong> order(s)</span>
         </div>
 
         @if (!orders.Any())
         {
-            <div class="text-center py-5" style="border-radius: 12px; background-color: #fcfcfc; border: 1px solid #eaeaea;">
-                <i class="fa fa-box-open fa-3x mb-3" style="color: #c9aa6f;"></i>
-                <h5 class="fw-bold" style="color: #1a1d20;">No orders found</h5>
-                <p class="text-muted mb-0">Try clearing or changing your filters.</p>
+            <div class="bor10 p-all-40 text-center">
+                <i class="fa fa-box-open fa-2x m-b-15"></i>
+                <h4 class="mtext-102 cl2">No orders found</h4>
             </div>
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table align-middle table-hover mb-0">
-                    <thead style="background-color: #1a1d20; color: #fff;">
-                        <tr>
-                            <th class="py-3 px-2 text-white">Order ID</th>
-                            <th class="py-3 px-2 text-white">Customer</th>
-                            <th class="py-3 px-2 text-white">Phone</th>
-                            <th class="py-3 px-2 text-white">Location</th>
-                            <th class="py-3 px-2 text-white">Total Price</th>
-                            <th class="py-3 px-2 text-white">Payment</th>
-                            <th class="py-3 px-2 text-white" style="min-width: 150px;">Order Status</th>
-                            <th class="py-3 px-2 text-end text-white">Action</th>
+            <div class="wrap-table-shopping-cart">
+                <table class="table-shopping-cart">
+                    <thead>
+                        <tr class="table_head">
+                            <th class="column-1">Order ID</th>
+                            <th class="column-2">Customer</th>
+                            <th class="column-3">Phone</th>
+                            <th class="column-4">Location</th>
+                            <th class="column-5">Total Price</th>
+                            <th class="column-6" style="padding: 12px 15px;">Payment Status</th>
+                            <th class="column-7" style="padding: 12px 15px;">Order Status</th>
+                            <th class="column-8" style="padding: 12px 15px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var order in orders)
                         {
-                            <tr style="border-bottom: 1px solid #eaeaea;">
-                                <td class="py-3 px-2 fw-semibold" style="color: #1a1d20;">#@order.OrderId</td>
-                                <td class="py-3 px-2" style="color: #1a1d20;">@order.CustomerName</td>
-                                <td class="py-3 px-2" style="color: #1a1d20;">@(order.CustomerPhoneNumber ?? "-")</td>
-                                <td class="py-3 px-2" style="color: #1a1d20;">@(order.Location ?? "-")</td>
-                                <td class="py-3 px-2 fw-bold" style="color: #1a1d20;">@order.TotalPrice.ToString("C")</td>
-                                <td class="py-3 px-2">
-                                    <span class="badge px-3 py-2 fw-semibold" style="background-color: #f8f9fa; color: #1a1d20; border: 1px solid #1a1d20; border-radius: 8px; font-size: 12px;">
-                                        <i class="fa fa-credit-card m-r-4 text-warning"></i> @order.PaymentStatusName
+                            <tr class="table_row">
+                                <td class="column-1">
+                                    <span style="font-size: 12px; font-weight: 400; color: #999;">
+                                        @order.OrderId
                                     </span>
                                 </td>
-                                <td class="py-3 px-2">
+                                <td class="column-2">@order.CustomerName</td>
+                                <td class="column-3">@(order.CustomerPhoneNumber ?? "-")</td>
+                                <td class="column-4">@(order.Location ?? "-")</td>
+                                <td class="column-5"><strong>@order.TotalPrice.ToString("C")</strong></td>
+                                <td class="column-6" style="padding: 12px 15px;">
+                                    <form asp-controller="Order" asp-action="UpdatePaymentStatus" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <input type="hidden" name="returnUrl" value="@currentUrl" />
+                                        <select name="paymentStatusId" class="form-control form-select form-select-sm" style="font-size: 12px; padding: 4px 28px 4px 10px; min-width: 120px;" onchange="this.form.submit()">
+                                            @foreach (var status in paymentStatuses)
+                                            {
+                                                <option value="@status.PaymentStatusId" selected="@(status.PaymentStatusId == order.PaymentStatusId)">@status.PaymentStatusName</option>
+                                            }
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="column-7" style="padding: 12px 15px;">
                                     <form asp-controller="Order" asp-action="UpdateStatus" method="post">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
                                         <input type="hidden" name="returnUrl" value="@currentUrl" />
-                                        <select name="orderStatusId" class="form-select form-select-sm fw-semibold custom-dropdown" onchange="this.form.submit()" style="font-size: 13px;">
+                                        <select name="orderStatusId" class="form-control form-select form-select-sm" style="font-size: 12px; padding: 4px 28px 4px 10px; min-width: 120px;" onchange="this.form.submit()">
                                             @foreach (var status in orderStatuses)
                                             {
                                                 <option value="@status.OrderStatusId" selected="@(status.OrderStatusId == order.OrderStatusId)">@status.OrderStatusName</option>
@@ -223,8 +401,8 @@
                                         </select>
                                     </form>
                                 </td>
-                                <td class="py-3 px-2 text-end">
-                                    <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm fw-semibold" style="border-radius: 20px; padding: 4px 12px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
+                                <td class="column-8" style="padding: 12px 15px;">
+                                    <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm" style="background-color: #c9aa6f; color: #1a1d20; border: 1px solid #1a1d20;">
                                         <i class="fa fa-eye"></i> Preview
                                     </a>
                                 </td>
@@ -233,97 +411,13 @@
                     </tbody>
                 </table>
             </div>
+
+            @await Html.PartialAsync("_PaginationPartial", orderPagination)
         }
     </div>
-
-    <!-- ===================== CUSTOMERS PANEL ===================== -->
-    <div class="dash-panel card border-0 shadow-sm p-4" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">
-        
-        <!-- Filter Form -->
-        <div class="p-4 mb-4" style="border-radius: 12px; border: 1px solid #1a1d20; background-color: #fcfcfc;">
-            <form asp-controller="Admin" asp-action="Index" method="get">
-                <input type="hidden" name="activeTab" value="customers" />
-
-                <div class="row align-items-end">
-                    <div class="col-md-8 mb-3 mb-md-0">
-                        <label class="form-label fw-semibold" style="font-size: 13px; color: #1a1d20;">Search Customers</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border-color: #1a1d20;"><i class="fa fa-search" style="color: #c9aa6f;"></i></span>
-                            <input type="text" name="customerSearch" value="@customerSearch" class="form-control border-start-0 bg-white" placeholder="Search by name, phone, or location..." style="border-color: #1a1d20;" />
-                        </div>
-                    </div>
-                    <div class="col-md-4 d-flex gap-2">
-                        <button type="submit" class="btn w-100 py-2 fw-bold" style="border-radius: 8px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
-                            <i class="fa fa-filter m-r-5"></i> Filter
-                        </button>
-                        <a asp-controller="Admin" asp-action="Index" asp-route-activeTab="customers" class="btn btn-outline-dark w-100 py-2 fw-semibold" style="border-radius: 8px;">
-                            Clear
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="mb-3">
-            <span style="font-size: 14px; color: #555;">Showing <strong style="color: #1a1d20;">@customers.Count</strong> customer(s)</span>
-        </div>
-
-        @if (!customers.Any())
-        {
-            <div class="text-center py-5" style="border-radius: 12px; background-color: #fcfcfc; border: 1px solid #eaeaea;">
-                <i class="fa fa-users fa-3x mb-3" style="color: #c9aa6f;"></i>
-                <h5 class="fw-bold" style="color: #1a1d20;">No customers found</h5>
-                <p class="text-muted mb-0">Try adjusting your search criteria.</p>
-            </div>
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table align-middle table-hover mb-0">
-                    <thead style="background-color: #1a1d20; color: #fff;">
-                        <tr>
-                            <th class="py-3 px-3 text-white">Customer ID</th>
-                            <th class="py-3 px-3 text-white">Phone Number</th>
-                            <th class="py-3 px-3 text-white">Name</th>
-                            <th class="py-3 px-3 text-white">Location</th>
-                            <th class="py-3 px-3 text-center text-white">Orders</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var customer in customers)
-                        {
-                            <tr style="border-bottom: 1px solid #eaeaea;">
-                                <td class="py-3 px-3 font-monospace" style="font-size: 13px; color: #777;">@customer.CustomerId</td>
-                                <td class="py-3 px-3" style="color: #1a1d20;">@(customer.PhoneNumber ?? "-")</td>
-                                <td class="py-3 px-3"><strong style="color: #1a1d20;">@customer.FullName</strong></td>
-                                <td class="py-3 px-3" style="color: #1a1d20;">@(customer.Location ?? "-")</td>
-                                <td class="py-3 px-3 text-center">
-                                    <span class="badge px-2 py-1" style="border-radius: 6px; background-color: #1a1d20; color: #c9aa6f;">@customer.OrderCount</span>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-    </div>
-
 </div>
 
 <style>
-    .custom-dropdown {
-        border: 1px solid #1a1d20 !important;
-        border-radius: 8px !important;
-        background-color: #fff !important;
-        color: #1a1d20 !important;
-        transition: all 0.3s ease;
-    }
-
-    .custom-dropdown:focus {
-        border-color: #c9aa6f !important;
-        box-shadow: 0 0 0 0.2rem rgba(201, 170, 111, 0.25) !important;
-    }
-
     .dash-tabs {
         display: flex;
         gap: 12px;
@@ -345,42 +439,32 @@
     }
 
     .dash-tab-btn:hover {
-        background: #1a1d20;
-        color: #c9aa6f;
+        background: #c9aa6f;
+        color: #1a1d20;
     }
 
     .dash-tab-btn.active {
-        background: #1a1d20;
-        color: #c9aa6f;
+        background: #c9aa6f;
+        color: #1a1d20;
         border-color: #1a1d20;
         box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
-    }
-
-    .table th {
-        font-size: 13px;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-    }
-
-    .table td {
-        font-size: 14px;
     }
 </style>
 
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             var tabButtons = document.querySelectorAll(".dash-tab-btn");
             var panels = document.querySelectorAll(".dash-panel");
 
-            tabButtons.forEach(function(button) {
-                button.addEventListener("click", function() {
+            tabButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
                     var target = button.getAttribute("data-tab");
 
-                    tabButtons.forEach(function(btn) { btn.classList.remove("active"); });
+                    tabButtons.forEach(function (btn) { btn.classList.remove("active"); });
                     button.classList.add("active");
 
-                    panels.forEach(function(panel) {
+                    panels.forEach(function (panel) {
                         panel.style.display = (panel.getAttribute("data-panel") === target) ? "block" : "none";
                     });
                 });

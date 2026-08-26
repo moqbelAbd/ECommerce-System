@@ -116,26 +116,28 @@
                     <!-- Buttons -->
                     <div class="d-flex flex-wrap mt-4">
 
-                        <a asp-action="Edit"
-                           asp-route-id="@Model.SubCategoryId"
-                           class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 mr-2 mb-2">
-                            <i class="fa fa-pencil m-r-8"></i>
-                            Edit
-                        </a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit"
+                            asp-route-id="@Model.SubCategoryId"
+                            class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 mr-2 mb-2">
+                                <i class="fa fa-pencil m-r-8"></i>
+                                Edit
+                            </a>
 
-                        <a asp-action="Delete"
-                           asp-route-id="@Model.SubCategoryId"
-                           class="btn mr-2 mb-2"
-                           style="
+                            <a asp-action="Delete"
+                            asp-route-id="@Model.SubCategoryId"
+                            class="btn mr-2 mb-2"
+                            style="
                                 border:1px solid #dc3545;
                                 color:#dc3545;
                                 border-radius:25px;
                                 padding:10px 25px;
-                           ">
-                            <i class="fa fa-trash mr-2"></i>
-                            Delete
-                        </a>
-
+                            ">
+                                <i class="fa fa-trash mr-2"></i>
+                                Delete
+                            </a>
+                        }
                         <a asp-action="Index"
                            class="btn mb-2"
                            style="

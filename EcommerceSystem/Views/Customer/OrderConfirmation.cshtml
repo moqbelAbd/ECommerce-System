@@ -17,7 +17,8 @@
         <div class="row justify-content-center">
             <div class="col-lg-9">
 
-                <div class="bor10 p-lr-40 p-tb-50" style="border-radius: 16px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.06);">
+                <!-- Printable Invoice Wrapper -->
+                <div id="printableInvoice" class="bor10 p-lr-40 p-tb-50" style="border-radius: 16px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.06);">
 
                     <!-- Success Icon -->
                     <div class="text-center m-b-20">
@@ -86,19 +87,9 @@
                     </div>
 
                     <!-- Shipping Address Info -->
-                    <div class="p-tb-15 p-lr-20 bg-light m-b-35" style="border-radius: 8px;">
+                    <div class="p-tb-15 p-lr-20 bg-light m-b-0" style="border-radius: 8px;">
                         <span class="stext-102 cl6 block" style="font-weight: 600;">Delivery Address:</span>
                         <span class="stext-111 cl2">@Model.Location</span>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex-w flex-c-m w-full" style="gap: 15px;">
-                        <a asp-controller="Home" asp-action="Index" class="flex-c-m stext-101 cl0 size-119 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none;">
-                            Back To Home
-                        </a>
-                        <a asp-controller="Customer" asp-action="OrderHistory" class="flex-c-m stext-101 cl2 size-119 bg2 bor13 hov-btn3 p-lr-15 trans-04 pointer" style="border-radius: 8px; text-decoration: none;">
-                            View All Orders
-                        </a>
                     </div>
 
                 </div>

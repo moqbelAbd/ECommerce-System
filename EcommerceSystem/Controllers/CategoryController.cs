@@ -22,12 +22,24 @@ namespace EcommerceSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.Categories
-                .Where(c => !c.IsDeleted)
+            if (!User.IsInRole("Admin"))
+            {
+                var categories = await _context.Categories
+                    .Where(c => !c.IsDeleted)
+                    .Include(c => c.SubCategories)
+                    .ToListAsync();
+
+                return View(categories);
+
+            }
+            else
+            {
+                var categories = await _context.Categories
                 .Include(c => c.SubCategories)
                 .ToListAsync();
 
-            return View(categories);
+                return View(categories);
+            }
         }
 
         // GET: Category/Details/{id} 
@@ -180,6 +192,49 @@ namespace EcommerceSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
+        // GET: Category/UnDelete/{id}
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnDelete(Guid? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(c =>
+                    c.CategoryId == id &&
+                    c.IsDeleted);
+
+            if (category == null)
+                return NotFound();
+
+            return View("Delete", category);
+        }
+
+        // POST: Category/UnDelete/{id}
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ActionName("UnDelete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnDeleteConfirmed(Guid id)
+        {
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(c =>
+                    c.CategoryId == id &&
+                    c.IsDeleted);
+
+            if (category == null)
+                return NotFound();
+
+            category.IsDeleted = false;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Warning"] = "Category restored successfully.";
+
+            return RedirectToAction(nameof(Index));
+        }
         private bool CategoryExists(Guid id)
         {
             return _context.Categories

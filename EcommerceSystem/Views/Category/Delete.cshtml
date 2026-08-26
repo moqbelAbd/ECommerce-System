@@ -6,9 +6,18 @@
 
 <!-- Title Banner -->
 <section class="bg-img1 txt-center p-lr-15 p-tb-75" style="background-image: url('/images/bg-01.jpg');">
-    <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
-        DELETE CATEGORY
-    </h2>
+    @if (!Model.IsDeleted)
+    {
+        <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
+            DELETE CATEGORY
+        </h2>
+    }
+    else
+    {
+        <h2 class="ltext-105 cl0 txt-center" style="font-weight: 600; letter-spacing: 2px; color: #222;">
+            RESTORE CATEGORY
+        </h2>
+    }
 </section>
 
 <div class="container py-5">
@@ -17,9 +26,26 @@
 
             <div class="card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
 
-                <div class="card-header bg-danger text-white p-4 text-center">
-                    <h4 class="mb-1 fw-bold" style="letter-spacing: 1px;"><i class="fa fa-exclamation-triangle m-r-5"></i> Confirm Deletion</h4>
-                    <p class="text-white-50 mb-0" style="font-size: 13px;">Please review the category before proceeding with the deletion.</p>
+                    @if (!Model.IsDeleted)
+                    {
+                    <div class="card-header bg-danger text-white p-4 text-center">
+                        <div class="card-header bg-danger text-white p-4 text-center">
+                            <h4 class="mb-1 fw-bold" style="letter-spacing: 1px;"><i class="fa fa-exclamation-triangle m-r-5"></i> Confirm Deletion</h4>
+                            <p class="text-white-50 mb-0" style="font-size: 13px;">Please review the category before proceeding with the deletion.</p>
+                        </div>
+                    </div>
+                }
+                    else
+                {
+
+                    <div class="card-header bg-success text-white p-4 text-center">
+
+                        <div class="card-header bg-success text-white p-4 text-center">
+                            <h4 class="mb-1 fw-bold" style="letter-spacing: 1px;"><i class="fa fa-refresh m-r-5"></i> Confirm Restoration</h4>
+                            <p class="text-white-50 mb-0" style="font-size: 13px;">Please review the category before proceeding with the restoration.</p>
+                        </div>
+                    </div>
+                }
                 </div>
 
                 <div class="card-body p-4 p-md-5 bg-white text-center">
@@ -31,30 +57,59 @@
                              class="rounded shadow-sm border">
                     </div>
 
-                    <p class="text-muted mb-1" style="font-size: 15px;">Are you sure you want to delete this category?</p>
+                        @if (!Model.IsDeleted)
+                     {
+                         <p class="text-muted mb-1" style="font-size: 15px;">Are you sure you want to delete this category?</p>
+                     }
+                        else
+                    {                        
+                        <p class="text-muted mb-1" style="font-size: 15px;">Are you sure you want to restore this category?</p>
+                    }
+
                     <h3 class="fw-bold mb-4" style="color: #111;">
                         @Model.CategoryName
                     </h3>
 
+                        @if (!Model.IsDeleted)
+    {
                     <div class="alert alert-warning text-start py-3 mb-4 rounded-3" style="font-size: 13px;">
                         <i class="fa fa-info-circle m-r-5"></i> This category will undergo <strong>soft delete</strong>. It will be hidden from the storefront but will not be permanently removed from the database.
                     </div>
+    }
 
-                    <form asp-action="Delete"
-                          asp-route-id="@Model.CategoryId"
-                          method="post">
-                        @Html.AntiForgeryToken()
+        @if (!Model.IsDeleted)
+                    {
+                        <form asp-action="Delete"
+                        asp-route-id="@Model.CategoryId"
+                        method="post">
+                            @Html.AntiForgeryToken()
 
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
-                                <i class="fa fa-arrow-left m-r-5"></i> Cancel
-                            </a>
-                            <button type="submit" class="btn btn-danger px-5 py-2" style="border-radius: 20px; font-weight: 500;">
-                                <i class="fa fa-trash m-r-5"></i> Yes, Delete
-                            </button>
-                        </div>
+                            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                                <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                                    <i class="fa fa-arrow-left m-r-5"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-danger px-5 py-2" style="border-radius: 20px; font-weight: 500;">
+                                    <i class="fa fa-trash m-r-5"></i> Yes, Delete
+                                </button>
+                            </div>
 
-                    </form>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="UnDelete" asp-route-id="@Model.CategoryId" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                                <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 20px; font-weight: 500;">
+                                    <i class="fa fa-arrow-left m-r-5"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-success px-5 py-2" style="border-radius: 20px; font-weight: 500;">
+                                    <i class="fa fa-undo m-r-5"></i> Yes, Restore
+                                </button>
+                            </div>
+                        </form>
+                    }
 
                 </div>
 
