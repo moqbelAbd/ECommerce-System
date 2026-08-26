@@ -1,4 +1,5 @@
 ﻿﻿@using EcommerceSystem.Models
+﻿@using EcommerceSystem.Models.ViewModels
 @model IEnumerable<Product>
 
 @{
@@ -25,6 +26,30 @@
     decimal? maxPrice = ViewBag.MaxPrice;
 
     string? search = ViewBag.Search;
+
+    int totalPages = ViewBag.TotalPages;
+    int page = ViewBag.Page;
+    int totalCount = ViewBag.TotalCount;
+
+    var pagination = new PaginationViewModel
+    {
+        CurrentPage = page,
+        TotalPages = totalPages,
+        PageParam = "page",
+        Action = "Index",
+        Controller = "Product",
+        RouteValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
+        {
+            ["search"] = search,
+            ["categoryId"] = selectedCategoryId,
+            ["subCategoryId"] = selectedSubCategoryId,
+            ["brandId"] = selectedBrandId,
+            ["modelId"] = selectedModelId,
+            ["minPrice"] = minPrice,
+            ["maxPrice"] = maxPrice
+        }
+    };
+}
 }
 
 <div class="bg0 p-t-80 p-b-100">
@@ -291,6 +316,14 @@
 
 
         <!-- Products Table -->
+        <div class="card"
+             style="
+            border:none;
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 5px 25px rgba(0,0,0,0.08);
+            ">
+
         @if (!Model.Any())
         {
             <div class="bor10 p-all-40 text-center">
@@ -318,39 +351,39 @@
         }
         else
         {
-            <div class="wrap-table-shopping-cart">
+            <div class="wrap-table-shopping-cart table-responsive">
 
                 <table class="table-shopping-cart">
 
-                    <thead>
+                        <thead style="background:#1a1d20; ">
 
                         <tr class="table_head">
 
-                            <th class="column-1">
+                                <th style="padding:18px; color:white;" class="column-1">
                                 Product
                             </th>
 
-                            <th class="column-2">
+                                <th style="padding:18px; color:white;" class="column-2">
                                 Name
                             </th>
 
-                            <th class="column-2">
+                                <th style="padding:18px; color:white;" class="column-2">
                                 Brand
                             </th>
 
-                            <th class="column-3">
+                                <th style="padding:18px; color:white;" class="column-3">
                                 Model
                             </th>
 
-                            <th class="column-4">
+                                <th style="padding:18px; color:white;" class="column-4">
                                 Price
                             </th>
 
-                            <th class="column-5">
+                                <th style="padding:18px; color:white;" class="column-5">
                                 Stock
                             </th>
 
-                            <th class="column-6">
+                                <th style="padding:18px; color:white;" class="column-6">
                                 Actions
                             </th>
 
@@ -505,8 +538,11 @@
                 </table>
 
             </div>
+            @await Html.PartialAsync("_PaginationPartial", pagination)
+
         }
 
+        </div>
     </div>
 
 </div>

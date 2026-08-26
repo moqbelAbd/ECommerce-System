@@ -27,8 +27,12 @@ namespace EcommerceSystem.Controllers
             Guid? modelId,
             decimal? minPrice,
             decimal? maxPrice,
-            string? search)
+            string? search,
+            int page = 1  )
         {
+
+            int pageSize = 8;
+
             var query = _context.Products
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.ProductBrand)
@@ -98,8 +102,14 @@ namespace EcommerceSystem.Controllers
                     p.ProductPrice <= maxPrice.Value);
             }
 
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            page = Math.Max(1, page);
+
             var products = await query
                 .OrderBy(p => p.ProductName)
+                .Skip((page -1 ) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             // Data for filters
@@ -125,7 +135,9 @@ namespace EcommerceSystem.Controllers
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
             ViewBag.Search = search;
-
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Page = page;
+            ViewBag.TotalCount = totalCount;
             return View(products);
         }
 
