@@ -52,8 +52,7 @@ namespace EcommerceSystem.Controllers
             var category = await _context.Categories
                 .Include(c => c.SubCategories)
                 .FirstOrDefaultAsync(c =>
-                    c.CategoryId == id &&
-                    !c.IsDeleted);
+                    c.CategoryId == id );
 
             if (category == null)
                 return NotFound();
