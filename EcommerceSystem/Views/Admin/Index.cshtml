@@ -27,8 +27,17 @@
     int? selectedOrderStatusId = ViewBag.SelectedOrderStatusId;
     int? selectedPaymentStatusId = ViewBag.SelectedPaymentStatusId;
 
-    string activeTab = ViewBag.ActiveTab ?? "orders";
+    string activeTab = ViewBag.ActiveTab ?? "overview";
     string currentUrl = Context.Request.Path + Context.Request.QueryString;
+
+    var overview = ViewBag.Overview as AdminOverviewViewModel ?? new AdminOverviewViewModel();
+
+    // Palette used for the pie / donut slices (matches the store theme).
+    var chartColors = new[] { "#c9aa6f", "#1a1d20", "#8c6d3f", "#5a5f66", "#e0c48f", "#3c4043", "#a9884f", "#767b82" };
+
+    Func<decimal?, string> pct = v => v.HasValue
+        ? (v.Value >= 0 ? "+" : "") + v.Value.ToString("0.#") + "%"
+        : "n/a";
 
     int customerPage = ViewBag.CustomerPage ?? 1;
     int customerTotalPages = ViewBag.CustomerTotalPages ?? 1;
@@ -162,62 +171,248 @@
 
     <!-- Dashboard Tabs -->
     <div class="dash-tabs mb-4">
+        <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
+            <i class="fa fa-dashboard m-r-5"></i> Overview
+        </button>
         <button type="button" class="dash-tab-btn @(activeTab == "orders" ? "active" : "")" data-tab="orders">
             <i class="fa fa-list-alt m-r-5"></i> Manage Orders
         </button>
         <button type="button" class="dash-tab-btn @(activeTab == "customers" ? "active" : "")" data-tab="customers">
             <i class="fa fa-users m-r-5"></i> Manage Customers
         </button>
-        @* <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
-            <i class="fa fa-dashboard m-r-5"></i> Overview
-        </button> *@
     </div>
 
     <!-- ===================== OVERVIEW PANEL ===================== -->
-    @* <div class="dash-panel" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none");">
-        <h4 class="mtext-103 cl2 p-b-20">Recent Watch Orders</h4>
-        <div class="wrap-table-shopping-cart">
-            <table class="table-shopping-cart">
-                <tr class="table_head">
-                    <th class="column-1">Order ID</th>
-                    <th class="column-2">Customer</th>
-                    <th class="column-3">Total Price</th>
-                    <th class="column-4">Status</th>
-                    <th class="column-5">Action</th>
-                </tr>
+    <div class="dash-panel" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none");">
 
-                @if (!Model.Any())
-                {
-                    <tr class="table_row">
-                        <td colspan="5" class="text-center">No orders yet</td>
-                    </tr>
-                }
-                else
-                {
-                    @foreach (var order in Model)
-                    {
-                        <tr class="table_row">
-                            <td class="column-1">@order.OrderId</td>
-                            <td class="column-2">
-                                @(order.Customer == null )
-                                    ? "-"
-                                    : $"{order.Customer.FirstName} {order.Customer.LastName}")
-                            </td>
-                            <td class="column-3">@order.TotalPrice.ToString("C")</td>
-                            <td class="column-4">
-                                <span class="badge bg-info text-dark">
-                                    @(order.OrderStatus?.OrderStatusName ?? "-")
-                                </span>
-                            </td>
-                            <td class="column-5">
-                                <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="stext-101 cl1 hov-cl1">View Details</a>
-                            </td>
-                        </tr>
-                    }
-                }
-            </table>
+        @{
+            var mss = overview.MonthlySales;
+            int maxMonthlyOrders = mss.Any() ? Math.Max(1, mss.Max(m => m.OrderCount)) : 1;
+
+            var catList = overview.RevenueByCategory;
+            decimal catTotal = catList.Sum(c => c.Revenue);
+
+            var statusList = overview.OrdersByStatus;
+            int statusTotal = statusList.Sum(s => s.Count);
+
+            const double donutR = 70;
+            const double donutC = 2 * Math.PI * donutR;
+        }
+
+        <!-- KPI row (this month vs last month) -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <span class="d-block mb-1" style="font-size:13px; font-weight:600; color:#555;">Total Revenue</span>
+                    <h3 class="fw-bold mb-1" style="color:#1a1d20;">@overview.TotalRevenue.ToString("C")</h3>
+                    <span style="font-size:12px; color:@(overview.RevenueChangePercent >= 0 ? "#2e7d32" : "#c62828");">
+                        @pct(overview.RevenueChangePercent) vs last month
+                    </span>
+                    <span class="d-block" style="font-size:11px; color:#777;">This month: @overview.RevenueThisMonth.ToString("C")</span>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <span class="d-block mb-1" style="font-size:13px; font-weight:600; color:#555;">Total Orders</span>
+                    <h3 class="fw-bold mb-1" style="color:#1a1d20;">@overview.TotalOrders</h3>
+                    <span style="font-size:12px; color:@(overview.OrdersChangePercent >= 0 ? "#2e7d32" : "#c62828");">
+                        @pct(overview.OrdersChangePercent) vs last month
+                    </span>
+                    <span class="d-block" style="font-size:11px; color:#777;">This month: @overview.OrdersThisMonth</span>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <span class="d-block mb-1" style="font-size:13px; font-weight:600; color:#555;">Avg. Order Value</span>
+                    <h3 class="fw-bold mb-1" style="color:#1a1d20;">@overview.AvgOrderValue.ToString("C")</h3>
+                    <span class="d-block" style="font-size:11px; color:#777;">Across all orders</span>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <span class="d-block mb-1" style="font-size:13px; font-weight:600; color:#555;">Customers</span>
+                    <h3 class="fw-bold mb-1" style="color:#1a1d20;">@overview.TotalCustomers</h3>
+                    <span class="text-danger d-block" style="font-size:11px;">
+                        <i class="fa fa-exclamation-triangle"></i> @overview.LowStockCount products low on stock
+                    </span>
+                </div>
+            </div>
         </div>
-    </div> *@
+
+        <div class="row g-4">
+            <!-- Pie / Donut: Revenue by Category -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <h5 class="fw-bold mb-3" style="color:#1a1d20;">Revenue by Category</h5>
+                    @if (!catList.Any() || catTotal <= 0)
+                    {
+                        <p class="text-muted mb-0">No sales data yet.</p>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-wrap align-items-center" style="gap:24px;">
+                            <svg viewBox="0 0 200 200" style="width:190px; height:190px;">
+                                <g transform="rotate(-90 100 100)">
+                                    @{
+                                        double catOffset = 0;
+                                    }
+                                    @for (int i = 0; i < catList.Count; i++)
+                                    {
+                                        var slice = catList[i];
+                                        double frac = (double)(slice.Revenue / catTotal);
+                                        double len = frac * donutC;
+                                        <circle cx="100" cy="100" r="@donutR" fill="none"
+                                                stroke="@chartColors[i % chartColors.Length]" stroke-width="34"
+                                                stroke-dasharray="@len.ToString("0.##") @((donutC - len).ToString("0.##"))"
+                                                stroke-dashoffset="@((-catOffset).ToString("0.##"))"></circle>
+                                        catOffset += len;
+                                    }
+                                </g>
+                                <text x="100" y="96" text-anchor="middle" style="font-size:13px; fill:#555;">Total</text>
+                                <text x="100" y="116" text-anchor="middle" style="font-size:15px; font-weight:700; fill:#1a1d20;">@catTotal.ToString("C0")</text>
+                            </svg>
+                            <div style="flex:1; min-width:180px;">
+                                @for (int i = 0; i < catList.Count; i++)
+                                {
+                                    var slice = catList[i];
+                                    double frac = (double)(slice.Revenue / catTotal) * 100;
+                                    <div class="d-flex align-items-center justify-content-between mb-2" style="font-size:13px;">
+                                        <span>
+                                            <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:@chartColors[i % chartColors.Length]; margin-right:8px;"></span>
+                                            @slice.Name
+                                        </span>
+                                        <span class="fw-semibold">@slice.Revenue.ToString("C0") (@frac.ToString("0.#")%)</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Donut: Orders by Status -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <h5 class="fw-bold mb-3" style="color:#1a1d20;">Orders by Status</h5>
+                    @if (!statusList.Any() || statusTotal <= 0)
+                    {
+                        <p class="text-muted mb-0">No orders yet.</p>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-wrap align-items-center" style="gap:24px;">
+                            <svg viewBox="0 0 200 200" style="width:190px; height:190px;">
+                                <g transform="rotate(-90 100 100)">
+                                    @{
+                                        double stOffset = 0;
+                                    }
+                                    @for (int i = 0; i < statusList.Count; i++)
+                                    {
+                                        var slice = statusList[i];
+                                        double frac = (double)slice.Count / statusTotal;
+                                        double len = frac * donutC;
+                                        <circle cx="100" cy="100" r="@donutR" fill="none"
+                                                stroke="@chartColors[i % chartColors.Length]" stroke-width="34"
+                                                stroke-dasharray="@len.ToString("0.##") @((donutC - len).ToString("0.##"))"
+                                                stroke-dashoffset="@((-stOffset).ToString("0.##"))"></circle>
+                                        stOffset += len;
+                                    }
+                                </g>
+                                <text x="100" y="96" text-anchor="middle" style="font-size:13px; fill:#555;">Orders</text>
+                                <text x="100" y="116" text-anchor="middle" style="font-size:15px; font-weight:700; fill:#1a1d20;">@statusTotal</text>
+                            </svg>
+                            <div style="flex:1; min-width:180px;">
+                                @for (int i = 0; i < statusList.Count; i++)
+                                {
+                                    var slice = statusList[i];
+                                    double frac = (double)slice.Count / statusTotal * 100;
+                                    <div class="d-flex align-items-center justify-content-between mb-2" style="font-size:13px;">
+                                        <span>
+                                            <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:@chartColors[i % chartColors.Length]; margin-right:8px;"></span>
+                                            @slice.Name
+                                        </span>
+                                        <span class="fw-semibold">@slice.Count (@frac.ToString("0.#")%)</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Bar chart: Orders over time (last 6 months) -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm p-4" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <h5 class="fw-bold mb-3" style="color:#1a1d20;">Orders Over Time <span class="fw-normal" style="font-size:13px; color:#777;">(last 6 months)</span></h5>
+                    <div class="d-flex align-items-end justify-content-around" style="height:220px; gap:12px; border-bottom:2px solid #1a1d20; padding-top:10px;">
+                        @foreach (var m in mss)
+                        {
+                            var h = (int)Math.Round(180.0 * m.OrderCount / maxMonthlyOrders);
+                            <div class="d-flex flex-column align-items-center justify-content-end" style="flex:1; height:100%;">
+                                <span class="fw-semibold" style="font-size:12px; color:#1a1d20;">@m.OrderCount</span>
+                                <div title="@m.Label — @m.OrderCount orders, @m.Revenue.ToString("C0")"
+                                     style="width:100%; max-width:56px; height:@(h)px; background:linear-gradient(180deg,#c9aa6f,#8c6d3f); border-radius:6px 6px 0 0;"></div>
+                            </div>
+                        }
+                    </div>
+                    <div class="d-flex justify-content-around" style="gap:12px; margin-top:6px;">
+                        @foreach (var m in mss)
+                        {
+                            <div class="text-center" style="flex:1; font-size:11px; color:#555;">
+                                <div>@m.Label</div>
+                                <div style="color:#777;">@m.Revenue.ToString("C0")</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent orders -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm p-4" style="border-radius:16px; border:1px solid #1a1d20;">
+                    <h5 class="fw-bold mb-3" style="color:#1a1d20;">Recent Orders</h5>
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead style="background:#1a1d20;">
+                                <tr>
+                                    <th style="padding:14px 18px; color:#fff; font-weight:600;">Order ID</th>
+                                    <th style="padding:14px 18px; color:#fff; font-weight:600;">Customer</th>
+                                    <th style="padding:14px 18px; color:#fff; font-weight:600;">Total</th>
+                                    <th style="padding:14px 18px; color:#fff; font-weight:600;">Status</th>
+                                    <th style="padding:14px 18px; color:#fff; font-weight:600;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (!Model.Any())
+                                {
+                                    <tr><td colspan="5" class="text-center" style="padding:16px;">No orders yet</td></tr>
+                                }
+                                else
+                                {
+                                    @foreach (var order in Model)
+                                    {
+                                        <tr style="border-bottom:1px solid #eee;">
+                                            <td style="padding:14px 18px; font-size:12px; color:#999;">@order.OrderId</td>
+                                            <td style="padding:14px 18px;">@(order.Customer == null ? "-" : $"{order.Customer.FirstName} {order.Customer.LastName}")</td>
+                                            <td style="padding:14px 18px;"><strong>@order.TotalPrice.ToString("C")</strong></td>
+                                            <td style="padding:14px 18px;">
+                                                <span class="badge" style="background-color:#c9aa6f; color:#1a1d20;">@(order.OrderStatus?.OrderStatusName ?? "-")</span>
+                                            </td>
+                                            <td style="padding:14px 18px;">
+                                                <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm" style="background-color:#c9aa6f; color:#1a1d20; border:1px solid #1a1d20;">
+                                                    <i class="fa fa-eye"></i> Preview
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ===================== CUSTOMERS PANEL ===================== -->
     <div class="dash-panel card border-0 shadow-sm p-4" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">

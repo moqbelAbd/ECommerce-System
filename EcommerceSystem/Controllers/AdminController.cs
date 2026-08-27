@@ -37,8 +37,6 @@ namespace EcommerceSystem.Controllers
             ViewBag.TotalCategories = await _context.Categories.CountAsync(c => !c.IsDeleted);
             ViewBag.TotalSubCategories = await _context.SubCategories.CountAsync(sc => !sc.IsDeleted);
 
-            ViewBag.TotalSubCategories = await _context.SubCategories.CountAsync(sc => !sc.IsDeleted);
-
             var totalRevenue = await _context.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
             var totalOrders = await _context.Orders.CountAsync();
             var totalCustomers = await _context.Customers.CountAsync(c => !c.IsDeleted);
