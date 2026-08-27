@@ -147,8 +147,12 @@ namespace EcommerceSystem.Controllers
     string? searchTerm,
     decimal? minPrice,
     decimal? maxPrice,
-    string? sort)
+    string? sort,
+    int page = 1 )
+
         {
+            int pageSize = 12;
+
             var query = _context.Products
       .Where(p => !p.IsDeleted && p.ProductQuantity >= 1)
       .Where(p => p.ProductSubCategories.Any(psc =>
@@ -207,7 +211,14 @@ namespace EcommerceSystem.Controllers
                 _ => query.OrderBy(p => p.ProductName)
             };
 
-            var products = await query.ToListAsync();
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            var products = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
 
             var categories = await _context.Categories
                 .Where(c => !c.IsDeleted)
@@ -240,6 +251,9 @@ namespace EcommerceSystem.Controllers
             ViewBag.MaxPrice = maxPrice;
             ViewBag.Sort = sort;
             ViewBag.UserWishlistIds = userWishlistIds;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Page = page;
+            ViewBag.TotalCount = totalCount;
 
             return View(products);
         }

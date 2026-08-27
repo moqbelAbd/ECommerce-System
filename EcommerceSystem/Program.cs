@@ -59,7 +59,7 @@ using (var scope = app.Services.CreateScope())
     }
 
     // --- DEMO SEED DATA (categories, products, customers, orders, testimonials) ---
-    await DbSeeder.SeedAsync(scope.ServiceProvider);
+    //await DbSeeder.SeedAsync(scope.ServiceProvider);
 }
 
 // Configure the HTTP request pipeline.
