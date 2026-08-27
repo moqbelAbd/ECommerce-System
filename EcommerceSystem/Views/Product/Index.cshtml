@@ -22,6 +22,8 @@
     Guid? selectedBrandId = ViewBag.SelectedBrandId;
     Guid? selectedModelId = ViewBag.SelectedModelId;
 
+    bool showDeleted = ViewBag.ShowDeleted ?? false;
+    bool? isInStock = ViewBag.IsInStock;
     decimal? minPrice = ViewBag.MinPrice;
     decimal? maxPrice = ViewBag.MaxPrice;
 
@@ -46,7 +48,9 @@
             ["brandId"] = selectedBrandId,
             ["modelId"] = selectedModelId,
             ["minPrice"] = minPrice,
-            ["maxPrice"] = maxPrice
+            ["maxPrice"] = maxPrice,
+            ["showDeleted"] = showDeleted,
+            ["isInStock"] = isInStock
         }
     };
 }
@@ -263,16 +267,39 @@
 
                     </div>
 
+                    <div class="col-md-2 m-b-15">
+                        <label class="stext-102 cl3">Status</label>
+                        <select name="showDeleted" class="form-control">
+                            @if (showDeleted)
+                            {
+                                <option value="false">Active Only</option>
+                                <option value="true" selected>Deleted Only</option>
+                            }
+                            else
+                            {
+                                <option value="false" selected>Active Only</option>
+                                <option value="true">Deleted Only</option>
+                            }
+                        </select>
+                    </div>
 
-                    <div class="col-md-8 d-flex align-items-end m-b-15">
+                    <div class="col-md-2 m-b-15">
+                        <label class="stext-102 cl3">Stock Status</label>
+                        <select name="isInStock" class="form-control">
 
-                        <button type="submit"
-                                class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 m-r-10">
+                            <option value="" selected="@(isInStock == null)">All Stock</option>
 
-                            <i class="fa fa-filter m-r-8"></i>
+                            <option value="true" selected="@(isInStock == true)">In Stock</option>
 
-                            Apply Filters
+                            <option value="false" selected="@(isInStock == false)">Out Of Stock</option>
 
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4 d-flex align-items-end m-b-15">
+                        <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-20 m-r-10">
+                            <i class="fa fa-filter m-r-8"></i> Apply Filters
                         </button>
 
 
@@ -515,7 +542,8 @@
 
                                         </a>
 
-
+                                            @if (!product.IsDeleted)
+                                            {
                                         <a asp-controller="Product"
                                            asp-action="Delete"
                                            asp-route-id="@product.ProductId"
@@ -525,7 +553,17 @@
                                             <i class="fa fa-trash"></i>
 
                                         </a>
-
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="UnDelete"
+                                                   asp-route-id="@product.ProductId"
+                                                   class="btn btn-sm bg-success"
+                                                   style=" border-radius:20px;
+                                                    ">
+                                                    <i class="fa fa-undo" style="color:white;"></i>
+                                                </a>
+                                            }
                                     </div>
 
                                 </td>
