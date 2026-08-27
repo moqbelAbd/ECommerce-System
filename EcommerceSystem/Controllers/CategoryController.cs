@@ -104,8 +104,7 @@ namespace EcommerceSystem.Controllers
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(c =>
-                    c.CategoryId == id &&
-                    !c.IsDeleted);
+                    c.CategoryId == id );
 
             if (category == null)
                 return NotFound();
@@ -129,8 +128,7 @@ namespace EcommerceSystem.Controllers
 
             var existingCategory = await _context.Categories
                 .FirstOrDefaultAsync(c =>
-                    c.CategoryId == id &&
-                    !c.IsDeleted);
+                    c.CategoryId == id );
 
             if (existingCategory == null)
                 return NotFound();

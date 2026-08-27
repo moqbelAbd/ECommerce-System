@@ -124,8 +124,7 @@ namespace EcommerceSystem.Controllers
 
             var subCategory = await _context.SubCategories
                 .FirstOrDefaultAsync(sc =>
-                    sc.SubCategoryId == id &&
-                    !sc.IsDeleted);
+                    sc.SubCategoryId == id );
 
             if (subCategory == null)
                 return NotFound();
@@ -152,8 +151,7 @@ namespace EcommerceSystem.Controllers
 
             var existingSubCategory = await _context.SubCategories
                 .FirstOrDefaultAsync(sc =>
-                    sc.SubCategoryId == id &&
-                    !sc.IsDeleted);
+                    sc.SubCategoryId == id );
 
             if (existingSubCategory == null)
                 return NotFound();
