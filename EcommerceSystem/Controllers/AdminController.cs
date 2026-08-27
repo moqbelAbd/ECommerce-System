@@ -62,6 +62,9 @@ namespace EcommerceSystem.Controllers
             ViewBag.TotalCustomers = totalCustomers;
             ViewBag.LowStockCount = lowStockCount;
 
+            ViewBag.RevenueThisMonth = revenueThisMonth;
+            ViewBag.RevenueLastMonth = revenueLastMonth;
+
             ViewBag.RevenueChangePercent = revenueLastMonth > 0
                 ? Math.Round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100, 1)
                 : (decimal?)null;
@@ -73,6 +76,7 @@ namespace EcommerceSystem.Controllers
             var recentOrders = await _context.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.OrderStatus)
+                .Include(o => o.PaymentStatus)
                 .OrderByDescending(o => o.CreatedAt)
                 .Take(5)
                 .ToListAsync();
@@ -192,7 +196,7 @@ namespace EcommerceSystem.Controllers
             ViewBag.OrderTotalPages = orderTotalPages;
             ViewBag.TotalOrderCount = totalOrderCount;
 
-            ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "orders" : activeTab;
+            ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "overview" : activeTab;
 
             return View(recentOrders);
         }

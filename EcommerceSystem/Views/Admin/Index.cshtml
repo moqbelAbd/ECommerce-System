@@ -53,7 +53,7 @@
         </div>
     }
 
-    <!-- كروت الإحصائيات (Stats Cards) -->
+    <!-- (Stats Cards) -->
     <div class="row g-4 mb-5">
         <!-- Total Users -->
         <div class="col-md-6 col-lg-3">
@@ -124,62 +124,113 @@
 
     <!-- Dashboard Tabs -->
     <div class="dash-tabs mb-4">
+        <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
+            <i class="fa fa-dashboard m-r-5"></i> Overview
+        </button>
         <button type="button" class="dash-tab-btn @(activeTab == "orders" ? "active" : "")" data-tab="orders">
             <i class="fa fa-list-alt m-r-5"></i> Manage Orders
         </button>
         <button type="button" class="dash-tab-btn @(activeTab == "customers" ? "active" : "")" data-tab="customers">
             <i class="fa fa-users m-r-5"></i> Manage Customers
         </button>
-        @* <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
-            <i class="fa fa-dashboard m-r-5"></i> Overview
-        </button> *@
     </div>
 
-    <!-- ===================== OVERVIEW PANEL ===================== -->
-    @* <div class="dash-panel" data-panel="overview" style="display:@(activeTab == "overview" ? "block" : "none");">
-        <h4 class="mtext-103 cl2 p-b-20">Recent Watch Orders</h4>
-        <div class="wrap-table-shopping-cart">
-            <table class="table-shopping-cart">
-                <tr class="table_head">
-                    <th class="column-1">Order ID</th>
-                    <th class="column-2">Customer</th>
-                    <th class="column-3">Total Price</th>
-                    <th class="column-4">Status</th>
-                    <th class="column-5">Action</th>
-                </tr>
 
-                @if (!Model.Any())
-                {
-                    <tr class="table_row">
-                        <td colspan="5" class="text-center">No orders yet</td>
+    <!-- ===================== OVERVIEW PANEL ===================== -->
+    <div class="dash-panel" data-panel="overview" style="@(activeTab == "overview" ? "display: block;" : "display: none;")">
+
+        <!-- Charts Row -->
+        <div class="row m-b-40">
+            <div class="col-md-7 m-b-20">
+                <div class="card p-all-20 shadow-sm" style="border-radius: 16px; border: 1px solid #1a1d20 !important; background: #fff; height: 100%;">
+                    <h5 class="fw-bold m-b-20" style="color: #1a1d20; letter-spacing: 0.5px;">
+                        <i class="fa fa-bar-chart m-r-8" style="color: #c9aa6f;"></i> Revenue Performance
+                    </h5>
+                    <div style="position: relative; height: 250px; width: 100%;">
+                        <canvas id="revenueBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 m-b-20">
+                <div class="card p-all-20 shadow-sm" style="border-radius: 16px; border: 1px solid #1a1d20 !important; background: #fff; height: 100%;">
+                    <h5 class="fw-bold m-b-20" style="color: #1a1d20; letter-spacing: 0.5px;">
+                        <i class="fa fa-pie-chart m-r-8" style="color: #c9aa6f;"></i> Inventory Health
+                    </h5>
+                    <div style="position: relative; height: 250px; width: 100%; display: flex; justify-content: center;">
+                        <canvas id="stockPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders Table -->
+        <h4 class="mtext-103 cl2 p-b-20 p-t-10">Recent Watch Orders</h4>
+
+        <div class="wrap-table-shopping-cart shadow-sm" style="border-radius: 16px; border: 1px solid #1a1d20 !important; overflow: hidden; background: #fff;">
+            <table class="table-shopping-cart mb-0">
+                <thead style="background:#1a1d20;">
+                    <tr class="table_head">
+                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Order ID</th>
+                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Customer</th>
+                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Total Price</th>
+                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Payment</th> <!-- Added Header -->
+                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Status</th>
+                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Action</th>
                     </tr>
-                }
-                else
-                {
-                    @foreach (var order in Model)
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
                     {
                         <tr class="table_row">
-                            <td class="column-1">@order.OrderId</td>
-                            <td class="column-2">
-                                @(order.Customer == null )
-                                    ? "-"
-                                    : $"{order.Customer.FirstName} {order.Customer.LastName}")
-                            </td>
-                            <td class="column-3">@order.TotalPrice.ToString("C")</td>
-                            <td class="column-4">
-                                <span class="badge bg-info text-dark">
-                                    @(order.OrderStatus?.OrderStatusName ?? "-")
-                                </span>
-                            </td>
-                            <td class="column-5">
-                                <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="stext-101 cl1 hov-cl1">View Details</a>
+                            <!-- Changed colspan from 5 to 6 to match the new column count -->
+                            <td colspan="6" class="text-center p-all-40">
+                                <i class="fa fa-box-open fa-2x m-b-15 text-muted"></i>
+                                <h4 class="mtext-102 cl2">No recent orders</h4>
                             </td>
                         </tr>
                     }
-                }
+                    else
+                    {
+                        @foreach (var order in Model)
+                        {
+                            <tr class="table_row" style="border-bottom: 1px solid #f5f5f5;">
+                                <td style="padding:16px 20px;">
+                                    <span style="font-size: 12px; font-weight: 400; color: #999;">
+                                        @order.OrderId
+                                    </span>
+                                </td>
+                                <td style="padding:16px 20px; font-weight: 500; color: #333;">
+                                    @(order.Customer == null ? "-" : $"{order.Customer.FirstName} {order.Customer.LastName}")
+                                </td>
+                                <td style="padding:16px 20px;">
+                                    <strong>@order.TotalPrice.ToString("C")</strong>
+                                </td>
+
+                                <!-- NEW: Payment Status Column -->
+                                <td style="padding:16px 20px;">
+                                    <span class="badge" style="background-color: #e9ecef; color: #1a1d20; border: 1px solid #ddd; padding: 6px 12px; font-weight: 600;">
+                                        @(order.PaymentStatus?.PaymentStatusName ?? "-")
+                                    </span>
+                                </td>
+
+                                <!-- EXISTING: Order Status Column -->
+                                <td style="padding:16px 20px;">
+                                    <span class="badge" style="background-color: #f8f9fa; color: #1a1d20; border: 1px solid #ddd; padding: 6px 12px; font-weight: 600;">
+                                        @(order.OrderStatus?.OrderStatusName ?? "-")
+                                    </span>
+                                </td>
+                                <td style="padding:16px 20px;">
+                                    <a asp-controller="Order" asp-action="Preview" asp-route-id="@order.OrderId" class="btn btn-sm" style="background-color: #c9aa6f; color: #1a1d20; border: 1px solid #1a1d20; font-weight: 600;">
+                                        <i class="fa fa-eye m-r-5"></i> Preview
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
             </table>
         </div>
-    </div> *@
+    </div>
 
     <!-- ===================== CUSTOMERS PANEL ===================== -->
     <div class="dash-panel card border-0 shadow-sm p-4" data-panel="customers" style="display:@(activeTab == "customers" ? "block" : "none"); border-radius: 16px; border: 1px solid #1a1d20 !important;">
@@ -410,6 +461,9 @@
 </style>
 
 @section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var tabButtons = document.querySelectorAll(".dash-tab-btn");
@@ -426,6 +480,84 @@
                         panel.style.display = (panel.getAttribute("data-panel") === target) ? "block" : "none";
                     });
                 });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            Chart.defaults.font.family = "'Poppins', sans-serif";
+            Chart.defaults.color = '#555';
+
+            // --- Bar Chart: Revenue ---
+            const barCtx = document.getElementById('revenueBarChart').getContext('2d');
+
+            const lastMonthRev = @Convert.ToInt32(ViewBag.RevenueLastMonth ?? 0);
+            const thisMonthRev = @Convert.ToInt32(ViewBag.RevenueThisMonth ?? 0);
+
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Last Month', 'This Month'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [lastMonthRev, thisMonthRev],
+                        backgroundColor: ['#1a1d20', '#c9aa6f'],
+                        borderRadius: 8, 
+                        barThickness: 45 
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, 
+                    plugins: {
+                        legend: { display: false } 
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // --- Pie Chart: Inventory Health ---
+            const pieCtx = document.getElementById('stockPieChart').getContext('2d');
+            const healthyStock = @(ViewBag.TotalProducts ?? 0) - @(ViewBag.LowStockCount ?? 0);
+            const lowStock = @(ViewBag.LowStockCount ?? 0);
+
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Healthy Stock', 'Low Stock (<= 3)'],
+                    datasets: [{
+                        data: [healthyStock, lowStock],
+                        backgroundColor: ['#1a1d20', '#c9aa6f'], 
+                        borderWidth: 3, 
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%', 
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true, 
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                }
             });
         });
     </script>
