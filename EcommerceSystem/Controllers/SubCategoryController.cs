@@ -27,7 +27,6 @@ namespace EcommerceSystem.Controllers
 
             var query = _context.SubCategories
                 .Include(sc => sc.Category)
-                .Where(sc => !sc.IsDeleted)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -66,8 +65,7 @@ namespace EcommerceSystem.Controllers
                 .Include(sc => sc.Category)
                 .Include(sc => sc.Products)
                 .FirstOrDefaultAsync(sc =>
-                    sc.SubCategoryId == id &&
-                    !sc.IsDeleted);
+                    sc.SubCategoryId == id );
 
             if (subCategory == null)
                 return NotFound();
@@ -215,6 +213,52 @@ namespace EcommerceSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+
+        // GET: SubCategory/UnDelete/{id}
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnDelete(Guid? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var subCategory = await _context.SubCategories
+                .Include(sc => sc.Category)
+                .FirstOrDefaultAsync(c =>
+                    c.SubCategoryId == id &&
+                    c.IsDeleted);
+
+            if (subCategory == null)
+                return NotFound();
+
+            return View("Delete", subCategory);
+        }
+
+        // POST: SubCategory/UnDelete/{id}
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ActionName("UnDelete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnDeleteConfirmed(Guid id)
+        {
+            var subCategory = await _context.SubCategories
+                .FirstOrDefaultAsync(c =>
+                    c.SubCategoryId == id &&
+                    c.IsDeleted);
+
+            if (subCategory == null)
+                return NotFound();
+
+            subCategory.IsDeleted = false;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "SubCategory restored successfully.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
         private async Task PopulateCategoriesAsync(Guid? selectedCategoryId = null)
         {

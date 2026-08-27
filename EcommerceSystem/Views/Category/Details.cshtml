@@ -113,11 +113,22 @@
                                 <i class="fa fa-pencil m-r-5"></i> Edit Category
                             </a>
 
-                            <a asp-action="Delete"
-                               asp-route-id="@Model.CategoryId"
-                               class="btn btn-danger px-4 py-2" style="border-radius: 20px;">
-                                <i class="fa fa-trash m-r-5"></i> Delete
-                            </a>
+                            @if (!Model.IsDeleted)
+                            {
+                                <a asp-action="Delete"
+                                asp-route-id="@Model.CategoryId"
+                                class="btn btn-danger px-4 py-2" style="border-radius: 20px;">
+                                    <i class="fa fa-trash m-r-5"></i> Delete
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="UnDelete"
+                                   asp-route-id="@Model.CategoryId"
+                                   class="btn btn-success px-4 py-2" style="border-radius: 20px;">
+                                    <i class="fa fa-undo m-r-5"></i> Restore
+                                </a>
+                            }
                         </div>
                     }
                 </div>

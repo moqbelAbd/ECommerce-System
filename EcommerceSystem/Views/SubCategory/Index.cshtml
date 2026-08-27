@@ -208,7 +208,8 @@
                                         ">
                                             <i class="fa fa-pencil"></i>
                                         </a>
-
+                                    @if (!item.IsDeleted)
+                                    {
                                         <a asp-action="Delete"
                                         asp-route-id="@item.SubCategoryId"
                                         class="btn btn-sm"
@@ -219,8 +220,18 @@
                                         ">
                                             <i class="fa fa-trash"></i>
                                         </a>
-
-                                    </td>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="UnDelete"
+                                           asp-route-id="@item.SubCategoryId"
+                                           class="btn btn-sm bg-success"
+                                           style=" border-radius:20px;
+                                            ">
+                                            <i class="fa fa-undo" style="color:white;"></i>
+                                        </a>
+                                    }
+                                </td>
 
                                 </tr>
                         }
