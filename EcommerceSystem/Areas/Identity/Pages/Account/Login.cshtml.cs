@@ -108,7 +108,9 @@ public class LoginModel : PageModel
     [HttpPost]
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
-        returnUrl ??= Url.Content("~/"); // الرابط الافتراضي إذا لم يوجد returnUrl
+        returnUrl ??= Url.Content("~/");
+
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
         if (ModelState.IsValid)
         {
@@ -118,12 +120,27 @@ public class LoginModel : PageModel
             {
                 _logger.LogInformation("User logged in.");
 
-                // هنا يتم إعادة توجيه المستخدم للصفحة الأصلية التي كان يحاول الوصول لها!
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user != null)
+                {
+                    if (await _userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        return RedirectToAction("Index", "Admin");
+                    }
+
+                    await MergeSessionCartToDatabaseAsync(user.Id);
+                }
+
                 return LocalRedirect(returnUrl);
             }
 
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+            }
             if (result.IsLockedOut)
             {
+                _logger.LogWarning("User account locked out.");
                 return RedirectToPage("./Lockout");
             }
             else
@@ -133,7 +150,6 @@ public class LoginModel : PageModel
             }
         }
 
-        // إذا حدث خطأ، نبقي الـ returnUrl موجوداً لكي لا يضيع
         return Page();
     }
     private async Task MergeSessionCartToDatabaseAsync(string applicationUserId)

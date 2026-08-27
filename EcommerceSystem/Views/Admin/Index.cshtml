@@ -490,16 +490,18 @@
             // --- Bar Chart: Revenue ---
             const barCtx = document.getElementById('revenueBarChart').getContext('2d');
 
+            const beforeThreeMonthsRev = @Convert.ToInt32(ViewBag.RevenueBeforeThreeMonths ?? 0);
+            const beforeTwoMonthsRev = @Convert.ToInt32(ViewBag.RevenueBeforeTwoMonths ?? 0);
             const lastMonthRev = @Convert.ToInt32(ViewBag.RevenueLastMonth ?? 0);
             const thisMonthRev = @Convert.ToInt32(ViewBag.RevenueThisMonth ?? 0);
 
             new Chart(barCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Last Month', 'This Month'],
+                    labels: ['Three Months Ago', 'Two Months Ago', 'Last Month', 'This Month'],
                     datasets: [{
                         label: 'Revenue ($)',
-                        data: [lastMonthRev, thisMonthRev],
+                        data: [beforeThreeMonthsRev, beforeTwoMonthsRev, lastMonthRev, thisMonthRev],
                         backgroundColor: ['#1a1d20', '#c9aa6f'],
                         borderRadius: 8, 
                         barThickness: 45 
@@ -534,7 +536,7 @@
             new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Healthy Stock', 'Low Stock (<= 3)'],
+                    labels: ['Healthy Stock', 'Low Stock (<= 5)'],
                     datasets: [{
                         data: [healthyStock, lowStock],
                         backgroundColor: ['#1a1d20', '#c9aa6f'], 

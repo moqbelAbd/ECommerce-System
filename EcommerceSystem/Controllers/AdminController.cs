@@ -31,6 +31,9 @@ namespace EcommerceSystem.Controllers
             var now = DateTime.Now;
             var startOfThisMonth = new DateTime(now.Year, now.Month, 1);
             var startOfLastMonth = startOfThisMonth.AddMonths(-1);
+            var startOftwoMonths = startOfThisMonth.AddMonths(-2);
+            var startOfThreeMonths = startOfThisMonth.AddMonths(-3);
+            var startOfFourMonths = startOfThisMonth.AddMonths(-4);
 
             ViewBag.TotalUsers = await _context.Users.CountAsync();
             ViewBag.TotalProducts = await _context.Products.CountAsync(p => !p.IsDeleted);
@@ -51,6 +54,14 @@ namespace EcommerceSystem.Controllers
                 .Where(o => o.CreatedAt >= startOfLastMonth && o.CreatedAt < startOfThisMonth)
                 .SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
 
+            var revenueBeforeTwoMonths = await _context.Orders
+                .Where(o => o.CreatedAt >= startOfThreeMonths && o.CreatedAt < startOftwoMonths)
+                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
+
+            var revenueBeforeThreeMonths = await _context.Orders
+                .Where(o => o.CreatedAt >= startOfFourMonths && o.CreatedAt < startOfThreeMonths)
+                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
+
             var ordersThisMonth = await _context.Orders
                 .CountAsync(o => o.CreatedAt >= startOfThisMonth);
 
@@ -64,6 +75,8 @@ namespace EcommerceSystem.Controllers
 
             ViewBag.RevenueThisMonth = revenueThisMonth;
             ViewBag.RevenueLastMonth = revenueLastMonth;
+            ViewBag.RevenueBeforeTwoMonths = revenueBeforeTwoMonths;
+            ViewBag.RevenueBeforeThreeMonths = revenueBeforeThreeMonths;
 
             ViewBag.RevenueChangePercent = revenueLastMonth > 0
                 ? Math.Round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100, 1)
