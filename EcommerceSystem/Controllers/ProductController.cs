@@ -29,7 +29,7 @@ namespace EcommerceSystem.Controllers
             decimal? minPrice,
             decimal? maxPrice,
             string? search,
-            bool? isInStock = null,
+            string? stockStatus = null,
             bool showDeleted = false,
             int page = 1
              )
@@ -60,6 +60,8 @@ namespace EcommerceSystem.Controllers
                      p.ProductModel.ModelName.Contains(search)));
             }
 
+            // Deletd
+
             if (showDeleted)
             {
                 query = query.Where(p => p.IsDeleted);
@@ -69,20 +71,26 @@ namespace EcommerceSystem.Controllers
                 query = query.Where(p => !p.IsDeleted);
             }
 
-            if (isInStock.HasValue)
+            //Stock 
+            if (!string.IsNullOrEmpty(stockStatus))
             {
-                if (isInStock.Value)
+                if (stockStatus == "in")
                 {
                     query = query.Where(p => p.ProductQuantity > 0);
                 }
-                else
+                else if (stockStatus == "out")
                 {
                     query = query.Where(p => p.ProductQuantity <= 0);
                 }
+                else if (stockStatus == "low")
+                {
+
+                    query = query.Where(p => p.ProductQuantity > 0 && p.ProductQuantity <= 5);
+                }
             }
 
-                // Category
-                if (categoryId.HasValue)
+            // Category
+            if (categoryId.HasValue)
             {
                 query = query.Where(p =>
                     p.ProductSubCategories.Any(psc =>
@@ -163,7 +171,7 @@ namespace EcommerceSystem.Controllers
             ViewBag.Page = page;
             ViewBag.TotalCount = totalCount;
             ViewBag.ShowDeleted = showDeleted;
-            ViewBag.IsInStock = isInStock;
+            ViewBag.StockStatus = stockStatus;
             return View(products);
         }
 

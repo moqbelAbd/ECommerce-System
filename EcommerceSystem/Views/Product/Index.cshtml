@@ -23,7 +23,7 @@
     Guid? selectedModelId = ViewBag.SelectedModelId;
 
     bool showDeleted = ViewBag.ShowDeleted ?? false;
-    bool? isInStock = ViewBag.IsInStock;
+    string? stockStatus = ViewBag.StockStatus;
     decimal? minPrice = ViewBag.MinPrice;
     decimal? maxPrice = ViewBag.MaxPrice;
 
@@ -50,7 +50,7 @@
             ["minPrice"] = minPrice,
             ["maxPrice"] = maxPrice,
             ["showDeleted"] = showDeleted,
-            ["isInStock"] = isInStock
+            ["stockStatus"] = stockStatus
         }
     };
 }
@@ -285,13 +285,15 @@
 
                     <div class="col-md-2 m-b-15">
                         <label class="stext-102 cl3">Stock Status</label>
-                        <select name="isInStock" class="form-control">
+                        <select name="stockStatus" class="form-control">
 
-                            <option value="" selected="@(isInStock == null)">All Stock</option>
+                            <option value="" selected="@(string.IsNullOrEmpty(stockStatus))">All Stock</option>
 
-                            <option value="true" selected="@(isInStock == true)">In Stock</option>
+                            <option value="in" selected="@(stockStatus == "in")">In Stock</option>
 
-                            <option value="false" selected="@(isInStock == false)">Out Of Stock</option>
+                            <option value="low" selected="@(stockStatus == "low")">Low Stock (<= 5)</option>
+
+                            <option value="out" selected="@(stockStatus == "out")">Out Of Stock</option>
 
                         </select>
                     </div>
