@@ -173,7 +173,7 @@
                         <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Order ID</th>
                         <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Customer</th>
                         <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Total Price</th>
-                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Payment</th> <!-- Added Header -->
+                        <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Payment</th>
                         <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Status</th>
                         <th style="padding:16px 20px; color:#fff; font-weight:600; white-space:nowrap;">Action</th>
                     </tr>
@@ -182,7 +182,6 @@
                     @if (!Model.Any())
                     {
                         <tr class="table_row">
-                            <!-- Changed colspan from 5 to 6 to match the new column count -->
                             <td colspan="6" class="text-center p-all-40">
                                 <i class="fa fa-box-open fa-2x m-b-15 text-muted"></i>
                                 <h4 class="mtext-102 cl2">No recent orders</h4>
@@ -206,14 +205,14 @@
                                     <strong>@order.TotalPrice.ToString("C")</strong>
                                 </td>
 
-                                <!-- NEW: Payment Status Column -->
+                                <!--  Payment Status Column -->
                                 <td style="padding:16px 20px;">
                                     <span class="badge" style="background-color: #e9ecef; color: #1a1d20; border: 1px solid #ddd; padding: 6px 12px; font-weight: 600;">
                                         @(order.PaymentStatus?.PaymentStatusName ?? "-")
                                     </span>
                                 </td>
 
-                                <!-- EXISTING: Order Status Column -->
+                                <!--  Order Status Column -->
                                 <td style="padding:16px 20px;">
                                     <span class="badge" style="background-color: #f8f9fa; color: #1a1d20; border: 1px solid #ddd; padding: 6px 12px; font-weight: 600;">
                                         @(order.OrderStatus?.OrderStatusName ?? "-")
