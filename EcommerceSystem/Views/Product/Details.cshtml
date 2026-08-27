@@ -16,6 +16,11 @@
 
     var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
     bool isInWishlist = userWishlistIds.Contains(Model.ProductId);
+
+    int purchases = ViewBag.Purchases;
+    bool hasPurchased = ViewBag.HasPurchased;
+
+
 }
 
 <div class="bg0 p-t-80 p-b-100">
@@ -30,12 +35,21 @@
                     <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-sm d-flex align-items-center justify-content-center" title="Edit Product" style="border-radius: 50%; width: 36px; height: 36px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
                         <i class="fa fa-pencil" style="font-size: 13px;"></i>
                     </a>
+                    @if (!Model.IsDeleted)
+                    {
                     <a asp-action="Delete" asp-route-id="@Model.ProductId" class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center" title="Delete Product" style="border-radius: 50%; width: 36px; height: 36px;">
                         <i class="fa fa-trash" style="font-size: 13px;"></i>
                     </a>
                     <a asp-action="Index" class="btn btn-sm d-flex align-items-center justify-content-center" title="Back to List" style="border-radius: 50%; width: 36px; height: 36px; background-color: #1a1d20; color: #c9aa6f; border: 1px solid #c9aa6f;">
                         <i class="fa fa-arrow-left" style="font-size: 13px;"></i>
                     </a>
+                    }
+                    else
+                    {
+                        <a asp-action="UnDelete" asp-route-id="@Model.ProductId" class="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center" title="Restore Product" style="border-radius: 50%; width: 36px; height: 36px;">
+                            <i class="fa fa-undo" style="font-size: 13px;"></i>
+                        </a>
+                    }
                 </div>
             </div>
         }
@@ -135,6 +149,20 @@
                             <span class="stext-102 cl3 size-205 fw-bold" style="color: #1a1d20;">Stock Quantity:</span>
                             <span class="stext-102 cl6">@Model.ProductQuantity</span>
                         </div>
+
+                         @if (isAdmin)
+                        {
+                            <div class="flex-w flex-m p-s-0 p-b-10">
+                                <span class="stext-102 cl3 size-205 fw-bold" style="color: #1a1d20;">Sold:</span>
+                                <span class="stext-102 cl6">@purchases</span>
+                            </div>
+                        }
+                        else if (isCustomer && hasPurchased)
+                        {
+                            <div class="flex-w flex-m p-s-0 p-b-10">
+                                <span class=" bg-success stext-102 cl3 px-2 py-2 fw-bold" style="color: white; border-radius:8px;"><strong> Purchased Before</strong> </span>
+                            </div>
+                        }
                     </div>
 
                     <!-- Quantity + Add To Cart Form -->
@@ -202,7 +230,6 @@
 
                     <div class="d-flex align-items-center gap-4 flex-wrap">
                         @{
-                            var hasPurchased = ViewBag.HasPurchased != null && (bool)ViewBag.HasPurchased;
                             var hasAlreadyReviewed = ViewBag.HasAlreadyReviewed != null && (bool)ViewBag.HasAlreadyReviewed;
                         }
 

@@ -21,6 +21,7 @@ namespace EcommerceSystem.Controllers
 
         // GET: Product
         public async Task<IActionResult> Index(
+
             Guid? categoryId,
             Guid? subCategoryId,
             Guid? brandId,
@@ -28,13 +29,15 @@ namespace EcommerceSystem.Controllers
             decimal? minPrice,
             decimal? maxPrice,
             string? search,
-            int page = 1  )
+            bool? isInStock = null,
+            bool showDeleted = false,
+            int page = 1
+             )
         {
 
             int pageSize = 8;
 
             var query = _context.Products
-                .Where(p => !p.IsDeleted)
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
@@ -57,8 +60,29 @@ namespace EcommerceSystem.Controllers
                      p.ProductModel.ModelName.Contains(search)));
             }
 
-            // Category
-            if (categoryId.HasValue)
+            if (showDeleted)
+            {
+                query = query.Where(p => p.IsDeleted);
+            }
+            else
+            {
+                query = query.Where(p => !p.IsDeleted);
+            }
+
+            if (isInStock.HasValue)
+            {
+                if (isInStock.Value)
+                {
+                    query = query.Where(p => p.ProductQuantity > 0);
+                }
+                else
+                {
+                    query = query.Where(p => p.ProductQuantity <= 0);
+                }
+            }
+
+                // Category
+                if (categoryId.HasValue)
             {
                 query = query.Where(p =>
                     p.ProductSubCategories.Any(psc =>
@@ -138,6 +162,8 @@ namespace EcommerceSystem.Controllers
             ViewBag.TotalPages = totalPages;
             ViewBag.Page = page;
             ViewBag.TotalCount = totalCount;
+            ViewBag.ShowDeleted = showDeleted;
+            ViewBag.IsInStock = isInStock;
             return View(products);
         }
 
@@ -156,7 +182,6 @@ namespace EcommerceSystem.Controllers
             ViewBag.CurrentCustomerId = currentCustomerId;
 
             var productQuery = _context.Products
-                .Where(p => !p.IsDeleted)
                 .Include(p => p.ProductBrand)
                 .Include(p => p.ProductModel)
                 .Include(p => p.ProductImages)
@@ -171,6 +196,7 @@ namespace EcommerceSystem.Controllers
             if (product == null)
                 return NotFound();
 
+            int purchases;
             bool hasPurchased = false;
             bool hasAlreadyReviewed = false;
 
@@ -193,10 +219,14 @@ namespace EcommerceSystem.Controllers
                 }
             }
 
+            purchases = _context.Orders
+               .SelectMany(o => o.OrderItems)
+               .Where(oi => oi.ProductId == product.ProductId).Count();
+
+            ViewBag.Purchases = purchases;
             ViewBag.HasPurchased = hasPurchased;
             ViewBag.HasAlreadyReviewed = hasAlreadyReviewed;
 
-            // تصفية المراجعات
             var reviews = product.ProductReviews.AsEnumerable();
 
             if (ratingFilter.HasValue)
@@ -448,8 +478,7 @@ namespace EcommerceSystem.Controllers
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductSubCategories)
                 .FirstOrDefaultAsync(p =>
-                    p.ProductId == id &&
-                    !p.IsDeleted);
+                    p.ProductId == id );
 
             if (product == null)
                 return NotFound();
@@ -481,8 +510,7 @@ namespace EcommerceSystem.Controllers
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductSubCategories)
                 .FirstOrDefaultAsync(p =>
-                    p.ProductId == id &&
-                    !p.IsDeleted);
+                    p.ProductId == id );
 
             if (existingProduct == null)
                 return NotFound();
@@ -591,6 +619,52 @@ namespace EcommerceSystem.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Warning"] = "Product deleted successfully.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Product/UnDelete/{id}
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnDelete(Guid? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var product = await _context.Products
+                .Include(p => p.ProductBrand)
+                .Include(p => p.ProductModel)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductSubCategories)
+                    .ThenInclude(psc => psc.SubCategory)
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id &&
+                    p.IsDeleted); // Searching for the deleted product
+
+            if (product == null)
+                return NotFound();
+
+            // Point to the shared Delete view
+            return View("Delete", product);
+        }
+
+        // POST: Product/UnDelete/{id}
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ActionName("UnDelete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnDeleteConfirmed(Guid id)
+        {
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p =>
+                    p.ProductId == id &&
+                    p.IsDeleted);
+
+            if (product == null)
+                return NotFound();
+
+            product.IsDeleted = false;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Product restored successfully.";
             return RedirectToAction(nameof(Index));
         }
 
