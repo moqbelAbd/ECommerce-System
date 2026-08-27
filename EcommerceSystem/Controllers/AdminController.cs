@@ -64,13 +64,93 @@ namespace EcommerceSystem.Controllers
             ViewBag.TotalCustomers = totalCustomers;
             ViewBag.LowStockCount = lowStockCount;
 
-            ViewBag.RevenueChangePercent = revenueLastMonth > 0
+            decimal? revenueChangePercent = revenueLastMonth > 0
                 ? Math.Round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100, 1)
                 : (decimal?)null;
 
-            ViewBag.OrdersChangePercent = ordersLastMonth > 0
+            decimal? ordersChangePercent = ordersLastMonth > 0
                 ? Math.Round(((decimal)(ordersThisMonth - ordersLastMonth) / ordersLastMonth) * 100, 1)
                 : (decimal?)null;
+
+            ViewBag.RevenueChangePercent = revenueChangePercent;
+            ViewBag.OrdersChangePercent = ordersChangePercent;
+
+            // ---------- Overview tab: charts + KPIs ----------
+            var sixMonthsAgo = startOfThisMonth.AddMonths(-5);
+
+            var monthlyRaw = await _context.Orders
+                .Where(o => o.CreatedAt >= sixMonthsAgo)
+                .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
+                .Select(g => new
+                {
+                    g.Key.Year,
+                    g.Key.Month,
+                    Count = g.Count(),
+                    Revenue = g.Sum(x => x.TotalPrice)
+                })
+                .ToListAsync();
+
+            var monthlySales = new List<AdminOverviewViewModel.MonthlyStat>();
+            for (int i = 0; i < 6; i++)
+            {
+                var m = sixMonthsAgo.AddMonths(i);
+                var hit = monthlyRaw.FirstOrDefault(x => x.Year == m.Year && x.Month == m.Month);
+                monthlySales.Add(new AdminOverviewViewModel.MonthlyStat
+                {
+                    Label = m.ToString("MMM yyyy"),
+                    OrderCount = hit?.Count ?? 0,
+                    Revenue = hit?.Revenue ?? 0m
+                });
+            }
+
+            var categoryRaw = await _context.OrderItems
+                .Select(oi => new
+                {
+                    oi.ItemTotalPrice,
+                    CategoryName = oi.Product!.ProductSubCategories
+                        .Select(ps => ps.SubCategory!.Category!.CategoryName)
+                        .FirstOrDefault()
+                })
+                .ToListAsync();
+
+            var revenueByCategory = categoryRaw
+                .GroupBy(x => string.IsNullOrWhiteSpace(x.CategoryName) ? "Uncategorized" : x.CategoryName!)
+                .Select(g => new AdminOverviewViewModel.CategoryRevenue
+                {
+                    Name = g.Key,
+                    Revenue = g.Sum(x => x.ItemTotalPrice)
+                })
+                .Where(c => c.Revenue > 0)
+                .OrderByDescending(c => c.Revenue)
+                .ToList();
+
+            var ordersByStatus = await _context.Orders
+                .GroupBy(o => o.OrderStatus!.OrderStatusName)
+                .Select(g => new AdminOverviewViewModel.StatusSlice
+                {
+                    Name = g.Key ?? "-",
+                    Count = g.Count()
+                })
+                .OrderByDescending(s => s.Count)
+                .ToListAsync();
+
+            ViewBag.Overview = new AdminOverviewViewModel
+            {
+                TotalRevenue = totalRevenue,
+                TotalOrders = totalOrders,
+                TotalCustomers = totalCustomers,
+                LowStockCount = lowStockCount,
+                RevenueThisMonth = revenueThisMonth,
+                RevenueLastMonth = revenueLastMonth,
+                OrdersThisMonth = ordersThisMonth,
+                OrdersLastMonth = ordersLastMonth,
+                RevenueChangePercent = revenueChangePercent,
+                OrdersChangePercent = ordersChangePercent,
+                AvgOrderValue = totalOrders > 0 ? Math.Round(totalRevenue / totalOrders, 2) : 0m,
+                MonthlySales = monthlySales,
+                RevenueByCategory = revenueByCategory,
+                OrdersByStatus = ordersByStatus
+            };
 
             var recentOrders = await _context.Orders
                 .Include(o => o.Customer)
@@ -194,7 +274,7 @@ namespace EcommerceSystem.Controllers
             ViewBag.OrderTotalPages = orderTotalPages;
             ViewBag.TotalOrderCount = totalOrderCount;
 
-            ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "orders" : activeTab;
+            ViewBag.ActiveTab = string.IsNullOrWhiteSpace(activeTab) ? "overview" : activeTab;
 
             return View(recentOrders);
         }
