@@ -228,7 +228,7 @@
                     @foreach (var t in testimonials)
                     {
                         <div class="item-slick2 p-lr-15 p-tb-10">
-                            <!-- Fixed height and uniform box sizing -->
+
                             <div class="p-all-35 bg0 shadow-sm trans-04" style="height: 270px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 16px; border: 1px solid #eaeaea;">
                                 <p class="stext-114 cl6 fst-italic text-secondary mb-0" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
                                     "@t.CustomerTestimonial"
@@ -439,15 +439,30 @@
                 });
             }
         });
+
     </script>
 }
 
 <style>
+
     .wrap-slick2 {
         position: relative;
     }
 
-    /* ستايل عام لجميع الأسهم */
+    .testimonial-slick .slick-track {
+        display: flex !important;
+    }
+
+    .testimonial-slick .slick-slide {
+        height: auto !important;
+        display: flex !important;
+    }
+
+    .testimonial-slick .item-slick2 {
+        height: 100%;
+        width: 100%;
+    }
+
     .slick-prev, .slick-next {
         position: absolute;
         top: 50%;
@@ -480,7 +495,7 @@
         color: #1a1d20 !important;
     }
 
-    /* الأسهم الخاصة بالتصنيفات (Category Slider) - إجبارها على الخروج للأطراف لكي تظهر بوضوح على اللابتوب */
+    /*  (Category Slider)  */
     .sec-banner .slick-prev {
         left: -40px !important;
     }
@@ -489,7 +504,7 @@
         right: -40px !important;
     }
 
-    /* الأسهم لباقي الأقسام (Testimonials & FAQ) */
+    /*  (Testimonials & FAQ) */
     .sec-testimonials .slick-prev, .sec-faq .slick-prev {
         left: -25px !important;
     }
@@ -501,4 +516,5 @@
     .block1:hover img {
         transform: scale(1.05);
     }
+
 </style>

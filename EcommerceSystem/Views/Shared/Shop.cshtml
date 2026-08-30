@@ -1,4 +1,5 @@
 @using EcommerceSystem.Models
+@using EcommerceSystem.Models.ViewModels
 @model IEnumerable<Product>
 
 @{
@@ -11,6 +12,9 @@
     decimal? minPrice = ViewBag.MinPrice;
     decimal? maxPrice = ViewBag.MaxPrice;
     string? sort = ViewBag.Sort;
+    int totalPages = ViewBag.TotalPages;
+    int page = ViewBag.Page;
+    int totalCount = ViewBag.TotalCount;
 
     string? selectedCategoryName = selectedCategoryId.HasValue
         ? categories.FirstOrDefault(c => c.CategoryId == selectedCategoryId.Value)?.CategoryName
@@ -21,6 +25,24 @@
         : null;
 
     var userWishlistIds = ViewBag.UserWishlistIds as List<Guid> ?? new List<Guid>();
+
+    var pagination = new PaginationViewModel
+    {
+        CurrentPage = page,
+        TotalPages = totalPages,
+        PageParam = "page",
+        Action = "Shop",
+        Controller = "Home",
+        RouteValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
+        {
+            ["search"] = searchTerm,
+            ["categoryId"] = selectedCategoryId,
+            ["subCategoryId"] = selectedSubCategoryId,
+            ["minPrice"] = minPrice,
+            ["maxPrice"] = maxPrice
+        }
+    };
+
 }
 
 <!-- Title Banner -->
@@ -172,6 +194,14 @@
         </div>
 
         <!-- Products Grid -->
+        <div class="card table-responsive"
+             style="
+            border:none;
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 5px 25px rgba(0,0,0,0.08);
+            ">
+
         @if (!Model.Any())
         {
             <div class="text-center py-5">
@@ -209,6 +239,9 @@
                     <partial name="_ProductCardPartial" model="cardData" />
                 }
             </div>
+                <div class="p-t-40 p-b-20 d-flex justify-content-center">
+                    <partial name="_PaginationPartial" model="pagination" />
+                </div>
         }
     </div>
 </div>
