@@ -46,6 +46,9 @@ namespace EcommerceSystem.Controllers
             var lowStockCount = await _context.Products
                 .CountAsync(p => !p.IsDeleted && p.ProductQuantity <= 5);
 
+            var outOfStockCount = await _context.Products
+                .CountAsync(p => !p.IsDeleted && p.ProductQuantity <= 0);
+
             var revenueThisMonth = await _context.Orders
                 .Where(o => o.CreatedAt >= startOfThisMonth)
                 .SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
@@ -68,15 +71,34 @@ namespace EcommerceSystem.Controllers
             var ordersLastMonth = await _context.Orders
                 .CountAsync(o => o.CreatedAt >= startOfLastMonth && o.CreatedAt < startOfThisMonth);
 
+            var activeCustomersCount = await _context.Customers
+            .Where(c => !c.IsDeleted && c.Orders.Any())
+            .CountAsync();
+
+            // 2. Group Orders by Status for the Donut Chart
+            var ordersByStatus = await _context.Orders
+                .Include(o => o.OrderStatus)
+                .GroupBy(o => o.OrderStatus.OrderStatusName)
+                .Select(g => new
+                {
+                    Name = g.Key ?? "Unassigned",
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
             ViewBag.TotalRevenue = totalRevenue;
             ViewBag.TotalOrders = totalOrders;
             ViewBag.TotalCustomers = totalCustomers;
             ViewBag.LowStockCount = lowStockCount;
+            ViewBag.OutOfStockCount = outOfStockCount;
 
             ViewBag.RevenueThisMonth = revenueThisMonth;
             ViewBag.RevenueLastMonth = revenueLastMonth;
             ViewBag.RevenueBeforeTwoMonths = revenueBeforeTwoMonths;
             ViewBag.RevenueBeforeThreeMonths = revenueBeforeThreeMonths;
+
+            ViewBag.ActiveCustomersCount = activeCustomersCount;
+            ViewBag.OrdersByStatus = ordersByStatus;
 
             ViewBag.RevenueChangePercent = revenueLastMonth > 0
                 ? Math.Round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100, 1)
@@ -97,6 +119,7 @@ namespace EcommerceSystem.Controllers
             var customerQuery = _context.Customers
                 .Where(c => !c.IsDeleted)
                 .AsQueryable();
+
 
             if (!string.IsNullOrWhiteSpace(customerSearch))
             {

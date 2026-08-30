@@ -103,27 +103,9 @@
             </div>
         </div>
 
-        <!-- Products & Low Stock -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px; background: #fff; border-left: 4px solid #1a1d20 !important; border: 1px solid #1a1d20;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="d-block mb-1" style="font-size: 13px; font-weight: 600; color: #555;">Total Products</span>
-                        <h3 class="fw-bold mb-1" style="color: #1a1d20;">@totalProducts</h3>
-                        <span class="text-danger fw-semibold" style="font-size: 11px;">
-                            <i class="fa fa-exclamation-triangle"></i> @lowStockCount low stock (&lt;=5)
-                        </span>
-                    </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: rgba(26, 29, 32, 0.1); color: #1a1d20; font-size: 22px;">
-                        <i class="fa fa-cube"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Dashboard Tabs -->
-    <div class="dash-tabs mb-4">
+        <div class="dash-tabs mb-4 pt-4 w-100">
         <button type="button" class="dash-tab-btn @(activeTab == "overview" ? "active" : "")" data-tab="overview">
             <i class="fa fa-dashboard m-r-5"></i> Overview
         </button>
@@ -139,29 +121,153 @@
     <!-- ===================== OVERVIEW PANEL ===================== -->
     <div class="dash-panel" data-panel="overview" style="@(activeTab == "overview" ? "display: block;" : "display: none;")">
 
-        <!-- Charts Row -->
-        <div class="row m-b-40">
-            <div class="col-md-7 m-b-20">
-                <div class="card p-all-20 shadow-sm" style="border-radius: 16px; border: 1px solid #1a1d20 !important; background: #fff; height: 100%;">
-                    <h5 class="fw-bold m-b-20" style="color: #1a1d20; letter-spacing: 0.5px;">
-                        <i class="fa fa-bar-chart m-r-8" style="color: #c9aa6f;"></i> Revenue Performance
-                    </h5>
-                    <div style="position: relative; height: 250px; width: 100%;">
-                        <canvas id="revenueBarChart"></canvas>
+        <!-- 3 Business Summary Cards (Above Charts) -->
+        <div class="row m-b-30">
+            <!-- 1. Total Revenue -->
+            <div class="col-md-4 m-b-20">
+                <div class="card p-4 shadow-sm h-100" style="border-radius: 16px; border: 1px solid #1a1d20; background: #fff;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="font-size: 14px; font-weight: 600; color: #c9aa6f;">Total Revenue</span>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(201, 170, 111, 0.2); color: #c9aa6f; font-size: 18px;">
+                            <i class="fa fa-dollar"></i>
+                        </div>
                     </div>
+                    <h3 class="fw-bold mb-2">@totalRevenue.ToString("C")</h3>
+
+                    @if (revenueChangePercent != null)
+                    {
+                        <span style="font-size: 12px; color: @(revenueChangePercent >= 0 ? "#28a745" : "#dc3545");">
+                            <i class="fa @(revenueChangePercent >= 0 ? "fa-arrow-up" : "fa-arrow-down")"></i>
+                            @Math.Abs(revenueChangePercent.Value)% vs last month
+                        </span>
+                    }
                 </div>
             </div>
-            <div class="col-md-5 m-b-20">
-                <div class="card p-all-20 shadow-sm" style="border-radius: 16px; border: 1px solid #1a1d20 !important; background: #fff; height: 100%;">
-                    <h5 class="fw-bold m-b-20" style="color: #1a1d20; letter-spacing: 0.5px;">
-                        <i class="fa fa-pie-chart m-r-8" style="color: #c9aa6f;"></i> Inventory Health
-                    </h5>
-                    <div style="position: relative; height: 250px; width: 100%; display: flex; justify-content: center;">
-                        <canvas id="stockPieChart"></canvas>
+
+            <!-- 2. Total Orders -->
+            <div class="col-md-4 m-b-20">
+                <div class="card p-4 shadow-sm h-100" style="border-radius: 16px; border: 1px solid #1a1d20; background: #fff;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="font-size: 14px; font-weight: 600; color: #555;">Total Orders</span>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(26, 29, 32, 0.1); color: #1a1d20; font-size: 18px;">
+                            <i class="fa fa-shopping-bag"></i>
+                        </div>
                     </div>
+                    <h3 class="fw-bold mb-2 text-dark">@totalOrders</h3>
+
+                    @if (ordersChangePercent != null)
+                    {
+                        <span style="font-size: 12px; color: @(ordersChangePercent >= 0 ? "#28a745" : "#dc3545");">
+                            <i class="fa @(ordersChangePercent >= 0 ? "fa-arrow-up" : "fa-arrow-down")"></i>
+                            @Math.Abs(ordersChangePercent.Value)% vs last month
+                        </span>
+                    }
                 </div>
             </div>
-        </div>
+
+            <!-- 3. Active Customers Card -->
+            <div class="col-md-4 m-b-20">
+                <div class="card p-4 shadow-sm h-100" style="border-radius: 16px; border: 1px solid #1a1d20; background: #fff;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="font-size: 14px; font-weight: 600; color: #555;">Active Customers</span>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(201, 170, 111, 0.2); color: #c9aa6f; font-size: 18px;">
+                            <i class="fa fa-users"></i>
+                        </div>
+                    </div>
+                    <h3 class="fw-bold mb-2 text-dark">@(ViewBag.ActiveCustomersCount ?? 0)</h3>
+                    <span style="font-size: 12px; color: #777;">Customers with at least 1 order</span>
+                </div>
+            </div>
+
+                <!-- Charts Row -->
+                <div class="row m-b-40 w-100 mx-0">
+
+                    <!-- Bar Chart -->
+                    <div class="col-12 col-lg-7 m-b-20 px-2">
+                        <div class="card p-all-20 shadow-sm" style="border-radius: 16px; border: 1px solid #1a1d20 !important; background: #fff; height: 100%; width: 100%;">
+                            <h5 class="fw-bold m-b-20" style="color: #1a1d20; letter-spacing: 0.5px;">
+                                <i class="fa fa-bar-chart m-r-8" style="color: #c9aa6f;"></i> Revenue Performance
+                            </h5>
+                            <div style="position: relative; height: 250px; width: 100%;">
+                                <canvas id="revenueBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pie chart: Orders by Status -->
+                    <div class="col-12 col-lg-5 m-b-20 px-2">
+                        <div class="card p-4 shadow-sm" style="border-radius:16px; border:1px solid #1a1d20; background: #fff; height: 100%; width: 100%;">
+                            <h5 class="fw-bold mb-4" style="color:#1a1d20; letter-spacing: 0.5px;">
+                                <i class="fa fa-pie-chart m-r-8" style="color: #c9aa6f;"></i> Orders by Status
+                            </h5>
+
+                            @{
+                                // Setup the data for the SVG Donut Chart
+                                var statusList = ViewBag.OrdersByStatus as IEnumerable<dynamic> ?? new List<dynamic>();
+                                int statusTotal = statusList.Sum(s => (int)s.Count);
+
+                                // Math for the SVG circle
+                                double donutR = 83;
+                                double donutC = 2 * Math.PI * donutR;
+
+                                string[] chartColors = new[] { "#c9aa6f", "#1a1d20", "#6c757d", "#dc3545", "#28a745" };
+                            }
+
+                            @if (!statusList.Any() || statusTotal <= 0)
+                            {
+                                <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+                                    <p class="text-muted mb-0">No orders yet.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex flex-wrap align-items-center justify-content-center" style="gap:24px; height: 100%;">
+
+                                    <!-- SVG Chart -->
+                                    <svg viewBox="0 0 200 200" style="width:170px; height:170px;">
+                                        <g transform="rotate(-90 100 100)">
+                                            @{
+                                                double stOffset = 0;
+                                            }
+                                            @for (int i = 0; i < statusList.Count(); i++)
+                                            {
+                                                var slice = statusList.ElementAt(i);
+                                                double frac = (double)slice.Count / statusTotal;
+                                                double len = frac * donutC;
+
+                                                <circle cx="100" cy="100" r="@donutR" fill="none"
+                                                        stroke="@chartColors[i % chartColors.Length]" stroke-width="34"
+                                                        stroke-dasharray="@len.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) @((donutC - len).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))"
+                                                        stroke-dashoffset="@((-stOffset).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))"></circle>
+                                                stOffset += len;
+                                            }
+                                        </g>
+                                        <text x="100" y="96" text-anchor="middle" style="font-size:13px; fill:#555;">Orders</text>
+                                        <text x="100" y="116" text-anchor="middle" style="font-size:15px; font-weight:700; fill:#1a1d20;">@statusTotal</text>
+                                    </svg>
+
+                                    <!-- Legend -->
+                                    <div style="flex:1; min-width:140px;">
+                                        @for (int i = 0; i < statusList.Count(); i++)
+                                        {
+                                            var slice = statusList.ElementAt(i);
+                                            double frac = (double)slice.Count / statusTotal * 100;
+
+                                            <div class="d-flex align-items-center justify-content-between mb-2" style="font-size:13px;">
+                                                <span>
+                                                    <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:@chartColors[i % chartColors.Length]; margin-right:8px;"></span>
+                                                    @slice.Name
+                                                </span>
+                                                <span class="fw-semibold text-dark">@slice.Count <span class="text-muted" style="font-size: 11px;">(@frac.ToString("0.#")%)</span></span>
+                                            </div>
+                                        }
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
 
         <!-- Recent Orders Table -->
         <h4 class="mtext-103 cl2 p-b-20 p-t-10">Recent Watch Orders</h4>
@@ -459,107 +565,64 @@
     }
 </style>
 
-@section Scripts {
+        @section Scripts {
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            // Tab Switching Logic
+                            var tabButtons = document.querySelectorAll(".dash-tab-btn");
+                            var panels = document.querySelectorAll(".dash-panel");
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var tabButtons = document.querySelectorAll(".dash-tab-btn");
-            var panels = document.querySelectorAll(".dash-panel");
+                            tabButtons.forEach(function(button) {
+                                button.addEventListener("click", function() {
+                                    var target = button.getAttribute("data-tab");
 
-            tabButtons.forEach(function (button) {
-                button.addEventListener("click", function () {
-                    var target = button.getAttribute("data-tab");
+                                    tabButtons.forEach(function(btn) { btn.classList.remove("active"); });
+                                    button.classList.add("active");
 
-                    tabButtons.forEach(function (btn) { btn.classList.remove("active"); });
-                    button.classList.add("active");
+                                    panels.forEach(function(panel) {
+                                        panel.style.display = (panel.getAttribute("data-panel") === target) ? "block" : "none";
+                                    });
+                                });
+                            });
 
-                    panels.forEach(function (panel) {
-                        panel.style.display = (panel.getAttribute("data-panel") === target) ? "block" : "none";
-                    });
-                });
-            });
-        });
+                            // Global Chart Styling
+                            Chart.defaults.font.family = "'Poppins', sans-serif";
+                            Chart.defaults.color = '#555';
 
-        document.addEventListener("DOMContentLoaded", function() {
+                            // --- Bar Chart: Revenue ---
+                            const barCtx = document.getElementById('revenueBarChart').getContext('2d');
+                            const beforeThreeMonthsRev = @Convert.ToInt32(ViewBag.RevenueBeforeThreeMonths ?? 0);
+                            const beforeTwoMonthsRev = @Convert.ToInt32(ViewBag.RevenueBeforeTwoMonths ?? 0);
+                            const lastMonthRev = @Convert.ToInt32(ViewBag.RevenueLastMonth ?? 0);
+                            const thisMonthRev = @Convert.ToInt32(ViewBag.RevenueThisMonth ?? 0);
 
-            Chart.defaults.font.family = "'Poppins', sans-serif";
-            Chart.defaults.color = '#555';
+                            new Chart(barCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: ['Three Months Ago', 'Two Months Ago', 'Last Month', 'This Month'],
+                                    datasets: [{
+                                        label: 'Revenue ($)',
+                                        data: [beforeThreeMonthsRev, beforeTwoMonthsRev, lastMonthRev, thisMonthRev],
+                                        backgroundColor: ['#1a1d20', '#c9aa6f'],
+                                        borderRadius: 8,
+                                        barThickness: 45
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { display: false } },
+                                    scales: {
+                                        y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false } },
+                                        x: { grid: { display: false } }
+                                    }
+                                }
+                            });
 
-            // --- Bar Chart: Revenue ---
-            const barCtx = document.getElementById('revenueBarChart').getContext('2d');
-
-            const beforeThreeMonthsRev = @Convert.ToInt32(ViewBag.RevenueBeforeThreeMonths ?? 0);
-            const beforeTwoMonthsRev = @Convert.ToInt32(ViewBag.RevenueBeforeTwoMonths ?? 0);
-            const lastMonthRev = @Convert.ToInt32(ViewBag.RevenueLastMonth ?? 0);
-            const thisMonthRev = @Convert.ToInt32(ViewBag.RevenueThisMonth ?? 0);
-
-            new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Three Months Ago', 'Two Months Ago', 'Last Month', 'This Month'],
-                    datasets: [{
-                        label: 'Revenue ($)',
-                        data: [beforeThreeMonthsRev, beforeTwoMonthsRev, lastMonthRev, thisMonthRev],
-                        backgroundColor: ['#1a1d20', '#c9aa6f'],
-                        borderRadius: 8, 
-                        barThickness: 45 
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false, 
-                    plugins: {
-                        legend: { display: false } 
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)',
-                                drawBorder: false
-                            }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-
-            // --- Pie Chart: Inventory Health ---
-            const pieCtx = document.getElementById('stockPieChart').getContext('2d');
-            const healthyStock = @(ViewBag.TotalProducts ?? 0) - @(ViewBag.LowStockCount ?? 0);
-            const lowStock = @(ViewBag.LowStockCount ?? 0);
-
-            new Chart(pieCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Healthy Stock', 'Low Stock (<= 5)'],
-                    datasets: [{
-                        data: [healthyStock, lowStock],
-                        backgroundColor: ['#1a1d20', '#c9aa6f'], 
-                        borderWidth: 3, 
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '75%', 
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true, 
-                                pointStyle: 'circle'
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+                        });
+            </script>
+        }
+}
 }
