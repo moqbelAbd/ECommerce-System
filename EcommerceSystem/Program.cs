@@ -5,14 +5,24 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+    }));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
- .AddRoles<IdentityRole>()
-.AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSession(options =>
@@ -24,14 +34,19 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-
-// --- ROLE SEEDING ---
+// 1. تطبيق الـ Migrations وإنشاء الجداول أولاً
 using (var scope = app.Services.CreateScope())
 {
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(); // Inject UserManager 
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
-    // Create the roles if they don't exist in the database
+    // إنشاء الجداول تلقائياً إن لم تكن موجودة
+    await dbContext.Database.MigrateAsync();
+
+    // 2. زراعة الأدوار والمستخدم الافتراضي بعد ضمان وجود الجداول
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
     string[] roleNames = { "Admin", "Customer" };
     foreach (var roleName in roleNames)
     {
@@ -41,11 +56,10 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // 2. Create the Master Admin Account
+    // إنشاء حساب Master Admin
     string adminEmail = "Admin@gmail.com";
     string adminPassword = "#Admin123";
 
-    // Check if the admin account already exists
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
     {
@@ -58,8 +72,8 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // --- DEMO SEED DATA (categories, products, customers, orders, testimonials) ---
-    //await DbSeeder.SeedAsync(scope.ServiceProvider);
+    // Seed Demo Data if needed
+    // await DbSeeder.SeedAsync(services);
 }
 
 // Configure the HTTP request pipeline.
@@ -70,7 +84,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
